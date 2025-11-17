@@ -1,7 +1,3 @@
-/*
- * Copyright 2023-2025 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
- */
-
 package org.jetbrains.kotlinx.network.ktor
 
 import io.ktor.http.*
@@ -18,6 +14,7 @@ import io.ktor.util.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import network.serialization.RpcCallSerializer
+import network.serialization.remoteCallSerializersModule
 import org.jetbrains.kotlinx.network.RemoteCall
 
 internal val KRemoteServerPluginAttributesKey = AttributeKey<KRemoteConfigBuilder>("KRemoteServerPluginAttributesKey")
@@ -27,11 +24,7 @@ val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
     createConfiguration = { KRemoteConfigBuilder() },
 ) {
     application.install(ContentNegotiation) {
-        json(Json {
-            serializersModule = SerializersModule {
-                contextual(RemoteCall::class, RpcCallSerializer(SerializersModule {}))
-            }
-        })
+        json(jsonWithRemoteCallSerializer)
     }
     application.install(CallId) {
         header(HttpHeaders.XRequestId)

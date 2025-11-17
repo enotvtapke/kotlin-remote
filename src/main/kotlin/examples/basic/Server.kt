@@ -10,6 +10,17 @@ import org.jetbrains.kotlinx.network.ktor.remote
 import kotlin.reflect.typeOf
 
 fun main() {
+    initCallableMap()
+    embeddedServer(Netty, port = 8080) {
+        install(KRemote)
+
+        routing {
+            remote("/call")
+        }
+    }.start(wait = true)
+}
+
+fun initCallableMap() {
     CallableMap["multiply"] = RpcCallable(
         name = "multiply",
         returnType = RemoteType(typeOf<Long>()),
@@ -22,13 +33,20 @@ fun main() {
             RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),
             RemoteParameter("rhs", RemoteType(typeOf<Long>()), false)
         ),
+        returnsStream = false,
     )
-
-    embeddedServer(Netty, port = 8080) {
-        install(KRemote)
-
-        routing {
-            remote("/call")
-        }
-    }.start(wait = true)
+    CallableMap["multiplyStreaming"] = RpcCallable(
+        name = "multiplyStreaming",
+        returnType = RemoteType(typeOf<Long>()),
+        invokator = RpcInvokator { args ->
+            return@RpcInvokator with(ServerConfig.context) {
+                multiplyStreaming(args[0] as Long, args[1] as Long)
+            }
+        },
+        parameters = arrayOf(
+            RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),
+            RemoteParameter("rhs", RemoteType(typeOf<Long>()), false)
+        ),
+        returnsStream = true,
+    )
 }

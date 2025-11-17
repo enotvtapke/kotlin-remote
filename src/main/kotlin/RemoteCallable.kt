@@ -17,6 +17,7 @@ class RpcCallable(
     val returnType: RemoteType,
     val invokator: RpcInvokator,
     val parameters: Array<out RemoteParameter>,
+    val returnsStream: Boolean,
 )
 
 fun interface RpcInvokator {

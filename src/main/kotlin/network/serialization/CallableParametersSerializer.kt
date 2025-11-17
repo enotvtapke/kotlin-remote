@@ -144,3 +144,7 @@ class RpcCallSerializer(
         }
     }
 }
+
+fun remoteCallSerializersModule(): SerializersModule = SerializersModule {
+    contextual(RemoteCall::class, RpcCallSerializer(SerializersModule {}))
+}

@@ -15,20 +15,8 @@ private suspend fun expression(a: Long, b: Long): Long {
 }
 
 fun main() = runBlocking {
-    CallableMap["multiply"] = RpcCallable(
-        name = "multiply",
-        returnType = RemoteType(typeOf<Long>()),
-        invokator = RpcInvokator { args ->
-            return@RpcInvokator with(ServerConfig.context) {
-                multiply(args[0] as Long, args[1] as Long)
-            }
-        },
-        parameters = arrayOf(
-            RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),
-            RemoteParameter("rhs", RemoteType(typeOf<Long>()), false)
-        ),
-    )
+    initCallableMap()
     with(object : RemoteContext {}) {
-        println(expression(1, 2))
+        multiplyStreaming(5, 6).collect { println(it) }
     }
 }
