@@ -1,26 +1,12 @@
 package org.jetbrains.kotlinx.examples.basic
 
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
-import io.ktor.server.logging.*
 import io.ktor.server.netty.*
-import io.ktor.server.plugins.callid.*
-import io.ktor.server.plugins.calllogging.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.plugins.statuspages.StatusPages
-import io.ktor.server.request.*
-import io.ktor.server.response.respondText
 import io.ktor.server.routing.*
-import io.ktor.util.reflect.*
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import network.serialization.RpcCallSerializer
-import network.serialization.rpcInternalKClass
 import org.jetbrains.kotlinx.*
-import org.jetbrains.kotlinx.network.RemoteCall
-import org.jetbrains.kotlinx.network.RemoteServerImpl
+import org.jetbrains.kotlinx.network.ktor.KRemote
+import org.jetbrains.kotlinx.network.ktor.remote
 import kotlin.reflect.typeOf
 
 fun main() {
@@ -39,48 +25,10 @@ fun main() {
     )
 
     embeddedServer(Netty, port = 8080) {
-        module()
-    }.start(wait = true)
-}
+        install(KRemote)
 
-fun Application.module() {
-    install(ContentNegotiation) {
-        json(Json {
-            serializersModule = SerializersModule {
-                contextual(RemoteCall::class, RpcCallSerializer(SerializersModule {}))
-            }
-        })
-    }
-    install(CallId) {
-        header(HttpHeaders.XRequestId)
-        verify { callId: String ->
-            callId.isNotEmpty()
+        routing {
+            remote("/call")
         }
-    }
-    install(CallLogging) {
-        callIdMdc("call-id")
-        format { call ->
-            val status = call.response.status() ?: "Unhandled"
-            "${status}: ${call.request.toLogString()} ${call.request.queryString()}"
-        }
-    }
-    val logger = log
-    install(StatusPages) {
-        exception<Throwable> { call, cause ->
-            logger.error(cause.stackTraceToString())
-            call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
-        }
-    }
-    routing {
-        post("/call") {
-            val remoteCall = call.receive<RemoteCall>()
-            call.respond(
-                RemoteServerImpl.handleCall(remoteCall),
-                TypeInfo(
-                    CallableMap[remoteCall.callableName].returnType.kType.rpcInternalKClass<Any>(),
-                    CallableMap[remoteCall.callableName].returnType.kType
-                )
-            )
-        }
-    }
+    }.start(wait = true)
 }
