@@ -1,13 +1,13 @@
 package de.jensklingenberg
 
-import com.google.auto.service.AutoService
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 
-@AutoService(CommandLineProcessor::class) // don't forget!
+@OptIn(ExperimentalCompilerApi::class)
 class ExampleCommandLineProcessor : CommandLineProcessor {
 
     override val pluginId: String = "helloWorldPlugin"

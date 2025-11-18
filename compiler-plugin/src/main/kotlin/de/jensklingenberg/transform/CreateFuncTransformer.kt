@@ -1,6 +1,7 @@
 package de.jensklingenberg.transform
 
 import de.jensklingenberg.DebugLogger
+import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -8,7 +9,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -32,6 +32,7 @@ internal class CreateFuncTransformer(
 
     }
 
+    @OptIn(DeprecatedForRemovalCompilerApi::class)
     override fun visitExpression(expression: IrExpression): IrExpression {
 
         //Find exampleKtorfit.create<TestApi>()
@@ -75,14 +76,13 @@ internal class CreateFuncTransformer(
 
                 //Create the constructor call for _ExampleApiImpl()
                 val newCall = IrConstructorCallImpl(
-                    0,
-                    0,
+                    startOffset = 0,
+                    endOffset = 0,
                     type = implClassSymbol.defaultType,
                     symbol = newConstructor,
-                    0,
-                    0,
-                    0,
-                    null
+                    typeArgumentsCount = 0,
+                    constructorTypeArgumentsCount = 0,
+                    origin = null
                 )
 
                 //Set _ExampleApiImpl() as argument for create<ExampleApi>()

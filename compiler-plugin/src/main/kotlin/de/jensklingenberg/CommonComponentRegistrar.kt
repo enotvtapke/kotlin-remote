@@ -1,6 +1,5 @@
 package de.jensklingenberg
 
-import com.google.auto.service.AutoService
 import de.jensklingenberg.transform.ExampleIrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -8,9 +7,10 @@ import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
-@AutoService(CompilerPluginRegistrar::class)
+@OptIn(ExperimentalCompilerApi::class)
 class CommonComponentRegistrar : CompilerPluginRegistrar() {
 
     override val supportsK2: Boolean
