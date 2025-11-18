@@ -17,6 +17,7 @@ private suspend fun expression(a: Long, b: Long): Long {
 fun main() = runBlocking {
     initCallableMap()
     with(object : RemoteContext {}) {
+        println(expression(100, 600))
         multiplyStreaming(5, 6).collect { println(it) }
     }
 }

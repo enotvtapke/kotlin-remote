@@ -26,8 +26,8 @@ context(ctx: RemoteContext)
 suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
     if (ctx == ServerConfig.context) {
         return flow {
-            repeat(100) {
-                delay(10000)
+            repeat(50) {
+                delay(50)
                 emit(lhs * rhs)
             }
         }
