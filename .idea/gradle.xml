@@ -4,11 +4,30 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/compiler-plugin" name="compiler-plugin">
+                <projects>
+                  <project path="$PROJECT_DIR$/compiler-plugin" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/gradle-plugin" name="gradle-plugin">
+                <projects>
+                  <project path="$PROJECT_DIR$/gradle-plugin" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="$USER_HOME$/.sdkman/candidates/gradle/current" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/compiler-plugin" />
+            <option value="$PROJECT_DIR$/gradle-plugin" />
+            <option value="$PROJECT_DIR$/integration-tests" />
           </set>
         </option>
       </GradleProjectSettings>
