@@ -21,7 +21,7 @@ plugins {
     id("io.ktor.plugin") version "3.2.1"
 }
 
-apply(plugin = "compiler.gradleplugin.helloworld")
+//apply(plugin = "compiler.gradleplugin.helloworld")
 
 
 group = "org.jetbrains.kotlinx"

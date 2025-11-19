@@ -6,8 +6,8 @@ repositories {
     mavenCentral()
 }
 
-group = "de.jensklingenberg"
-version = "0.0.1"
+group = "org.jetbrains.kotlinx"
+version = "1.0-SNAPSHOT"
 
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:2.2.0")

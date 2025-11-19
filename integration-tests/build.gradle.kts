@@ -1,11 +1,11 @@
+import kotlinx.kremote.TestCompilerExtension
+
 plugins {
     kotlin("jvm")
-    id("compiler.gradleplugin.helloworld")
+    id("org.jetbrains.kotlinx.kremote.plugin")
 }
 
-apply(plugin = "compiler.gradleplugin.helloworld")
-
-configure<de.jensklingenberg.gradle.TestCompilerExtension> {
+configure<TestCompilerExtension> {
     enabled = true
 }
 

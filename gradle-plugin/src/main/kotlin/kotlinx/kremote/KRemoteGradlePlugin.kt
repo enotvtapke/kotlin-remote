@@ -1,4 +1,4 @@
-package de.jensklingenberg.gradle
+package kotlinx.kremote
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
@@ -11,12 +11,12 @@ open class TestCompilerExtension {
     var enabled: Boolean = true
 }
 
-class HelloWorldGradleSubPlugin : KotlinCompilerPluginSupportPlugin {
+class KRemoteGradlePlugin : KotlinCompilerPluginSupportPlugin {
 
     companion object {
-        const val SERIALIZATION_GROUP_NAME = "de.jensklingenberg"
+        const val SERIALIZATION_GROUP_NAME = "org.jetbrains.kotlinx"
         const val ARTIFACT_NAME = "compiler-plugin"
-        const val VERSION_NUMBER = "0.0.1"
+        const val VERSION_NUMBER = "1.0-SNAPSHOT"
     }
 
     private var gradleExtension : TestCompilerExtension = TestCompilerExtension()
@@ -31,13 +31,13 @@ class HelloWorldGradleSubPlugin : KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.extensions.create(
-            "helloWorld",
+            "kotlinx-kremote",
             TestCompilerExtension::class.java
         )
         super.apply(target)
     }
 
-    override fun getCompilerPluginId(): String = "helloWorldPlugin"
+    override fun getCompilerPluginId(): String = "kotlinx-kremote"
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
         return true

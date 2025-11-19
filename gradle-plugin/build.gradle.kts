@@ -3,8 +3,8 @@ plugins {
     kotlin("jvm") version ("2.2.0")
 }
 
-group = "de.jensklingenberg"
-version = "1.0.0"
+group = "org.jetbrains.kotlinx"
+version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -16,9 +16,10 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        create("simplePlugin") {
-            id = "compiler.gradleplugin.helloworld"
-            implementationClass = "de.jensklingenberg.gradle.HelloWorldGradleSubPlugin"
+        create("plugin") {
+            id = "org.jetbrains.kotlinx.kremote.plugin"
+
+            implementationClass = "kotlinx.kremote.KRemoteGradlePlugin"
         }
     }
 }
