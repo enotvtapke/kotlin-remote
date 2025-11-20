@@ -12,15 +12,15 @@ data class RemoteParameter(
     val isOptional: Boolean,
 )
 
-class RpcCallable(
+class RemoteCallable(
     val name: String,
     val returnType: RemoteType,
-    val invokator: RpcInvokator,
+    val invokator: RemoteInvokator,
     val parameters: Array<out RemoteParameter>,
     val returnsStream: Boolean,
 )
 
-fun interface RpcInvokator {
+fun interface RemoteInvokator {
     suspend fun call(parameters: Array<Any?>): Any?
 }
 

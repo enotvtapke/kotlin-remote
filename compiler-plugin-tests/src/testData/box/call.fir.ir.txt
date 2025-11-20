@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/simple.kt
+FILE fqName:<root> fileName:/call.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

@@ -32,12 +32,13 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.getValueArgument
 import org.jetbrains.kotlin.ir.util.isStatic
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 
-internal class RpcIrServiceStatusTransformer : IrTransformer<RpcIrContext>() {
+internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
     private fun RpcIrContext.irBuilder(symbol: IrSymbol): DeclarationIrBuilder =
         DeclarationIrBuilder(pluginContext, symbol, symbol.owner.startOffset, symbol.owner.endOffset)
 
@@ -45,11 +46,11 @@ internal class RpcIrServiceStatusTransformer : IrTransformer<RpcIrContext>() {
         declaration: IrFunction,
         data: RpcIrContext
     ): IrStatement {
-        if (!declaration.remote()) {
-            return super.visitFunction(declaration, data)
+        if (!declaration.remote()) return super.visitFunction(declaration, data)
+        if (!declaration.isTopLevel && !declaration.isStatic) {
+            error("Remote function `${declaration.name}` can't be a non-static method")
         }
-        if (!declaration.isTopLevel && !declaration.isStatic) error("Remote function can't be a non-static method")
-        val originalBody = declaration.body ?: error("Remote function should have a body")
+        val originalBody = declaration.body ?: error("Remote function `${declaration.name}` should have a body")
         val context = declaration.parameters.singleOrNull {
             it.type == data.remoteContext.defaultType && it.kind == IrParameterKind.Context
         } ?: error("Remote function should have a context parameter of type ${data.remoteContext.defaultType.render()}")
@@ -77,8 +78,14 @@ internal class RpcIrServiceStatusTransformer : IrTransformer<RpcIrContext>() {
                     )
                 )
             )
-            +irReturn(irCall(data.functions.remoteClientCall).apply {
-                typeArguments[0] = declaration.returnType
+            val isStreaming = declaration.returnType.isSubtypeOfClass(data.flow)
+            val call =
+                if (isStreaming) data.functions.remoteClientCallStreaming
+                else data.functions.remoteClientCall
+            +irReturn(irCall(call).apply {
+                typeArguments[0] =
+                    if (isStreaming) (declaration.returnType as IrSimpleType).arguments.single().typeOrFail
+                    else declaration.returnType
                 arguments[0] = configClient
                 arguments[1] = irCallConstructor(data.remoteCall.constructors.single(), listOf()).apply {
                     arguments[0] = irString(declaration.name.asString())
@@ -104,13 +111,11 @@ internal class RpcIrServiceStatusTransformer : IrTransformer<RpcIrContext>() {
     private fun IrFunction.valueParameters(): List<IrValueParameter> =
         parameters.filter { it.kind == IrParameterKind.Regular }
 
-    fun IrDeclaration.remoteConfigObject(): IrClassSymbol {
+    private fun IrDeclaration.remoteConfigObject(): IrClassSymbol {
         val remoteAnnotationCall = getAnnotation(remoteAnnotation.asSingleFqName())!!
         val remoteConfigClassExpression = remoteAnnotationCall.getValueArgument(Name.identifier("config"))
             ?: error(
-                "Annotation '${
-                    remoteAnnotation.asSingleFqName().asString()
-                }' should have an argument named `config`"
+                "Annotation '${remoteAnnotation.asSingleFqName().asString()}' should have an argument named `config`"
             )
         val remoteConfigSymbol =
             ((remoteConfigClassExpression.type as? IrSimpleType)?.arguments[0] as? IrTypeProjection)?.type?.classOrFail

@@ -1,4 +1,4 @@
-package examples.basic
+package manual
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +9,6 @@ import kotlinx.remote.network.RemoteCall
 import kotlinx.remote.network.call
 import kotlinx.remote.network.callStreaming
 
-@Remote(ServerConfig::class)
 context(ctx: RemoteContext)
 suspend fun multiply(lhs: Long, rhs: Long) =
     if (ctx == ServerConfig.context) {
@@ -20,8 +19,6 @@ suspend fun multiply(lhs: Long, rhs: Long) =
         )
     }
 
-
-@Remote(ServerConfig::class)
 context(ctx: RemoteContext)
 suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
     if (ctx == ServerConfig.context) {
@@ -33,12 +30,5 @@ suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
         }
     } else {
         return ServerConfig.client.callStreaming<Long>(RemoteCall("multiplyStreaming", arrayOf(lhs, rhs)))
-    }
-}
-
-class Heh {
-    @Remote(ServerConfig::class)
-    fun aas() {
-
     }
 }

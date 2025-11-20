@@ -1,5 +1,3 @@
-package examples.basic
-
 import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.network.RemoteClient

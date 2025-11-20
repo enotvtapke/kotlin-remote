@@ -1,14 +1,14 @@
-package examples.basic
+package generated
 
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
-import io.ktor.server.routing.*
+import io.ktor.server.application.install
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.routing.routing
 import kotlinx.remote.CallableMap
 import kotlinx.remote.RemoteParameter
 import kotlinx.remote.RemoteType
-import kotlinx.remote.RpcCallable
-import kotlinx.remote.RpcInvokator
+import kotlinx.remote.RemoteCallable
+import kotlinx.remote.RemoteInvokator
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
 import kotlin.reflect.typeOf
@@ -25,11 +25,11 @@ fun main() {
 }
 
 fun initCallableMap() {
-    CallableMap["multiply"] = RpcCallable(
+    CallableMap["multiply"] = RemoteCallable(
         name = "multiply",
         returnType = RemoteType(typeOf<Long>()),
-        invokator = RpcInvokator { args ->
-            return@RpcInvokator with(ServerConfig.context) {
+        invokator = RemoteInvokator { args ->
+            return@RemoteInvokator with(ServerConfig.context) {
                 multiply(args[0] as Long, args[1] as Long)
             }
         },
@@ -39,11 +39,11 @@ fun initCallableMap() {
         ),
         returnsStream = false,
     )
-    CallableMap["multiplyStreaming"] = RpcCallable(
+    CallableMap["multiplyStreaming"] = RemoteCallable(
         name = "multiplyStreaming",
         returnType = RemoteType(typeOf<Long>()),
-        invokator = RpcInvokator { args ->
-            return@RpcInvokator with(ServerConfig.context) {
+        invokator = RemoteInvokator { args ->
+            return@RemoteInvokator with(ServerConfig.context) {
                 multiplyStreaming(args[0] as Long, args[1] as Long)
             }
         },

@@ -10,7 +10,7 @@ import kotlinx.serialization.encoding.*
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
 import kotlinx.remote.CallableMap
-import kotlinx.remote.RpcCallable
+import kotlinx.remote.RemoteCallable
 import kotlinx.remote.RemoteType
 import kotlinx.remote.network.RemoteCall
 import kotlin.reflect.KClass
@@ -49,7 +49,7 @@ fun SerializersModule.buildContextual(type: RemoteType): KSerializer<Any?> {
 }
 
 class CallableParametersSerializer(
-    private val callable: RpcCallable,
+    private val callable: RemoteCallable,
     private val module: SerializersModule,
 ) : KSerializer<Array<Any?>> {
     private val callableSerializers = Array(callable.parameters.size) { i ->

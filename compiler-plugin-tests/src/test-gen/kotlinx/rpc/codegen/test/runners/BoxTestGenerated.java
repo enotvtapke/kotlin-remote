@@ -22,8 +22,20 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
-  @TestMetadata("simple.kt")
-  public void testSimple() {
-    runTest("src/testData/box/simple.kt");
+  @TestMetadata("call.kt")
+  public void testCall() {
+    runTest("src/testData/box/call.kt");
+  }
+
+  @Test
+  @TestMetadata("callStreaming.kt")
+  public void testCallStreaming() {
+    runTest("src/testData/box/callStreaming.kt");
+  }
+
+  @Test
+  @TestMetadata("localCall.kt")
+  public void testLocalCall() {
+    runTest("src/testData/box/localCall.kt");
   }
 }

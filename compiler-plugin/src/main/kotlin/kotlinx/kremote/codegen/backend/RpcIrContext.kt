@@ -179,6 +179,10 @@ class RpcIrContext(
             namedFunction("kotlinx.remote.network", "call")
         }
 
+        val remoteClientCallStreaming by lazy {
+            namedFunction("kotlinx.remote.network", "callStreaming")
+        }
+
         val rpcClientCallServerStreaming by lazy {
             remoteClient.namedFunction("callServerStreaming")
         }
