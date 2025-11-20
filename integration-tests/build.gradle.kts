@@ -1,9 +1,9 @@
 import kotlinx.kremote.TestCompilerExtension
 
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.kotlinx.kremote.plugin")
-    id("io.ktor.plugin") version "3.2.1"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.ktor)
+    alias(libs.plugins.kotlinx.remote)
 }
 
 configure<TestCompilerExtension> {
@@ -18,11 +18,11 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-netty-jvm")
     implementation(project(":"))
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.server.netty)
 
-    testImplementation("io.ktor:ktor-server-test-host:3.2.1")
-    implementation("io.ktor:ktor-client-cio")
+    testImplementation(libs.ktor.server.test.host)
     testImplementation(kotlin("test"))
 }
 

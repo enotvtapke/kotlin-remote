@@ -6,11 +6,9 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    alias(libs.plugins.kotlin.jvm)
     java
-    kotlin("jvm") version "2.2.0"
 }
-
-// this setup – courtesy of https://github.com/demiurg906/kotlin-compiler-plugin-template/tree/master
 
 sourceSets {
     test {
@@ -97,8 +95,6 @@ dependencies {
     testImplementation(libs.kotlin.reflect)
     testImplementation(libs.kotlin.compiler)
     testImplementation(libs.kotlin.compiler.test.framework)
-
-    testImplementation(libs.junit4)
 
     testImplementation(platform(libs.junit5.bom))
     testImplementation(libs.junit5.jupiter)
