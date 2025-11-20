@@ -21,6 +21,8 @@ dependencies {
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation(project(":"))
 
+    testImplementation("io.ktor:ktor-server-test-host:3.2.1")
+    implementation("io.ktor:ktor-client-cio")
     testImplementation(kotlin("test"))
 }
 
@@ -31,7 +33,5 @@ tasks.test {
 kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-parameters")
-        freeCompilerArgs.add("-Xphases-to-dump-after=ALL")
-        freeCompilerArgs.add("-Xdump-directory=/home/enotvtapke/work/kotlin-remote/dump-ir")
     }
 }

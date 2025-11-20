@@ -1,0 +1,187 @@
+import io.ktor.server.application.*
+import io.ktor.server.routing.*
+import io.ktor.server.testing.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toList
+import kotlinx.remote.*
+import kotlinx.remote.network.RemoteClient
+import kotlinx.remote.network.configureRemote
+import kotlinx.remote.network.ktor.KRemote
+import kotlinx.remote.network.ktor.remote
+import kotlinx.remote.network.remoteClient
+import org.junit.jupiter.api.Test
+import kotlin.reflect.typeOf
+import kotlin.test.assertEquals
+
+class ApplicationTests {
+    @Test
+    fun `simple local call`() =
+        testApplication {
+            application {
+                install(KRemote)
+
+                routing {
+                    remote("/call")
+                }
+            }
+            ServerConfig._client = createClient { configureRemote("http://localhost:80") }.remoteClient("/call")
+
+            @Remote(ServerConfig::class)
+            context(ctx: RemoteContext)
+            suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
+
+            CallableMap["multiply"] = RemoteCallable(
+                name = "multiply",
+                returnType = RemoteType(typeOf<Long>()),
+                invokator = RemoteInvokator { args ->
+                    return@RemoteInvokator with(ServerConfig.context) {
+                        multiply(args[0] as Long, args[1] as Long)
+                    }
+                },
+                parameters = arrayOf(
+                    RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),
+                    RemoteParameter("rhs", RemoteType(typeOf<Long>()), false)
+                ),
+                returnsStream = false,
+            )
+            context(ServerContext) {
+                assertEquals(100, multiply(10, 10))
+            }
+        }
+
+    @Test
+    fun `simple non local call`() =
+        testApplication {
+            application {
+                install(KRemote)
+
+                routing {
+                    remote("/call")
+                }
+            }
+            ServerConfig._client = createClient { configureRemote("http://localhost:80") }.remoteClient("/call")
+
+            @Remote(ServerConfig::class)
+            context(ctx: RemoteContext)
+            suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
+
+            CallableMap["multiply"] = RemoteCallable(
+                name = "multiply",
+                returnType = RemoteType(typeOf<Long>()),
+                invokator = RemoteInvokator { args ->
+                    return@RemoteInvokator with(ServerConfig.context) {
+                        multiply(args[0] as Long, args[1] as Long)
+                    }
+                },
+                parameters = arrayOf(
+                    RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),
+                    RemoteParameter("rhs", RemoteType(typeOf<Long>()), false)
+                ),
+                returnsStream = false,
+            )
+            context(ClientContext) {
+                assertEquals(100, multiply(10, 10))
+            }
+        }
+
+    @Test
+    fun `streaming local call`() =
+        testApplication {
+            application {
+                install(KRemote)
+
+                routing {
+                    remote("/call")
+                }
+            }
+            ServerConfig._client = createClient { configureRemote("http://localhost:80") }.remoteClient("/call")
+
+            @Remote(ServerConfig::class)
+            context(ctx: RemoteContext)
+            suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
+                return flow {
+                    repeat(50) {
+                        delay(10)
+                        emit(lhs * rhs)
+                    }
+                }
+            }
+
+            CallableMap["multiply"] = RemoteCallable(
+                name = "multiply",
+                returnType = RemoteType(typeOf<Long>()),
+                invokator = RemoteInvokator { args ->
+                    return@RemoteInvokator with(ServerConfig.context) {
+                        multiplyStreaming(args[0] as Long, args[1] as Long)
+                    }
+                },
+                parameters = arrayOf(
+                    RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),
+                    RemoteParameter("rhs", RemoteType(typeOf<Long>()), false)
+                ),
+                returnsStream = true,
+            )
+            context(ServerContext) {
+                val res = multiplyStreaming(10, 10).toList()
+                assertEquals(List(50) { 100L }, res)
+            }
+        }
+
+    @Test
+    fun `streaming non local call`() =
+        testApplication {
+            application {
+                install(KRemote)
+
+                routing {
+                    remote("/call")
+                }
+            }
+
+            @Remote(ServerConfig::class)
+            context(ctx: RemoteContext)
+            suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
+                return flow {
+                    repeat(50) {
+                        delay(10)
+                        emit(lhs * rhs)
+                    }
+                }
+            }
+
+            CallableMap["multiplyStreaming"] = RemoteCallable(
+                name = "multiply",
+                returnType = RemoteType(typeOf<Long>()),
+                invokator = RemoteInvokator { args ->
+                    return@RemoteInvokator with(ServerConfig.context) {
+                        multiplyStreaming(args[0] as Long, args[1] as Long)
+                    }
+                },
+                parameters = arrayOf(
+                    RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),
+                    RemoteParameter("rhs", RemoteType(typeOf<Long>()), false)
+                ),
+                returnsStream = true,
+            )
+            context(ClientContext) {
+                ServerConfig._client = createClient { configureRemote("http://localhost:80") }.remoteClient("/call")
+
+                val res = multiplyStreaming(10, 10).toList()
+                assertEquals(List(50) { 100L }, res)
+            }
+        }
+
+    private data object ServerConfig : RemoteConfig {
+        override val context = ServerContext
+
+        var _client: RemoteClient? = null
+        override val client: RemoteClient
+            get() = _client ?: throw IllegalStateException("Client not initialized")
+    }
+
+    private data object ServerContext : RemoteContext
+    private data object ClientContext : RemoteContext
+}
+

@@ -63,7 +63,9 @@ suspend inline fun <reified T> RemoteClient.callStreaming(call: RemoteCall) = ca
 
 suspend inline fun <reified T> RemoteClient.call(call: RemoteCall) = call(call, typeInfo<T>()) as T
 
-fun remoteClient(url: String, path: String, block: HttpClientConfig<*>.() -> Unit = {}): RemoteClient = HttpClient {
+fun HttpClient.remoteClient(path: String): RemoteClient = RemoteClientImpl(this, path)
+
+fun HttpClientConfig<*>.configureRemote(url: String) {
     defaultRequest {
         url(url)
         accept(ContentType.Application.Json)
@@ -75,5 +77,4 @@ fun remoteClient(url: String, path: String, block: HttpClientConfig<*>.() -> Uni
     install(ContentNegotiation) {
         json(jsonWithRemoteCallSerializer)
     }
-    block()
-}.let { RemoteClientImpl(it, path) }
+}

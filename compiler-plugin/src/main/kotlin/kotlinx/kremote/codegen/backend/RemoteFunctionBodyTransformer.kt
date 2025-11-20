@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.getValueArgument
+import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.isStatic
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.isTopLevel
@@ -47,7 +48,7 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
         data: RpcIrContext
     ): IrStatement {
         if (!declaration.remote()) return super.visitFunction(declaration, data)
-        if (!declaration.isTopLevel && !declaration.isStatic) {
+        if (!(declaration.isTopLevel || declaration.isLocal || declaration.isStatic)) {
             error("Remote function `${declaration.name}` can't be a non-static method")
         }
         val originalBody = declaration.body ?: error("Remote function `${declaration.name}` should have a body")

@@ -1,5 +1,6 @@
 package manual
 
+import ClientContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.RemoteContext
 
@@ -10,7 +11,7 @@ private suspend fun expression(a: Long, b: Long): Long {
 
 fun main() = runBlocking {
     initCallableMap()
-    with(object : RemoteContext {}) {
+    with(ClientContext) {
         println(expression(100, 600))
         multiplyStreaming(5, 6).collect { println(it) }
     }
