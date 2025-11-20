@@ -10,3 +10,4 @@ rootProject.name = "kotlin-remote"
 
 includeBuild("compiler-plugin")
 include("integration-tests")
+include("compiler-plugin-tests")

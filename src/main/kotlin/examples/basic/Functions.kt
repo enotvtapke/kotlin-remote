@@ -1,13 +1,13 @@
-package org.jetbrains.kotlinx.examples.basic
+package examples.basic
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.jetbrains.kotlinx.Remote
-import org.jetbrains.kotlinx.RemoteContext
-import org.jetbrains.kotlinx.network.RemoteCall
-import org.jetbrains.kotlinx.network.call
-import org.jetbrains.kotlinx.network.callStreaming
+import kotlinx.remote.Remote
+import kotlinx.remote.RemoteContext
+import kotlinx.remote.network.RemoteCall
+import kotlinx.remote.network.call
+import kotlinx.remote.network.callStreaming
 
 @Remote(ServerConfig::class)
 context(ctx: RemoteContext)
@@ -15,7 +15,7 @@ suspend fun multiply(lhs: Long, rhs: Long) =
     if (ctx == ServerConfig.context) {
         lhs * rhs
     } else {
-        ServerConfig.remoteClient.call<Long>(
+        ServerConfig.client.call<Long>(
             RemoteCall("multiply", arrayOf(lhs, rhs))
         )
     }
@@ -32,6 +32,13 @@ suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
             }
         }
     } else {
-        return ServerConfig.remoteClient.callStreaming<Long>(RemoteCall("multiplyStreaming", arrayOf(lhs, rhs)))
+        return ServerConfig.client.callStreaming<Long>(RemoteCall("multiplyStreaming", arrayOf(lhs, rhs)))
+    }
+}
+
+class Heh {
+    @Remote(ServerConfig::class)
+    fun aas() {
+
     }
 }

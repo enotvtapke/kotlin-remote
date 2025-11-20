@@ -1,12 +1,16 @@
-package org.jetbrains.kotlinx.examples.basic
+package examples.basic
 
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.routing.*
-import org.jetbrains.kotlinx.*
-import org.jetbrains.kotlinx.network.ktor.KRemote
-import org.jetbrains.kotlinx.network.ktor.remote
+import kotlinx.remote.CallableMap
+import kotlinx.remote.RemoteParameter
+import kotlinx.remote.RemoteType
+import kotlinx.remote.RpcCallable
+import kotlinx.remote.RpcInvokator
+import kotlinx.remote.network.ktor.KRemote
+import kotlinx.remote.network.ktor.remote
 import kotlin.reflect.typeOf
 
 fun main() {

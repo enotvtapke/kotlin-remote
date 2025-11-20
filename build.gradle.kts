@@ -27,10 +27,6 @@ plugins {
 group = "org.jetbrains.kotlinx"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 

@@ -1,0 +1,47 @@
+FILE: simpleNoContext.kt
+    public final data class TestData : R|kotlin/Any| {
+        public constructor(value: R|kotlin/String|): R|TestData| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|kotlin/String| = R|<local>/value|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(value: R|kotlin/String| = this@R|/TestData|.R|/TestData.value|): R|TestData|
+
+    }
+    @R|kotlinx/rpc/annotations/Remote|(context = <getClass>(Q|kotlinx/rpc/codegen/test/ServerConfig|)) public open class BoxService : R|kotlin/Any|, R|kotlinx/rpc/Remote| {
+        public constructor(): R|BoxService| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open suspend fun test1(testData: R|TestData|): R|kotlin/String| {
+            ^test1 String()
+        }
+
+        public open suspend fun test2(testData: R|TestData|): R|kotlin/String| {
+            ^test2 String()
+        }
+
+        public final override suspend fun close(): R|kotlin/Unit|
+
+        public final class $rpcServiceStub : R|kotlin/Any| {
+            public final companion object Companion : R|kotlin/Any| {
+            }
+
+        }
+
+        private final object $rpcServiceSerializer : R|kotlinx/serialization/KSerializer<BoxService>| {
+        }
+
+    }
+    public final fun a(): R|kotlin/Unit| {
+        ^a R|kotlinx/coroutines/runBlocking|<R|kotlin/Unit|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=EXACTLY_ONCE>  {
+            lval box: R|BoxService| = R|/BoxService.BoxService|()
+            lval test1: R|kotlin/String| = R|<local>/box|.R|/BoxService.test1|(R|/TestData.TestData|(String(value)))
+            lval test2: R|kotlin/String| = R|<local>/box|.R|/BoxService.test2|(R|/TestData.TestData|(String(value)))
+        }
+        )
+    }

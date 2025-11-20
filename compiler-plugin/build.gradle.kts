@@ -12,3 +12,9 @@ version = "1.0-SNAPSHOT"
 dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-compiler-embeddable:2.2.0")
 }
+
+kotlin {
+    sourceSets.all {
+        languageSettings.optIn("org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI")
+    }
+}
