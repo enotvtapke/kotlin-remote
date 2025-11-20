@@ -28,9 +28,7 @@ private class RuntimeDependency(
 
 private object RpcClasspathProvider {
     private val TEST_RUNTIME = RuntimeDependency("build/libs/", "compiler-plugin-tests")
-//    private val KRPC_CORE_JVM = RuntimeDependency("$globalRootDir/krpc/krpc-core/build/libs/", "krpc-core-jvm")
     private val CORE_JVM = RuntimeDependency("$globalRootDir/build/libs/", "kotlin-remote")
-//    private val UTILS_JVM = RuntimeDependency("$globalRootDir/utils/build/libs/", "utils-jvm")
 
     private const val RUNTIME_DEPENDENCIES_PROPERTY = "kotlinx.rpc.test.data.classpath.dependencies"
     private val runtimeDependenciesPaths = System.getProperty(RUNTIME_DEPENDENCIES_PROPERTY)
@@ -42,8 +40,6 @@ private object RpcClasspathProvider {
         val additionalDependencies = listOf(
             TEST_RUNTIME,
             CORE_JVM,
-//            KRPC_CORE_JVM,
-//            UTILS_JVM,
         ).map { it.getFile(testServices) }
 
         return runtimeDependenciesPaths + additionalDependencies
