@@ -6,29 +6,22 @@
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
+import kotlinx.remote.CallableMap
 import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.remoteClient
 import kotlinx.rpc.codegen.test.ServerConfig
 import kotlinx.rpc.codegen.test.ClientContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.single
 
 @Remote(ServerConfig::class)
 context(ctx: RemoteContext)
-fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
-    return flow {
-        repeat(50) {
-            emit(lhs * rhs)
-        }
-    }
-}
+suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
 fun box(): String = runBlocking {
+    CallableMap.init()
     context(ClientContext) {
-        val test1 = multiplyStreaming(5, 6).single()
+        val test1 = multiply(5, 6)
         if (test1 == 42L) "OK" else "Fail: test1=$test1"
     }
 }

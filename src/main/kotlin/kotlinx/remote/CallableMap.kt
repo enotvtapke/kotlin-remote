@@ -1,10 +1,13 @@
 package kotlinx.remote
 
+
 object CallableMap {
     // This map is generated during compilation
-    private val callableMap: MutableMap<String, RemoteCallable> = mutableMapOf(
-        // ...
-    )
+    var callableMap: MutableMap<String, RemoteCallable> = mutableMapOf()
+
+    fun init(newMap: MutableMap<String, RemoteCallable> = mutableMapOf()) {
+        callableMap = newMap
+    }
 
     operator fun get(name: String): RemoteCallable = callableMap[name]
         ?: throw IllegalStateException(

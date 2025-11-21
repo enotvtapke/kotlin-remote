@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.nestedClasses
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.CallableId
@@ -44,6 +45,10 @@ class RpcIrContext(
 
     val kTypeClass by lazy {
         getIrClassSymbol("kotlin.reflect", "KType")
+    }
+
+    val suspendFunction1 by lazy {
+        getIrClassSymbol("kotlin.coroutines", "SuspendFunction1")
     }
 
     val suspendFunction2 by lazy {
@@ -86,6 +91,14 @@ class RpcIrContext(
         getRpcIrClassSymbol("RemoteCall", "network")
     }
 
+    val callableMap by lazy {
+        getRpcIrClassSymbol("CallableMap")
+    }
+
+    val callableMapMap by lazy {
+        callableMap.property("callableMap")
+    }
+
     val rpcCall by lazy {
         getRpcIrClassSymbol("RpcCall")
     }
@@ -110,8 +123,18 @@ class RpcIrContext(
         getRpcIrClassSymbol("RpcTypeKrpc", "descriptor")
     }
 
+    val remoteCallable by lazy {
+        getRpcIrClassSymbol("RemoteCallable")
+    }
+
+
+    val remoteType by lazy {
+        getRpcIrClassSymbol("RemoteType")
+    }
+
+
     val rpcCallable by lazy {
-        getRpcIrClassSymbol("RpcCallable", "descriptor")
+        getRpcIrClassSymbol("RpcCallable")
     }
 
     val rpcCallableDefault by lazy {
@@ -134,12 +157,20 @@ class RpcIrContext(
         getRpcIrClassSymbol("RpcParameter", "descriptor")
     }
 
+    val remoteParameter by lazy {
+        getRpcIrClassSymbol("RemoteParameter")
+    }
+
     val rpcParameterDefault by lazy {
         getRpcIrClassSymbol("RpcParameterDefault", "descriptor")
     }
 
     val remoteConfig by lazy {
         getRpcIrClassSymbol("RemoteConfig")
+    }
+
+    val remoteInvokator by lazy {
+        getRpcIrClassSymbol("RemoteInvokator")
     }
 
     val remoteConfigClient by lazy {
@@ -171,6 +202,11 @@ class RpcIrContext(
     val functions = Functions()
 
     inner class Functions {
+        val mapOf by lazy {
+            namedFunction("kotlin.collections", "mapOf") {
+                    it.owner.valueParameters().singleOrNull()?.isVararg ?: false
+            }
+        }
 //        val remoteClientCall by lazy {
 //            remoteClient.namedFunction("call")
 //        }
@@ -185,6 +221,10 @@ class RpcIrContext(
 
         val rpcClientCallServerStreaming by lazy {
             remoteClient.namedFunction("callServerStreaming")
+        }
+
+        val callableMapInit by lazy {
+            callableMap.namedFunction("init")
         }
 
         val rpcClientCloseService by lazy {

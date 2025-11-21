@@ -18,7 +18,7 @@ import kotlinx.remote.network.ktor.jsonWithRemoteCallSerializer
 
 interface RemoteClient {
     suspend fun call(call: RemoteCall, returnType: TypeInfo): Any?
-    suspend fun callStreaming(call: RemoteCall, returnType: TypeInfo): Flow<Any?>
+    fun callStreaming(call: RemoteCall, returnType: TypeInfo): Flow<Any?>
 }
 
 class RemoteClientImpl(private val httpClient: HttpClient, private val path: String) : RemoteClient {
@@ -29,7 +29,7 @@ class RemoteClientImpl(private val httpClient: HttpClient, private val path: Str
         return post.body(returnType)
     }
 
-    override suspend fun callStreaming(
+    override fun callStreaming(
         call: RemoteCall,
         returnType: TypeInfo
     ): Flow<Any?> {
@@ -59,7 +59,7 @@ class RemoteClientImpl(private val httpClient: HttpClient, private val path: Str
     }
 }
 
-suspend inline fun <reified T> RemoteClient.callStreaming(call: RemoteCall) = callStreaming(call, typeInfo<T>()) as Flow<T>
+inline fun <reified T> RemoteClient.callStreaming(call: RemoteCall) = callStreaming(call, typeInfo<T>()) as Flow<T>
 
 suspend inline fun <reified T> RemoteClient.call(call: RemoteCall) = call(call, typeInfo<T>()) as T
 

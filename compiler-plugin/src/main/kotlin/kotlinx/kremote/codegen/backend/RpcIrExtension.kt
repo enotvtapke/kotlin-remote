@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 class RpcIrExtension : IrGenerationExtension {
-    override fun generate(
-        moduleFragment: IrModuleFragment,
-        pluginContext: IrPluginContext,
-    ) {
+    override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         val context = RpcIrContext(pluginContext)
-
+        val scanner = RemoteFunctionScanner()
+        scanner.visitModuleFragment(moduleFragment)
+        CallableMapInjector(context, CallableMapGenerator(context, scanner.remoteFunctions)).visitModuleFragment(
+            moduleFragment
+        )
         moduleFragment.transform(RemoteFunctionBodyTransformer(), context)
     }
 }

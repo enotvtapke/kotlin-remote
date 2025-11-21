@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.single
 
 @Remote(ServerConfig::class)
 context(ctx: RemoteContext)
-fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
+suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
     return flow {
         repeat(50) {
             emit(lhs * rhs)

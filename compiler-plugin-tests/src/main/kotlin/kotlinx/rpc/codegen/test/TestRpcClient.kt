@@ -18,7 +18,7 @@ object TestRpcClient : RemoteClient {
         return 42L
     }
 
-    override suspend fun callStreaming(
+    override fun callStreaming(
         call: RemoteCall,
         returnType: TypeInfo
     ): Flow<Any?> {

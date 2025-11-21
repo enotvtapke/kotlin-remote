@@ -12,7 +12,7 @@ data class RemoteParameter(
     val isOptional: Boolean,
 )
 
-class RemoteCallable(
+data class RemoteCallable(
     val name: String,
     val returnType: RemoteType,
     val invokator: RemoteInvokator,

@@ -34,6 +34,18 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
+  @TestMetadata("callStreamingSuspend.kt")
+  public void testCallStreamingSuspend() {
+    runTest("src/testData/box/callStreamingSuspend.kt");
+  }
+
+  @Test
+  @TestMetadata("initCallableMap.kt")
+  public void testInitCallableMap() {
+    runTest("src/testData/box/initCallableMap.kt");
+  }
+
+  @Test
   @TestMetadata("localCall.kt")
   public void testLocalCall() {
     runTest("src/testData/box/localCall.kt");

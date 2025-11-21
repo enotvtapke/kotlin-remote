@@ -25,7 +25,7 @@ fun main() {
 }
 
 fun initCallableMap() {
-    CallableMap["multiply"] = RemoteCallable(
+    CallableMap["generated.multiply"] = RemoteCallable(
         name = "multiply",
         returnType = RemoteType(typeOf<Long>()),
         invokator = RemoteInvokator { args ->
@@ -39,7 +39,7 @@ fun initCallableMap() {
         ),
         returnsStream = false,
     )
-    CallableMap["multiplyStreaming"] = RemoteCallable(
+    CallableMap["generated.multiplyStreaming"] = RemoteCallable(
         name = "multiplyStreaming",
         returnType = RemoteType(typeOf<Long>()),
         invokator = RemoteInvokator { args ->

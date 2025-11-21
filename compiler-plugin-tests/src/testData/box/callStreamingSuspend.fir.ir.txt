@@ -1,4 +1,4 @@
-FILE fqName:<root> fileName:/callStreaming.kt
+FILE fqName:<root> fileName:/callStreamingSuspend.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/callStreaming.kt
                                 then: STRING_CONCATENATION type=kotlin.String
                                   CONST String type=kotlin.String value="Fail: test1="
                                   GET_VAR 'val test1: kotlin.Long declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.Long origin=null
-  FUN name:multiplyStreaming visibility:public modality:FINAL returnType:kotlinx.coroutines.flow.Flow<kotlin.Long>
+  FUN name:multiplyStreaming visibility:public modality:FINAL returnType:kotlinx.coroutines.flow.Flow<kotlin.Long> [suspend]
     VALUE_PARAMETER kind:Context name:ctx index:0 type:kotlinx.remote.RemoteContext
     VALUE_PARAMETER kind:Regular name:lhs index:1 type:kotlin.Long
     VALUE_PARAMETER kind:Regular name:rhs index:2 type:kotlin.Long
