@@ -1,4 +1,12 @@
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
+import io.ktor.client.plugins.defaultRequest
+import io.ktor.client.request.accept
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.*
+import io.ktor.server.plugins.calllogging.CallLogging
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import kotlinx.coroutines.delay
@@ -10,7 +18,6 @@ import kotlinx.remote.Remote
 import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.network.RemoteClient
-import kotlinx.remote.network.configureRemote
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
 import kotlinx.remote.network.remoteClient
@@ -30,14 +37,8 @@ class ApplicationTests {
     @Test
     fun `simple local call`() =
         testApplication {
-            application {
-                install(KRemote)
-
-                routing {
-                    remote("/call")
-                }
-            }
-            ServerConfig._client = createClient { configureRemote("http://localhost:80") }.remoteClient("/call")
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
 
             @Remote(ServerConfig::class)
             context(ctx: RemoteContext)
@@ -51,14 +52,8 @@ class ApplicationTests {
     @Test
     fun `simple non local call`() =
         testApplication {
-            application {
-                install(KRemote)
-
-                routing {
-                    remote("/call")
-                }
-            }
-            ServerConfig._client = createClient { configureRemote("http://localhost:80") }.remoteClient("/call")
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
 
             @Remote(ServerConfig::class)
             context(ctx: RemoteContext)
@@ -72,14 +67,8 @@ class ApplicationTests {
     @Test
     fun `streaming local call`() =
         testApplication {
-            application {
-                install(KRemote)
-
-                routing {
-                    remote("/call")
-                }
-            }
-            ServerConfig._client = createClient { configureRemote("http://localhost:80") }.remoteClient("/call")
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
 
             @Remote(ServerConfig::class)
             context(ctx: RemoteContext)
@@ -101,13 +90,8 @@ class ApplicationTests {
     @Test
     fun `streaming non local call`() =
         testApplication {
-            application {
-                install(KRemote)
-
-                routing {
-                    remote("/call")
-                }
-            }
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
 
             @Remote(ServerConfig::class)
             context(ctx: RemoteContext)
@@ -121,8 +105,6 @@ class ApplicationTests {
             }
 
             context(ClientContext) {
-                ServerConfig._client = createClient { configureRemote("http://localhost:80") }.remoteClient("/call")
-
                 val res = multiplyStreaming(10, 10).toList()
                 assertEquals(List(50) { 100L }, res)
             }
@@ -138,5 +120,30 @@ class ApplicationTests {
 
     private data object ServerContext : RemoteContext
     private data object ClientContext : RemoteContext
+
+    private fun ApplicationTestBuilder.testRemoteClient(): RemoteClient =
+        createClient {
+            defaultRequest {
+                url("http://localhost:80")
+                accept(ContentType.Application.Json)
+                contentType(ContentType.Application.Json)
+            }
+            install(ClientContentNegotiation) {
+                json()
+            }
+        }.remoteClient("/call")
+
+    private fun ApplicationTestBuilder.configureApplication() {
+        application {
+            install(CallLogging)
+            install(ServerContentNegotiation) {
+                json()
+            }
+            install(KRemote)
+            routing {
+                remote("/call")
+            }
+        }
+    }
 }
 

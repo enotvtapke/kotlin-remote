@@ -20,7 +20,15 @@ repositories {
 dependencies {
     implementation(project(":"))
     implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiations)
+
     implementation(libs.ktor.server.netty)
+    implementation(libs.ktor.server.call.logging)
+    implementation(libs.ktor.server.call.id)
+    implementation(libs.ktor.server.content.negotiation)
+
+    implementation(libs.ktor.serialization.json)
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(kotlin("test"))

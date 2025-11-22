@@ -1,6 +1,7 @@
 package kotlinx.remote.network.ktor
 
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -26,7 +27,7 @@ fun Route.remote(path: String) {
                 val serializer = serializer(callable.returnType.kType)
                 val result = CallableMap[remoteCall.callableName].invokator.call(remoteCall.parameters) as Flow<Any?>
                 result.collect { item ->
-                    writeStringUtf8(jsonWithRemoteCallSerializer.encodeToString(serializer, item))
+                    writeStringUtf8(DefaultJson.encodeToString(serializer, item))
                     writeStringUtf8("\n")
                     flush()
                 }

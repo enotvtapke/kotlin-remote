@@ -48,7 +48,7 @@ fun SerializersModule.buildContextual(type: RemoteType): KSerializer<Any?> {
     return buildContextual(type.kType)
 }
 
-class CallableParametersSerializer(
+private class CallableParametersSerializer(
     private val callable: RemoteCallable,
     private val module: SerializersModule,
 ) : KSerializer<Array<Any?>> {
@@ -96,10 +96,8 @@ class CallableParametersSerializer(
 }
 
 
-class RpcCallSerializer(
-    private val module: SerializersModule
-) : KSerializer<RemoteCall> {
-
+class RpcCallSerializer() : KSerializer<RemoteCall> {
+    private val module: SerializersModule = SerializersModule {}
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("RpcCall") {
         element<String>("callableName")
         element("parameters", buildClassSerialDescriptor("Parameters"))
@@ -143,8 +141,4 @@ class RpcCallSerializer(
             )
         }
     }
-}
-
-fun remoteCallSerializersModule(): SerializersModule = SerializersModule {
-    contextual(RemoteCall::class, RpcCallSerializer(SerializersModule {}))
 }

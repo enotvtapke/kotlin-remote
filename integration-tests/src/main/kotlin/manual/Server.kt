@@ -1,27 +1,13 @@
 package manual
 
-import io.ktor.server.application.install
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.routing.routing
-import kotlinx.remote.CallableMap
-import kotlinx.remote.RemoteParameter
-import kotlinx.remote.RemoteType
-import kotlinx.remote.RemoteCallable
-import kotlinx.remote.RemoteInvokator
-import kotlinx.remote.network.ktor.KRemote
-import kotlinx.remote.network.ktor.remote
+import ServerConfig
+import kotlinx.remote.*
+import remoteEmbeddedServer
 import kotlin.reflect.typeOf
 
 fun main() {
     initCallableMap()
-    embeddedServer(Netty, port = 8080) {
-        install(KRemote)
-
-        routing {
-            remote("/call")
-        }
-    }.start(wait = true)
+    remoteEmbeddedServer().start(wait = true)
 }
 
 fun initCallableMap() {

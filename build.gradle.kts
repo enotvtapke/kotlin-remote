@@ -19,16 +19,8 @@ version = "1.0-SNAPSHOT"
 
 dependencies {
     implementation(libs.serialization.core)
-
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.content.negotiations)
-    implementation(libs.ktor.client.logging)
-
-    implementation(libs.ktor.server.netty)
-    implementation(libs.ktor.server.call.logging)
-    implementation(libs.ktor.server.call.id)
-    implementation(libs.ktor.server.content.negotiation)
-    implementation(libs.ktor.server.status.pages)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.status.pages)
     implementation(libs.ktor.serialization.json)
 

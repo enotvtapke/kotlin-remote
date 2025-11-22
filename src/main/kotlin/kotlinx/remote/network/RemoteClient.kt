@@ -2,17 +2,12 @@ package kotlinx.remote.network
 
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.plugins.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
-import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.util.reflect.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.remote.network.ktor.jsonWithRemoteCallSerializer
 import kotlinx.serialization.serializer
 
 interface RemoteClient {
@@ -32,7 +27,6 @@ class RemoteClientImpl(private val httpClient: HttpClient, private val path: Str
         call: RemoteCall,
         returnType: TypeInfo
     ): Flow<Any?> {
-        val serializer = jsonWithRemoteCallSerializer.serializersModule.serializer(returnType.kotlinType!!)
         return flow {
             httpClient.preparePost(path) {
                 setBody(call)
@@ -41,7 +35,7 @@ class RemoteClientImpl(private val httpClient: HttpClient, private val path: Str
                 while (!channel.isClosedForRead) {
                     val line = channel.readUTF8Line()
                     if (line != null) {
-                        emit(jsonWithRemoteCallSerializer.decodeFromString(serializer, line))
+                        emit(DefaultJson.decodeFromString(serializer(returnType.kotlinType!!), line))
                     }
                 }
             }
@@ -54,17 +48,3 @@ inline fun <reified T> RemoteClient.callStreaming(call: RemoteCall) = callStream
 suspend inline fun <reified T> RemoteClient.call(call: RemoteCall) = call(call, typeInfo<T>()) as T
 
 fun HttpClient.remoteClient(path: String): RemoteClient = RemoteClientImpl(this, path)
-
-fun HttpClientConfig<*>.configureRemote(url: String) {
-    defaultRequest {
-        url(url)
-        accept(ContentType.Application.Json)
-        contentType(ContentType.Application.Json)
-    }
-    install(Logging) {
-        level = LogLevel.BODY
-    }
-    install(ContentNegotiation) {
-        json(jsonWithRemoteCallSerializer)
-    }
-}
