@@ -12,9 +12,8 @@ import io.ktor.util.reflect.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.serialization.serializer
-import kotlinx.remote.network.ktor.HEARTBEAT_JSON
 import kotlinx.remote.network.ktor.jsonWithRemoteCallSerializer
+import kotlinx.serialization.serializer
 
 interface RemoteClient {
     suspend fun call(call: RemoteCall, returnType: TypeInfo): Any?
@@ -37,21 +36,12 @@ class RemoteClientImpl(private val httpClient: HttpClient, private val path: Str
         return flow {
             httpClient.preparePost(path) {
                 setBody(call)
-                timeout {
-                    socketTimeoutMillis = 10000
-                }
             }.execute { httpResponse ->
                 val channel: ByteReadChannel = httpResponse.body()
-
                 while (!channel.isClosedForRead) {
                     val line = channel.readUTF8Line()
-                    if (line == HEARTBEAT_JSON) {
-                        println("Client received and ignored heartbeat.")
-                        continue
-                    }
-                    if (line?.isNotBlank() == true) {
-                        val item = jsonWithRemoteCallSerializer.decodeFromString(serializer, line)
-                        emit(item)
+                    if (line != null) {
+                        emit(jsonWithRemoteCallSerializer.decodeFromString(serializer, line))
                     }
                 }
             }

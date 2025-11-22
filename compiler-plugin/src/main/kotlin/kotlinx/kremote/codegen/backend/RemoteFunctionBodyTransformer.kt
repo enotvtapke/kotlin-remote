@@ -34,22 +34,6 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
             val configContext = irCall(data.remoteConfigContext.owner.getter!!.symbol).apply {
                 arguments[0] = irGetObjectValue(remoteConfigSymbol.defaultType, remoteConfigSymbol)
             }
-            +irWhen(
-                data.irBuiltIns.unitType,
-                listOf(
-                    irBranch(
-                        irEquals(irGet(context), configContext),
-                        when (originalBody) {
-                            is IrBlockBody -> irBlock {
-                                originalBody.statements.forEach { +it }
-                            }
-
-                            is IrExpressionBody -> irReturn(originalBody.expression)
-                            is IrSyntheticBody -> error("Remote function can't have synthetic body")
-                        }
-                    )
-                )
-            )
             val isStreaming = declaration.returnType.isSubtypeOfClass(data.flow)
             val call =
                 if (isStreaming) data.functions.remoteClientCallStreaming
@@ -70,13 +54,32 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
                     }
                 }
             }
-            +irReturn(irCall(call).apply {
-                typeArguments[0] =
-                    if (isStreaming) (declaration.returnType as IrSimpleType).arguments.single().typeOrFail
-                    else declaration.returnType
-                arguments[0] = configClient
-                arguments[1] = remoteCall
-            })
+            +irWhen(
+                data.irBuiltIns.unitType,
+                listOf(
+                    irBranch(
+                        irEquals(irGet(context), configContext),
+                        when (originalBody) {
+                            is IrBlockBody -> irBlock {
+                                originalBody.statements.forEach { +it }
+                            }
+
+                            is IrExpressionBody -> irReturn(originalBody.expression)
+                            is IrSyntheticBody -> error("Remote function can't have synthetic body")
+                        }
+                    ),
+                    irBranch(
+                        true.toIrConst(data.irBuiltIns.booleanType, startOffset, endOffset),
+                        irReturn(irCall(call).apply {
+                            typeArguments[0] =
+                                if (isStreaming) (declaration.returnType as IrSimpleType).arguments.single().typeOrFail
+                                else declaration.returnType
+                            arguments[0] = configClient
+                            arguments[1] = remoteCall
+                        })
+                    )
+                )
+            )
         }
         return super.visitFunction(declaration, data)
     }
