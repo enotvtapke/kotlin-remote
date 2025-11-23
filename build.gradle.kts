@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ktor)
+    alias(libs.plugins.atomicfu)
 }
 
 group = "org.jetbrains.kotlinx"

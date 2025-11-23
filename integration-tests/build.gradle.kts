@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.ktor)
     alias(libs.plugins.kotlinx.remote)
+    alias(libs.plugins.atomicfu)
+    alias(libs.plugins.serialization)
 }
 
 configure<TestCompilerExtension> {
@@ -29,6 +31,8 @@ dependencies {
     implementation(libs.ktor.server.content.negotiation)
 
     implementation(libs.ktor.serialization.json)
+
+    implementation(libs.serialization.core)
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(kotlin("test"))
