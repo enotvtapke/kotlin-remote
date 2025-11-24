@@ -1,8 +1,9 @@
-package remoteClass
+package remoteClass.generated
 
+import kotlinx.remote.CallableMap
 import remoteEmbeddedServer
 
 fun main() {
-    initCallableMap()
+    CallableMap.init()
     remoteEmbeddedServer().start(wait = true)
 }

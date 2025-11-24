@@ -149,3 +149,7 @@ fun IrFunction.remoteFunctionName(): String = fqNameWhenAvailable?.asString()
 
 fun IrBuilderWithScope.irSafeAs(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.SAFE_CAST, type, argument)
+
+fun IrFunction.supportedParameters(): List<IrValueParameter> = parameters.filter {
+    it.kind in listOf(IrParameterKind.DispatchReceiver, IrParameterKind.Regular)
+}

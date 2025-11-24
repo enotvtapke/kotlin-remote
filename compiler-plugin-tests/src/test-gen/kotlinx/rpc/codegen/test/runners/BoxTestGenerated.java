@@ -40,6 +40,18 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
+  @TestMetadata("class.kt")
+  public void testClass() {
+    runTest("src/testData/box/class.kt");
+  }
+
+  @Test
+  @TestMetadata("classWithChild.kt")
+  public void testClassWithChild() {
+    runTest("src/testData/box/classWithChild.kt");
+  }
+
+  @Test
   @TestMetadata("initCallableMap.kt")
   public void testInitCallableMap() {
     runTest("src/testData/box/initCallableMap.kt");

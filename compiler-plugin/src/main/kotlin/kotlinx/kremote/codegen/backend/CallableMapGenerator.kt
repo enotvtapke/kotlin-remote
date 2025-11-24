@@ -3,40 +3,24 @@ package kotlinx.kremote.codegen.backend
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.irAs
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irExprBody
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
-import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -69,30 +53,30 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
             constructorTypeArgumentsCount = 0,
         ).apply {
             val invokator = genInvocator(parent, callable)
-            val parameters = callable.valueParameters()
+            val parameters = callable.supportedParameters()
             val callee =
-                if (callable.valueParameters().isEmpty()) ctx.functions.emptyArray
+                if (parameters.isEmpty()) ctx.functions.emptyArray
                 else ctx.irBuiltIns.arrayOf
-            val arrayParametersType = ctx.irBuiltIns.arrayClass.typeWith(
+            val parametersType = ctx.irBuiltIns.arrayClass.typeWith(
                 ctx.remoteParameter.defaultType,
                 Variance.OUT_VARIANCE,
             )
-            val arrayOfCall =
+            val parametersCall =
                 IrCallImpl(
                     startOffset = UNDEFINED_OFFSET,
                     endOffset = UNDEFINED_OFFSET,
-                    type = arrayParametersType,
+                    type = parametersType,
                     symbol = callee,
                     typeArgumentsCount = 1,
                 ).apply arrayOfCall@{
-                    if (parameters.isEmpty()) {
+                    if (callee == ctx.functions.emptyArray) {
                         typeArguments[0] = ctx.remoteParameter.defaultType
                         return@arrayOfCall
                     }
                     val vararg = IrVarargImpl(
                         startOffset = UNDEFINED_OFFSET,
                         endOffset = UNDEFINED_OFFSET,
-                        type = arrayParametersType,
+                        type = parametersType,
                         varargElementType = ctx.remoteParameter.defaultType,
                         elements = parameters.memoryOptimizedMap { parameter ->
                             IrConstructorCallImpl(
@@ -102,22 +86,21 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
                                 symbol = ctx.remoteParameter.constructors.single(),
                                 typeArgumentsCount = 0,
                                 constructorTypeArgumentsCount = 0,
-                            )
-                                .apply {
-                                    arguments[0] = IrConstImpl.string(
-                                        startOffset,
-                                        endOffset,
-                                        ctx.irBuiltIns.stringType,
-                                        parameter.name.asString()
-                                    )
-                                    arguments[1] = irRemoteTypeCall(parameter.type)
-                                    arguments[2] = IrConstImpl.boolean(
-                                        startOffset,
-                                        endOffset,
-                                        ctx.irBuiltIns.booleanType,
-                                        parameter.defaultValue != null
-                                    )
-                                }
+                            ).apply {
+                                arguments[0] = IrConstImpl.string(
+                                    startOffset,
+                                    endOffset,
+                                    ctx.irBuiltIns.stringType,
+                                    parameter.name.asString()
+                                )
+                                arguments[1] = irRemoteTypeCall(parameter.type)
+                                arguments[2] = IrConstImpl.boolean(
+                                    startOffset,
+                                    endOffset,
+                                    ctx.irBuiltIns.booleanType,
+                                    parameter.defaultValue != null
+                                )
+                            }
                         },
                     )
                     typeArguments[0] = ctx.remoteParameter.defaultType
@@ -131,7 +114,7 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
                 else callable.returnType
             )
             arguments[2] = invokator
-            arguments[3] = arrayOfCall
+            arguments[3] = parametersCall
             arguments[4] =
                 IrConstImpl.boolean(startOffset, endOffset, ctx.irBuiltIns.booleanType, isStreaming)
 
@@ -156,7 +139,7 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
 
             body = ctx.irBuilder(symbol).irBlockBody {
                 val call = irCall(callable).apply {
-                    val argValues = callable.valueParameters().memoryOptimizedMapIndexed { argIndex, arg ->
+                    val argValues = callable.supportedParameters().memoryOptimizedMapIndexed { argIndex, arg ->
                         val argValue = irCall(
                             callee = ctx.functions.arrayGet.symbol,
                             type = ctx.anyNullable,
@@ -177,7 +160,7 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
                     }
                         ?: error("Remote function `${callable.name}` should have a single context parameter of type `${ctx.remoteContext.defaultType.render()}`")
                     arguments[remoteContextParameter.indexInParameters] = remoteConfigContextCall(callable, ctx)
-                    callable.parameters.filter { it.kind == IrParameterKind.Regular }.forEachIndexed { index, param ->
+                    callable.supportedParameters().forEachIndexed { index, param ->
                         arguments[param.indexInParameters] = argValues[index]
                     }
                 }

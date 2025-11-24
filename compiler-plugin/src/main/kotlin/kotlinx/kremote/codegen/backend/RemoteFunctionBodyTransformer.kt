@@ -17,10 +17,7 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
         declaration: IrFunction,
         data: RpcIrContext
     ): IrStatement {
-        if (!declaration.remote()) return super.visitFunction(declaration, data)
-        if (!(declaration.isTopLevel || declaration.isLocal || declaration.isStatic)) {
-            error("Remote function `${declaration.name}` can't be a non-static method")
-        }
+        if (!declaration.remote() || declaration.isFakeOverride) return super.visitFunction(declaration, data)
         val originalBody = declaration.body ?: error("Remote function `${declaration.name}` should have a body")
         val context = declaration.parameters.singleOrNull {
             it.type == data.remoteContext.defaultType && it.kind == IrParameterKind.Context
@@ -47,7 +44,7 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
                         typeArguments[0] = data.anyNullable
                         arguments[0] = irVararg(
                             elementType = data.anyNullable,
-                            values = declaration.valueParameters().memoryOptimizedMap {
+                            values = declaration.supportedParameters().memoryOptimizedMap {
                                 irGet(it)
                             },
                         )

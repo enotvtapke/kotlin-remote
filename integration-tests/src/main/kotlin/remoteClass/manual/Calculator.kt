@@ -1,4 +1,4 @@
-package remoteClass
+package remoteClass.manual
 
 import ClientContext
 import kotlinx.coroutines.runBlocking
@@ -8,7 +8,7 @@ import kotlinx.remote.RemoteContext
 import kotlinx.remote.RemoteInvokator
 import kotlinx.remote.RemoteParameter
 import kotlinx.remote.RemoteType
-import kotlinx.remote.classes.RemoteClasses.remoteClasses
+import kotlinx.remote.classes.RemoteInstancesPool.instances
 import kotlinx.remote.classes.StubIdGenerator
 import kotlinx.remote.network.RemoteCall
 import kotlinx.remote.network.call
@@ -21,7 +21,7 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlin.reflect.typeOf
 
-@Serializable(with = CalculatorSerializer::class)
+@Serializable(with = Calculator.CalculatorSerializer::class)
 open class Calculator(private var init: Int) {
     context(ctx: RemoteContext)
     suspend fun multiply(x: Int): Int {
@@ -33,31 +33,27 @@ open class Calculator(private var init: Int) {
                 RemoteCall("multiply", arrayOf(this, x))
             )
         }
-
     }
-    fun result(): Int {
-        return init
-    }
-}
 
-class CalculatorStub(val id: Long): Calculator(0)
+    class CalculatorStub(val id: Long): Calculator(0)
 
-object CalculatorSerializer : KSerializer<Calculator> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("id", LONG)
+    object CalculatorSerializer : KSerializer<Calculator> {
+        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("id", LONG)
 
-    override fun serialize(encoder: Encoder, value: Calculator) {
-        if (value is CalculatorStub) {
-            encoder.encodeLong(value.id)
-            return
+        override fun serialize(encoder: Encoder, value: Calculator) {
+            if (value is CalculatorStub) {
+                encoder.encodeLong(value.id)
+                return
+            }
+            val id = StubIdGenerator.nextId()
+            instances[id] = value
+            encoder.encodeLong(id)
         }
-        val id = StubIdGenerator.nextId()
-        remoteClasses[id] = value
-        encoder.encodeLong(id)
-    }
 
-    override fun deserialize(decoder: Decoder): Calculator {
-        val id = decoder.decodeLong()
-        return remoteClasses[id]?.let { it as Calculator } ?: CalculatorStub(id)
+        override fun deserialize(decoder: Decoder): Calculator {
+            val id = decoder.decodeLong()
+            return instances[id]?.let { it as Calculator } ?: CalculatorStub(id)
+        }
     }
 }
 
@@ -77,6 +73,7 @@ fun main(): Unit = runBlocking {
     context(ClientContext) {
         val x = calculator(5)
         println(x.multiply(6))
+        println(x.multiply(7))
     }
 }
 
