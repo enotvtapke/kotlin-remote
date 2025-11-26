@@ -1,0 +1,19 @@
+/*
+ * Copyright 2023-2025 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
+ */
+
+package kotlinx.kremote.codegen.frontend
+
+import org.jetbrains.kotlin.GeneratedDeclarationKey
+
+internal object FirRemoteClassStubKey : GeneratedDeclarationKey() {
+    override fun toString(): String {
+        return "FirRemoteClassStub"
+    }
+}
+
+internal object FirRemoteClassSerializerKey : GeneratedDeclarationKey() {
+    override fun toString(): String {
+        return "FirRemoteClassSerializer"
+    }
+}

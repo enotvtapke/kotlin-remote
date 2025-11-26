@@ -1,15 +1,11 @@
 package remoteClass.manual
 
 import ClientContext
+import ServerConfig
 import kotlinx.coroutines.runBlocking
-import kotlinx.remote.CallableMap
-import kotlinx.remote.RemoteCallable
-import kotlinx.remote.RemoteContext
-import kotlinx.remote.RemoteInvokator
-import kotlinx.remote.RemoteParameter
-import kotlinx.remote.RemoteType
+import kotlinx.remote.*
 import kotlinx.remote.classes.RemoteInstancesPool.instances
-import kotlinx.remote.classes.StubIdGenerator
+import kotlinx.remote.classes.addInstance
 import kotlinx.remote.network.RemoteCall
 import kotlinx.remote.network.call
 import kotlinx.serialization.KSerializer
@@ -45,14 +41,12 @@ open class Calculator(private var init: Int) {
                 encoder.encodeLong(value.id)
                 return
             }
-            val id = StubIdGenerator.nextId()
-            instances[id] = value
-            encoder.encodeLong(id)
+            encoder.encodeLong(addInstance(value))
         }
 
         override fun deserialize(decoder: Decoder): Calculator {
             val id = decoder.decodeLong()
-            return instances[id]?.let { it as Calculator } ?: CalculatorStub(id)
+            return instances.getOrDefault(id, CalculatorStub(id)) as Calculator
         }
     }
 }

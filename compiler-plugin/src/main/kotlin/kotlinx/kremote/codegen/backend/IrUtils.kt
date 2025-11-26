@@ -5,6 +5,7 @@
 package kotlinx.kremote.codegen.backend
 
 import kotlinx.kremote.codegen.common.RpcClassId.remoteAnnotation
+import kotlinx.kremote.codegen.common.RpcClassId.remoteSerializableAnnotation
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.IrBuilder
@@ -109,6 +110,8 @@ fun IrFactory.createExpressionBody(expression: IrExpression): IrExpressionBody =
     createExpressionBody(expression.startOffset, expression.endOffset, expression)
 
 fun IrDeclaration.remote(): Boolean = hasAnnotation(remoteAnnotation)
+
+fun IrDeclaration.remoteSerializable(): Boolean = hasAnnotation(remoteSerializableAnnotation)
 
 fun IrClass.remoteConfigObject(): IrClassSymbol {
     val remoteAnnotationCall = getAnnotation(remoteAnnotation.asSingleFqName())!!

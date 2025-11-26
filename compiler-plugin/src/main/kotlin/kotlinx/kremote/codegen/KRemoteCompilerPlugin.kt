@@ -1,10 +1,12 @@
 package kotlinx.kremote.codegen
 
 import kotlinx.kremote.codegen.backend.RpcIrExtension
+import kotlinx.kremote.codegen.frontend.FirRpcExtensionRegistrar
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 
 @OptIn(ExperimentalCompilerApi::class)
 class KRemoteCompilerPlugin : CompilerPluginRegistrar() {
@@ -24,6 +26,7 @@ class KRemoteCompilerPlugin : CompilerPluginRegistrar() {
 @OptIn(ExperimentalCompilerApi::class)
 fun CompilerPluginRegistrar.ExtensionStorage.registerRpcExtensions(configuration: CompilerConfiguration) {
     IrGenerationExtension.registerExtension(RpcIrExtension())
+    FirExtensionRegistrarAdapter.registerExtension(FirRpcExtensionRegistrar(configuration))
 }
 
 

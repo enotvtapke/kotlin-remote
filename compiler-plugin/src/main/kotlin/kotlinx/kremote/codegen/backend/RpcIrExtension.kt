@@ -17,5 +17,10 @@ class RpcIrExtension : IrGenerationExtension {
             moduleFragment
         )
         moduleFragment.transform(RemoteFunctionBodyTransformer(), context)
+
+        val classScanner = RemoteClassScanner()
+        classScanner.visitModuleFragment(moduleFragment)
+        val serializerGenerator = RemoteSerializerGenerator(context)
+        classScanner.remoteClasses.forEach { serializerGenerator.generate(it) }
     }
 }

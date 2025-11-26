@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.name.Name
 
 object RpcClassId {
     val remoteAnnotation = ClassId(FqName("kotlinx.remote"), Name.identifier("Remote"))
+    val remoteSerializableAnnotation = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("RemoteSerializable"))
     val checkedTypeAnnotation = ClassId(FqName("kotlinx.rpc.annotations"), Name.identifier("CheckedTypeAnnotation"))
 
     val serializableAnnotation = ClassId(FqName("kotlinx.serialization"), Name.identifier("Serializable"))
@@ -25,7 +26,8 @@ object RpcClassId {
 
 object RpcNames {
     val SERVICE_STUB_NAME: Name = Name.identifier("\$rpcServiceStub")
-    val SERVICE_SERIALIZER_NAME: Name = Name.identifier("\$rpcServiceSerializer")
+    val REMOTE_CLASS_STUB_NAME: Name = Name.identifier("RemoteClassStub")
+    val REMOTE_CLASS_SERIALIZER_NAME: Name = Name.identifier("RemoteClassSerializer")
     val REMOTE_CLOSE_NAME: Name = Name.identifier("close")
     val KSERIALIZER_SERIALIZE_NAME: Name = Name.identifier("serialize")
     val KSERIALIZER_DESERIALIZE_NAME: Name = Name.identifier("deserialize")

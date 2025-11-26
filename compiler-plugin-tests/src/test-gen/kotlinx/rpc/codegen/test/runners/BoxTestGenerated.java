@@ -62,4 +62,10 @@ public class BoxTestGenerated extends AbstractBoxTest {
   public void testLocalCall() {
     runTest("src/testData/box/localCall.kt");
   }
+
+  @Test
+  @TestMetadata("serializers.kt")
+  public void testSerializers() {
+    runTest("src/testData/box/serializers.kt");
+  }
 }

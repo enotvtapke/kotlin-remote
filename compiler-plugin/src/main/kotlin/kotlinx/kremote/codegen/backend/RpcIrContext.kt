@@ -87,6 +87,10 @@ class RpcIrContext(
         getRpcIrClassSymbol("RemoteContext")
     }
 
+    val remoteInstancesPool by lazy {
+        getRpcIrClassSymbol("RemoteInstancesPool", "classes")
+    }
+
     val remoteCall by lazy {
         getRpcIrClassSymbol("RemoteCall", "network")
     }
@@ -223,6 +227,10 @@ class RpcIrContext(
             remoteClient.namedFunction("callServerStreaming")
         }
 
+        val getOrDefault by lazy {
+            remoteInstancesPool.namedFunction("getOrDefault")
+        }
+
         val callableMapInit by lazy {
             callableMap.namedFunction("init")
         }
@@ -247,6 +255,10 @@ class RpcIrContext(
             namedFunction("kotlinx.rpc", "withService") {
                 it.owner.parameters.count() == 1
             }
+        }
+
+        val addInstance by lazy {
+            namedFunction("kotlinx.remote.classes", "addInstance")
         }
 
         val println by lazy {
