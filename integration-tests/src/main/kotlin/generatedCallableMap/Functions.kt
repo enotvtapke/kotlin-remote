@@ -1,4 +1,4 @@
-package callableMap
+package generatedCallableMap
 
 import ServerConfig
 import kotlinx.coroutines.delay

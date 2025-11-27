@@ -1,4 +1,4 @@
-package remoteClass.fullyGenerated
+package remoteClass.generatedSerializer
 
 import ClientContext
 import ServerConfig
@@ -14,14 +14,14 @@ import kotlinx.serialization.Serializable
 open class Calculator(private var init: Int = 0) {
     @Remote(ServerConfig::class)
     context(_: RemoteContext)
-    open suspend fun multiply(x: Int): Int {
+    suspend fun multiply(x: Int): Int {
         init *= x
         return init
     }
 
     @Remote(ServerConfig::class)
     context(_: RemoteContext)
-    open suspend fun result(): Int {
+    suspend fun result(): Int {
         return init
     }
 }

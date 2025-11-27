@@ -1,4 +1,4 @@
-package callableMap
+package generatedCallableMap
 
 import kotlinx.remote.CallableMap
 import remoteEmbeddedServer

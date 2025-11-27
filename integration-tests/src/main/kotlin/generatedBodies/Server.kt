@@ -1,4 +1,4 @@
-package generated
+package generatedBodies
 
 import ServerConfig
 import kotlinx.remote.*

@@ -1,4 +1,4 @@
-package remoteClass.generated
+package remoteClass.generatedMethods
 
 import ClientContext
 import ServerConfig

@@ -1,4 +1,4 @@
-package remoteClass.fullyGenerated
+package remoteClass.generatedMethods
 
 import kotlinx.remote.CallableMap
 import remoteEmbeddedServer

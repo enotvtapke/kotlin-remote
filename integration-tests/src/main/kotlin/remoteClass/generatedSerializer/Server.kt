@@ -1,4 +1,4 @@
-package remoteClass.generated
+package remoteClass.generatedSerializer
 
 import kotlinx.remote.CallableMap
 import remoteEmbeddedServer
