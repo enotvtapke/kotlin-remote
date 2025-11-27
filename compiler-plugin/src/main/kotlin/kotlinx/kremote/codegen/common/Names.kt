@@ -15,6 +15,7 @@ object RpcClassId {
 
     val serializableAnnotation = ClassId(FqName("kotlinx.serialization"), Name.identifier("Serializable"))
     val kSerializer = ClassId(FqName("kotlinx.serialization"), Name.identifier("KSerializer"))
+    val stubInterface = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("Stub"))
     val serializationTransient = ClassId.topLevel(FqName("kotlinx.serialization.Transient"))
 
     val flow = ClassId(FqName("kotlinx.coroutines.flow"), Name.identifier("Flow"))

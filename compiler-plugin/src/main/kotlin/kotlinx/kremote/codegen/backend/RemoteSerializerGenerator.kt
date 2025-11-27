@@ -1,9 +1,8 @@
 package kotlinx.kremote.codegen.backend
 
 import kotlinx.kremote.codegen.common.RpcNames
-import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
-import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -39,6 +42,9 @@ class RemoteSerializerGenerator(private val ctx: RpcIrContext) {
     private var stubId: IrProperty by Delegates.notNull()
 
     private fun initStubClass(parent: IrClass, stub: IrClass) {
+        stub.declarations.removeAll { declaration ->
+            declaration.isFakeOverride && declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE && declaration.getNameWithAssert() in listOf(ctx.properties.stubId.owner.name)
+        }
         stub.addConstructor {
             name = stub.name
             isPrimary = true
@@ -49,7 +55,32 @@ class RemoteSerializerGenerator(private val ctx: RpcIrContext) {
                 type = ctx.irBuiltIns.longType
             }
             this@RemoteSerializerGenerator.stubId =
-                stub.addConstructorProperty(Name.identifier("id"), ctx.irBuiltIns.longType, stubId)
+                stub.addProperty {
+                    name = Name.identifier("id")
+                    visibility = PRIVATE
+                }.apply {
+                    addBackingFieldUtil {
+                        visibility = PRIVATE
+                        type = ctx.irBuiltIns.longType
+                        isFinal = true
+                        overriddenSymbols = listOf(ctx.properties.stubId)
+                    }.apply {
+                        initializer = factory.createExpressionBody(
+                            IrGetValueImpl(
+                                startOffset = startOffset,
+                                endOffset = endOffset,
+                                type = stubId.type,
+                                symbol = stubId.symbol,
+                                origin = IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER,
+                            )
+                        )
+                    }
+
+                    addDefaultGetter(stub, ctx.irBuiltIns) {
+                        visibility = PRIVATE
+                        overriddenSymbols = listOf(ctx.properties.stubId.owner.getterOrFail.symbol)
+                    }
+                }
             body = ctx.irBuilder(symbol).irBlockBody {
                 +irDelegatingConstructorCall(parent.constructors.firstOrNull { constructor ->
                     constructor.parameters.all { it.defaultValue != null }

@@ -72,6 +72,7 @@ class FirRpcServiceGenerator(
             visibility = Visibilities.Public
             modality = Modality.FINAL
             superType(owner.classId.constructClassLikeType())
+            superType(RpcClassId.stubInterface.constructClassLikeType())
         }.symbol
     }
 }

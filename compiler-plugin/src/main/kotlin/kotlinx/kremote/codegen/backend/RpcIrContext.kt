@@ -83,6 +83,10 @@ class RpcIrContext(
         getRpcIrClassSymbol("RemoteClient", "network")
     }
 
+    val stub by lazy {
+        getRpcIrClassSymbol("Stub", "classes")
+    }
+
     val remoteContext by lazy {
         getRpcIrClassSymbol("RemoteContext")
     }
@@ -330,6 +334,10 @@ class RpcIrContext(
 
         val kSerializerDescriptor by lazy {
             kSerializer.namedProperty("descriptor")
+        }
+
+        val stubId by lazy {
+            stub.namedProperty("id")
         }
 
         private fun IrClassSymbol.namedProperty(name: String): IrPropertySymbol {
