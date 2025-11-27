@@ -8,18 +8,22 @@ import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.createExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.*
+import kotlin.properties.Delegates
 
 class RemoteClassInitializer(private val ctx: RpcIrContext) {
     fun init(remoteClass: RemoteClass) {
         initStubClass(remoteClass.stub, remoteClass.declaration)
-        initSerializer(remoteClass.serializer, remoteClass.stub)
+        initSerializer(remoteClass.serializer)
     }
+
+    private var stubConstructor: IrConstructor by Delegates.notNull()
 
     private fun initStubClass(stubClass: IrClass, remoteClass: IrClass) {
         stubClass.declarations.removeAll { declaration ->
@@ -30,6 +34,7 @@ class RemoteClassInitializer(private val ctx: RpcIrContext) {
             isPrimary = true
             returnType = stubClass.defaultType
         }.run {
+            stubConstructor = this
             body = ctx.irBuilder(symbol).irBlockBody {
                 +irDelegatingConstructorCall(remoteClass.constructors.firstOrNull { constructor ->
                     constructor.parameters.all { it.defaultValue != null }
@@ -72,7 +77,7 @@ class RemoteClassInitializer(private val ctx: RpcIrContext) {
         }
     }
 
-    private fun initSerializer(serializerClass: IrClass, stubClass: IrClass) {
+    private fun initSerializer(serializerClass: IrClass) {
         serializerClass.addConstructor {
             name = serializerClass.name
             isPrimary = true
@@ -98,7 +103,7 @@ class RemoteClassInitializer(private val ctx: RpcIrContext) {
             body = ctx.irBuilder(symbol).irBlockBody {
                 +irReturn(
                     irCallConstructor(
-                        stubClass.constructors.single().symbol,
+                        stubConstructor.symbol,
                         listOf()
                     ).apply {
                         arguments[0] = irGet(id)

@@ -2,7 +2,6 @@ import kotlinx.kremote.TestCompilerExtension
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.ktor)
     alias(libs.plugins.kotlinx.remote)
     alias(libs.plugins.atomicfu)
     alias(libs.plugins.serialization)

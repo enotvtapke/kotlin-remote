@@ -17,7 +17,7 @@ class RpcIrExtension : IrGenerationExtension {
             moduleFragment
         )
         moduleFragment.transform(RemoteFunctionBodyTransformer(), context)
-
+        moduleFragment.transform(RpcIrServiceStatusTransformer(), context)
         val classScanner = RemoteClassScanner()
         classScanner.visitModuleFragment(moduleFragment)
         val remoteClassInitializer = RemoteClassInitializer(context)

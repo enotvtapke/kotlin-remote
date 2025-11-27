@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 
 @RemoteSerializable
 @Serializable(with = Calculator.RemoteClassSerializer::class)
-open class Calculator(private var init: Int = 0) {
+class Calculator(private var init: Int) {
     @Remote(ServerConfig::class)
     context(_: RemoteContext)
     suspend fun multiply(x: Int): Int {

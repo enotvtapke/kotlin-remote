@@ -114,10 +114,10 @@ class ApplicationTests {
 
     @RemoteSerializable
     @Serializable(with = Calculator.RemoteClassSerializer::class)
-    open class Calculator(private var init: Int = 0) {
+    class Calculator(private var init: Int) {
         @Remote(ServerConfig::class)
         context(_: RemoteContext)
-        open suspend fun multiply(x: Int): Int {
+        suspend fun multiply(x: Int): Int {
             init *= x
             return init
         }

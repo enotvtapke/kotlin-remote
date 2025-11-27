@@ -1,0 +1,37 @@
+FILE: class.kt
+    public final class Calculator : R|kotlin/Any| {
+        public constructor(init: R|kotlin/Long|): R|Calculator| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final var init: R|kotlin/Long| = R|<local>/init|
+            private get(): R|kotlin/Long|
+            private set(value: R|kotlin/Long|): R|kotlin/Unit|
+
+        context(ctx: R|kotlinx/remote/RemoteContext|)
+        @R|kotlinx/remote/Remote|(config = <getClass>(Q|kotlinx/rpc/codegen/test/ServerConfig|)) public final suspend fun multiply(x: R|kotlin/Long|): R|kotlin/Long| {
+            this@R|/Calculator|.R|/Calculator.init| = this@R|/Calculator|.R|/Calculator.init|.R|kotlin/Long.times|(R|<local>/x|)
+            ^multiply this@R|/Calculator|.R|/Calculator.init|
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {
+            Q|kotlinx/remote/CallableMap|.R|kotlinx/remote/CallableMap.init|()
+            ^ R|kotlin/context|<R|kotlinx/rpc/codegen/test/ClientContext|, R|kotlin/String|>(Q|kotlinx/rpc/codegen/test/ClientContext|, <L> = context(<unused var>: R|kotlinx/rpc/codegen/test/ClientContext|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                lval c: R|Calculator| = R|/Calculator.Calculator|(Long(1))
+                lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) R|<local>/c|.R|/Calculator.multiply|(Long(5))
+                ^ when () {
+                    ==(R|<local>/test1|, Long(42)) ->  {
+                        String(OK)
+                    }
+                    else ->  {
+                        <strcat>(String(Fail: test1=), R|<local>/test1|)
+                    }
+                }
+
+            }
+            )
+        }
+        )
+    }
