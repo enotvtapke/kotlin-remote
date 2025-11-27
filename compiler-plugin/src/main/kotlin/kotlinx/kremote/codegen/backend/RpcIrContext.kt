@@ -95,6 +95,10 @@ class RpcIrContext(
         getRpcIrClassSymbol("RemoteInstancesPool", "classes")
     }
 
+    val remoteSerializer by lazy {
+        getRpcIrClassSymbol("RemoteSerializer", "classes")
+    }
+
     val remoteCall by lazy {
         getRpcIrClassSymbol("RemoteCall", "network")
     }

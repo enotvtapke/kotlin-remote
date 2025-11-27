@@ -15,6 +15,7 @@ object RpcClassId {
 
     val serializableAnnotation = ClassId(FqName("kotlinx.serialization"), Name.identifier("Serializable"))
     val kSerializer = ClassId(FqName("kotlinx.serialization"), Name.identifier("KSerializer"))
+    val remoteSerializer = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("RemoteSerializer"))
     val stubInterface = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("Stub"))
     val serializationTransient = ClassId.topLevel(FqName("kotlinx.serialization.Transient"))
 
@@ -30,6 +31,7 @@ object RpcNames {
     val REMOTE_CLASS_STUB_NAME: Name = Name.identifier("RemoteClassStub")
     val REMOTE_CLASS_SERIALIZER_NAME: Name = Name.identifier("RemoteClassSerializer")
     val REMOTE_CLOSE_NAME: Name = Name.identifier("close")
+    val REMOTE_SERIALIZER_STUB_NAME: Name = Name.identifier("createStub")
     val KSERIALIZER_SERIALIZE_NAME: Name = Name.identifier("serialize")
     val KSERIALIZER_DESERIALIZE_NAME: Name = Name.identifier("deserialize")
     val KSERIALIZER_DESCRIPTOR_NAME: Name = Name.identifier("descriptor")

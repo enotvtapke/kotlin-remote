@@ -58,12 +58,12 @@ class FirRpcServiceGenerator(
         }
     }
 
-    private fun generateSerializerObjectForRpcService(owner: FirClassSymbol<*>, ): FirClassLikeSymbol<*> {
-        return createNestedClass(owner, RpcNames.REMOTE_CLASS_SERIALIZER_NAME, FirRemoteClassSerializerKey, ClassKind.OBJECT) {
+    private fun generateSerializerObjectForRpcService(owner: FirClassSymbol<*>): FirClassLikeSymbol<*> {
+        return createNestedClass(owner, RpcNames.REMOTE_CLASS_SERIALIZER_NAME, FirRemoteClassSerializerKey) {
             visibility = Visibilities.Public
             modality = Modality.FINAL
             val typeArguments = arrayOf(owner.classId.constructClassLikeType())
-            superType(RpcClassId.kSerializer.constructClassLikeType(typeArguments))
+            superType(RpcClassId.remoteSerializer.constructClassLikeType(typeArguments))
         }.symbol
     }
 
