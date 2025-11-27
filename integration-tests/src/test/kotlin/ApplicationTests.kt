@@ -17,10 +17,12 @@ import kotlinx.remote.CallableMap
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
+import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
 import kotlinx.remote.network.remoteClient
+import kotlinx.serialization.Serializable
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -107,6 +109,36 @@ class ApplicationTests {
             context(ClientContext) {
                 val res = multiplyStreaming(10, 10).toList()
                 assertEquals(List(50) { 100L }, res)
+            }
+        }
+
+    @RemoteSerializable
+    @Serializable(with = Calculator.RemoteClassSerializer::class)
+    open class Calculator(private var init: Int = 0) {
+        @Remote(ServerConfig::class)
+        context(_: RemoteContext)
+        open suspend fun multiply(x: Int): Int {
+            init *= x
+            return init
+        }
+    }
+
+    @Test
+    fun `remote class`() =
+        testApplication {
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
+
+            @Remote(ServerConfig::class)
+            context(ctx: RemoteContext)
+            suspend fun calculator(init: Int): Calculator {
+                return Calculator(init)
+            }
+
+            context(ClientContext) {
+                val x = calculator(5)
+                assertEquals(30, x.multiply(6))
+                assertEquals(210, x.multiply(7))
             }
         }
 

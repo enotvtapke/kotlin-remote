@@ -3,7 +3,6 @@ package kotlinx.kremote.codegen.frontend
 import kotlinx.kremote.codegen.common.RpcClassId
 import kotlinx.kremote.codegen.common.RpcNames
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
@@ -12,6 +11,7 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.createNestedClass
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -62,7 +62,7 @@ class FirRpcServiceGenerator(
         return createNestedClass(owner, RpcNames.REMOTE_CLASS_SERIALIZER_NAME, FirRemoteClassSerializerKey) {
             visibility = Visibilities.Public
             modality = Modality.FINAL
-            val typeArguments = arrayOf(owner.classId.constructClassLikeType())
+            val typeArguments = arrayOf(owner.defaultType())
             superType(RpcClassId.remoteSerializer.constructClassLikeType(typeArguments))
         }.symbol
     }
@@ -71,7 +71,7 @@ class FirRpcServiceGenerator(
         return createNestedClass(owner, RpcNames.REMOTE_CLASS_STUB_NAME, FirRemoteClassStubKey) {
             visibility = Visibilities.Public
             modality = Modality.FINAL
-            superType(owner.classId.constructClassLikeType())
+            superType(owner.defaultType())
             superType(RpcClassId.stubInterface.constructClassLikeType())
         }.symbol
     }
