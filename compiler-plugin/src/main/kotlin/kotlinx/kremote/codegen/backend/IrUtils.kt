@@ -63,71 +63,12 @@ fun IrProperty.addDefaultGetter(
     }
 }
 
-// A collection of functions that proved to be useful,
-// but appeared only in the latest Kotlin versions.
-// Copied and placed here as is
-
-val IrTypeArgument.typeOrFail: IrType
-    get() {
-        require(this is IrTypeProjection) {
-            "Type argument should be of type `IrTypeProjection`, but was `${this::class}` instead"
-        }
-
-        return this.type
-    }
-
-// originally named 'addBackingField'
-inline fun IrProperty.addBackingFieldUtil(builder: IrFieldBuilder.() -> Unit = {}): IrField {
-    return factory.buildField {
-        name = this@addBackingFieldUtil.name
-        origin = IrDeclarationOrigin.PROPERTY_BACKING_FIELD
-        builder()
-    }.also { field ->
-        this@addBackingFieldUtil.backingField = field
-        field.correspondingPropertySymbol = this@addBackingFieldUtil.symbol
-        field.parent = this@addBackingFieldUtil.parent
-    }
-}
-
-inline fun <T, R> Collection<T>.memoryOptimizedMap(transform: (T) -> R): List<R> {
-    return mapTo(ArrayList<R>(size), transform).compactIfPossible()
-}
-
-inline fun <T, R> Collection<T>.memoryOptimizedMapIndexed(transform: (index: Int, T) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size), transform).compactIfPossible()
-}
-
-fun <T> List<T>.compactIfPossible(): List<T> =
-    when (size) {
-        0 -> emptyList()
-        1 -> listOf(first())
-        else -> apply {
-            if (this is ArrayList<*>) trimToSize()
-        }
-    }
-
-@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // TODO(KTIJ-26314): Remove this suppression
-fun IrFactory.createExpressionBody(expression: IrExpression): IrExpressionBody =
-    createExpressionBody(expression.startOffset, expression.endOffset, expression)
-
 fun IrDeclaration.remote(): Boolean = hasAnnotation(remoteAnnotation)
 
 fun IrDeclaration.remoteSerializable(): Boolean = hasAnnotation(remoteSerializableAnnotation)
 
-fun IrClass.remoteConfigObject(): IrClassSymbol {
-    val remoteAnnotationCall = getAnnotation(remoteAnnotation.asSingleFqName())!!
-    val remoteConfigClassExpression = remoteAnnotationCall.getValueArgument(Name.identifier("context"))
-        ?: error("Annotation '${remoteAnnotation.asSingleFqName().asString()}' should have an argument named `context`")
-    val remoteConfigSymbol = ((remoteConfigClassExpression.type as? IrSimpleType)?.arguments[0] as? IrTypeProjection)?.type?.classOrFail
-        ?: error("Cannot get RemoteConfig from type ${remoteConfigClassExpression.type}")
-    return remoteConfigSymbol
-}
-
 fun RpcIrContext.irBuilder(symbol: IrSymbol): DeclarationIrBuilder =
     DeclarationIrBuilder(pluginContext, symbol, symbol.owner.startOffset, symbol.owner.endOffset)
-
-fun IrFunction.valueParameters(): List<IrValueParameter> =
-    parameters.filter { it.kind == IrParameterKind.Regular }
 
 fun IrDeclaration.remoteConfigObject(): IrClassSymbol {
     val remoteAnnotationCall = getAnnotation(remoteAnnotation.asSingleFqName())!!

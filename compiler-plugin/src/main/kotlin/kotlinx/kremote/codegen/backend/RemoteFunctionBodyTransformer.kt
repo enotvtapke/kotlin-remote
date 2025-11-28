@@ -8,8 +8,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
     override fun visitFunction(

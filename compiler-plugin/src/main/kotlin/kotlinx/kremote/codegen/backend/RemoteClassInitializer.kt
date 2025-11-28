@@ -4,6 +4,7 @@ import kotlinx.kremote.codegen.common.RpcNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addBackingField
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -55,7 +56,7 @@ class RemoteClassInitializer(private val ctx: RpcIrContext) {
         stubClass.addProperty {
             name = ctx.properties.stubId.owner.name
         }.apply {
-            addBackingFieldUtil {
+            addBackingField {
                 visibility = PRIVATE
                 type = ctx.irBuiltIns.longType
                 isFinal = true
