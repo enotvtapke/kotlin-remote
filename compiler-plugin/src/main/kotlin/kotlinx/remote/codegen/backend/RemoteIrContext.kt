@@ -2,7 +2,7 @@
  * Copyright 2023-2025 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package kotlinx.kremote.codegen.backend
+package kotlinx.remote.codegen.backend
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class RpcIrContext(
+class RemoteIrContext(
     val pluginContext: IrPluginContext,
 ) {
     val irBuiltIns = pluginContext.irBuiltIns

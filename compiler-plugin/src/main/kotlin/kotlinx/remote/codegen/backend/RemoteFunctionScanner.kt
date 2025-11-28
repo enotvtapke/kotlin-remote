@@ -1,4 +1,4 @@
-package kotlinx.kremote.codegen.backend
+package kotlinx.remote.codegen.backend
 
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFunction

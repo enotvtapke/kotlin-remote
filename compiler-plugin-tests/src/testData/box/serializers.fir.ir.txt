@@ -22,13 +22,13 @@ FILE fqName:<root> fileName:/serializers.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:init type:kotlin.Long visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Calculator declared in <root>.Calculator.<set-init>' type=<root>.Calculator origin=null
             value: GET_VAR '<set-?>: kotlin.Long declared in <root>.Calculator.<set-init>' type=kotlin.Long origin=null
-    CLASS GENERATED[kotlinx.kremote.codegen.frontend.FirRemoteClassSerializerKey] CLASS name:RemoteClassSerializer modality:FINAL visibility:public superTypes:[kotlinx.remote.classes.RemoteSerializer<<root>.Calculator>]
+    CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassSerializerKey] CLASS name:RemoteClassSerializer modality:FINAL visibility:public superTypes:[kotlinx.remote.classes.RemoteSerializer<<root>.Calculator>]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Calculator.RemoteClassSerializer
       CONSTRUCTOR visibility:public returnType:<root>.Calculator.RemoteClassSerializer [primary]
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlinx.remote.classes.RemoteSerializer'
             TYPE_ARG T: <none>
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[kotlinx.kremote.codegen.frontend.FirRemoteClassSerializerKey] CLASS name:RemoteClassSerializer modality:FINAL visibility:public superTypes:[kotlinx.remote.classes.RemoteSerializer<<root>.Calculator>]' type=kotlin.Unit
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassSerializerKey] CLASS name:RemoteClassSerializer modality:FINAL visibility:public superTypes:[kotlinx.remote.classes.RemoteSerializer<<root>.Calculator>]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:deserialize visibility:public modality:OPEN returnType:<root>.Calculator [fake_override]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlinx.remote.classes.RemoteSerializer<<root>.Calculator>
         VALUE_PARAMETER kind:Regular name:decoder index:1 type:kotlinx.serialization.encoding.Decoder
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/serializers.kt
           correspondingProperty: PROPERTY FAKE_OVERRIDE name:descriptor visibility:public modality:OPEN [fake_override,val]
           overridden:
             public open fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.remote.classes.RemoteSerializer
-    CLASS GENERATED[kotlinx.kremote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[<root>.Calculator; kotlinx.remote.classes.Stub]
+    CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[<root>.Calculator; kotlinx.remote.classes.Stub]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Calculator.RemoteClassStub
       PROPERTY name:id visibility:public modality:FINAL [val]
         overridden:
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/serializers.kt
         VALUE_PARAMETER kind:Regular name:id index:0 type:kotlin.Long
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in <root>.Calculator'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[kotlinx.kremote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[<root>.Calculator; kotlinx.remote.classes.Stub]' type=kotlin.Unit
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[<root>.Calculator; kotlinx.remote.classes.Stub]' type=kotlin.Unit
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?

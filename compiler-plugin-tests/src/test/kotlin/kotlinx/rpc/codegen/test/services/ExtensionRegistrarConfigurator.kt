@@ -4,12 +4,9 @@
 
 package kotlinx.rpc.codegen.test.services
 
-import kotlinx.kremote.codegen.registerRpcExtensions
+import kotlinx.remote.codegen.registerRpcExtensions
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices

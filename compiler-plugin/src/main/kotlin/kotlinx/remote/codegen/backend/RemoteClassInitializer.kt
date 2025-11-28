@@ -1,6 +1,6 @@
-package kotlinx.kremote.codegen.backend
+package kotlinx.remote.codegen.backend
 
-import kotlinx.kremote.codegen.common.RpcNames
+import kotlinx.remote.codegen.common.RemoteNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.*
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.*
 import kotlin.properties.Delegates
 
-class RemoteClassInitializer(private val ctx: RpcIrContext) {
+class RemoteClassInitializer(private val ctx: RemoteIrContext) {
     fun init(remoteClass: RemoteClass) {
         initStubClass(remoteClass.stub, remoteClass.declaration)
         initSerializer(remoteClass.serializer)
@@ -95,7 +95,7 @@ class RemoteClassInitializer(private val ctx: RpcIrContext) {
         }
 
         serializerClass.functions.single {
-            it.name == RpcNames.REMOTE_SERIALIZER_STUB_NAME
+            it.name == RemoteNames.REMOTE_SERIALIZER_STUB_NAME
         }.apply {
             isFakeOverride = false
             origin = IrDeclarationOrigin.DEFINED

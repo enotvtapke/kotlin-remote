@@ -1,4 +1,4 @@
-package kotlinx.kremote.codegen.backend
+package kotlinx.remote.codegen.backend
 
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -7,7 +7,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-class CallableMapInjector(private val ctx: RpcIrContext, private val generator: CallableMapGenerator): IrElementTransformerVoid() {
+class CallableMapInjector(private val ctx: RemoteIrContext, private val generator: CallableMapGenerator): IrElementTransformerVoid() {
     var parent: IrDeclarationParent? = null
 
     override fun visitFunction(declaration: IrFunction): IrStatement {

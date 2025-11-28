@@ -2,23 +2,20 @@
  * Copyright 2023-2025 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package kotlinx.kremote.codegen.backend
+package kotlinx.remote.codegen.backend
 
-import kotlinx.kremote.codegen.common.RpcClassId.remoteAnnotation
-import kotlinx.kremote.codegen.common.RpcClassId.remoteSerializableAnnotation
+import kotlinx.remote.codegen.common.RemoteClassId.remoteAnnotation
+import kotlinx.remote.codegen.common.RemoteClassId.remoteSerializableAnnotation
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.IrBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.declarations.IrFieldBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.addDefaultGetter
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGetObjectValue
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -67,7 +64,7 @@ fun IrDeclaration.remote(): Boolean = hasAnnotation(remoteAnnotation)
 
 fun IrDeclaration.remoteSerializable(): Boolean = hasAnnotation(remoteSerializableAnnotation)
 
-fun RpcIrContext.irBuilder(symbol: IrSymbol): DeclarationIrBuilder =
+fun RemoteIrContext.irBuilder(symbol: IrSymbol): DeclarationIrBuilder =
     DeclarationIrBuilder(pluginContext, symbol, symbol.owner.startOffset, symbol.owner.endOffset)
 
 fun IrDeclaration.remoteConfigObject(): IrClassSymbol {
@@ -82,7 +79,7 @@ fun IrDeclaration.remoteConfigObject(): IrClassSymbol {
     return remoteConfigSymbol
 }
 
-fun IrBuilder.remoteConfigContextCall(declaration: IrDeclaration, context: RpcIrContext): IrCall {
+fun IrBuilder.remoteConfigContextCall(declaration: IrDeclaration, context: RemoteIrContext): IrCall {
     val remoteConfigSymbol = declaration.remoteConfigObject()
     return irCall(context.remoteConfigContext.owner.getter!!.symbol).apply {
         arguments[0] = irGetObjectValue(remoteConfigSymbol.defaultType, remoteConfigSymbol)
@@ -95,8 +92,8 @@ fun IrFunction.remoteFunctionName(): String = fqNameWhenAvailable?.asString()
 fun IrBuilderWithScope.irSafeAs(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.SAFE_CAST, type, argument)
 
-fun IrFunction.nonStaticParameters(ctx: RpcIrContext): List<IrValueParameter> = parameters.filter {
+fun IrFunction.nonStaticParameters(ctx: RemoteIrContext): List<IrValueParameter> = parameters.filter {
     !it.isRemoteContext(ctx)
 }
 
-fun IrValueParameter.isRemoteContext(ctx: RpcIrContext) = kind == IrParameterKind.Context && type.isSubtypeOfClass(ctx.remoteContext)
+fun IrValueParameter.isRemoteContext(ctx: RemoteIrContext) = kind == IrParameterKind.Context && type.isSubtypeOfClass(ctx.remoteContext)

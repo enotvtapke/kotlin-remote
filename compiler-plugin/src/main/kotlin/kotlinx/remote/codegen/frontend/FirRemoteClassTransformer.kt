@@ -1,7 +1,7 @@
-package kotlinx.kremote.codegen.frontend
+package kotlinx.remote.codegen.frontend
 
-import kotlinx.kremote.codegen.common.RpcClassId
-import kotlinx.kremote.codegen.common.RpcNames
+import kotlinx.remote.codegen.common.RemoteClassId
+import kotlinx.remote.codegen.common.RemoteNames
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -18,21 +18,21 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.name.Name
 
-class FirRpcServiceGenerator(
+class FirRemoteClassTransformer(
     session: FirSession,
     @Suppress("unused")
     private val logger: MessageCollector,
 ) : FirDeclarationGenerationExtension(session) {
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
-        register(FirRpcPredicates.remoteSerializable)
+        register(FirRemotePredicates.remoteSerializable)
     }
 
     override fun getNestedClassifiersNames(
         classSymbol: FirClassSymbol<*>,
         context: NestedClassGenerationContext,
     ): Set<Name> {
-        return if (session.predicateBasedProvider.matches(FirRpcPredicates.remoteSerializable, classSymbol)) {
-            setOf(RpcNames.REMOTE_CLASS_STUB_NAME, RpcNames.REMOTE_CLASS_SERIALIZER_NAME)
+        return if (session.predicateBasedProvider.matches(FirRemotePredicates.remoteSerializable, classSymbol)) {
+            setOf(RemoteNames.REMOTE_CLASS_STUB_NAME, RemoteNames.REMOTE_CLASS_SERIALIZER_NAME)
         } else {
             emptySet()
         }
@@ -44,11 +44,11 @@ class FirRpcServiceGenerator(
         context: NestedClassGenerationContext,
     ): FirClassLikeSymbol<*>? {
         return when(name) {
-            RpcNames.REMOTE_CLASS_STUB_NAME -> {
+            RemoteNames.REMOTE_CLASS_STUB_NAME -> {
                 generateRpcServiceStubClass(owner)
             }
 
-            RpcNames.REMOTE_CLASS_SERIALIZER_NAME -> {
+            RemoteNames.REMOTE_CLASS_SERIALIZER_NAME -> {
                 generateSerializerObjectForRpcService(owner)
             }
 
@@ -59,20 +59,20 @@ class FirRpcServiceGenerator(
     }
 
     private fun generateSerializerObjectForRpcService(owner: FirClassSymbol<*>): FirClassLikeSymbol<*> {
-        return createNestedClass(owner, RpcNames.REMOTE_CLASS_SERIALIZER_NAME, FirRemoteClassSerializerKey) {
+        return createNestedClass(owner, RemoteNames.REMOTE_CLASS_SERIALIZER_NAME, FirRemoteClassSerializerKey) {
             visibility = Visibilities.Public
             modality = Modality.FINAL
             val typeArguments = arrayOf(owner.defaultType())
-            superType(RpcClassId.remoteSerializer.constructClassLikeType(typeArguments))
+            superType(RemoteClassId.remoteSerializer.constructClassLikeType(typeArguments))
         }.symbol
     }
 
     private fun generateRpcServiceStubClass(owner: FirClassSymbol<*>): FirRegularClassSymbol? {
-        return createNestedClass(owner, RpcNames.REMOTE_CLASS_STUB_NAME, FirRemoteClassStubKey) {
+        return createNestedClass(owner, RemoteNames.REMOTE_CLASS_STUB_NAME, FirRemoteClassStubKey) {
             visibility = Visibilities.Public
             modality = Modality.FINAL
             superType(owner.defaultType())
-            superType(RpcClassId.stubInterface.constructClassLikeType())
+            superType(RemoteClassId.stubInterface.constructClassLikeType())
         }.symbol
     }
 }

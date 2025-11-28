@@ -1,4 +1,4 @@
-package kotlinx.kremote.codegen.backend
+package kotlinx.remote.codegen.backend
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunctions: MutableList<IrFunction>) {
+class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteFunctions: MutableList<IrFunction>) {
 
     fun generate(parent: IrDeclarationParent): IrExpression {
         return irMapOf(

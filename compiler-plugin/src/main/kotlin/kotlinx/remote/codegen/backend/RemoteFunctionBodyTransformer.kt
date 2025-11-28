@@ -1,4 +1,4 @@
-package kotlinx.kremote.codegen.backend
+package kotlinx.remote.codegen.backend
 
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
+internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() {
     override fun visitFunction(
         declaration: IrFunction,
-        data: RpcIrContext
+        data: RemoteIrContext
     ): IrStatement {
         if (!declaration.remote() || declaration.isFakeOverride) return super.visitFunction(declaration, data)
         val originalBody = declaration.body ?: error("Remote function `${declaration.name}` should have a body")

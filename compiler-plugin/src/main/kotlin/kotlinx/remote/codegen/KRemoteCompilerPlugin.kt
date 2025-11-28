@@ -1,9 +1,9 @@
-package kotlinx.kremote.codegen
+package kotlinx.remote.codegen
 
-import kotlinx.kremote.codegen.backend.RpcIrExtension
-import kotlinx.kremote.codegen.backend.noarg.NoArgIrGenerationExtension
-import kotlinx.kremote.codegen.common.RpcClassId
-import kotlinx.kremote.codegen.frontend.FirRpcExtensionRegistrar
+import kotlinx.remote.codegen.backend.RemoteIrExtension
+import kotlinx.remote.codegen.backend.noarg.NoArgIrGenerationExtension
+import kotlinx.remote.codegen.common.RemoteClassId
+import kotlinx.remote.codegen.frontend.FirRemoteExtensionRegistrar
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -27,13 +27,12 @@ class KRemoteCompilerPlugin : CompilerPluginRegistrar() {
 
 @OptIn(ExperimentalCompilerApi::class)
 fun CompilerPluginRegistrar.ExtensionStorage.registerRpcExtensions(configuration: CompilerConfiguration) {
-    FirExtensionRegistrarAdapter.registerExtension(FirRpcExtensionRegistrar(configuration))
+    FirExtensionRegistrarAdapter.registerExtension(FirRemoteExtensionRegistrar(configuration))
     IrGenerationExtension.registerExtension(
-        NoArgIrGenerationExtension(listOf(RpcClassId.remoteSerializableAnnotation.asSingleFqName().asString()), false)
+        NoArgIrGenerationExtension(listOf(RemoteClassId.remoteSerializableAnnotation.asSingleFqName().asString()), false)
     )
-    IrGenerationExtension.registerExtension(RpcIrExtension())
+    IrGenerationExtension.registerExtension(RemoteIrExtension())
 }
-
 
 @OptIn(ExperimentalCompilerApi::class)
 class KRemoteCommandLineProcessor : CommandLineProcessor {
