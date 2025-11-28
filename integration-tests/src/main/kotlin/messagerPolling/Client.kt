@@ -8,6 +8,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.CallableMap
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
+import kotlinx.remote.genCallableMap
 
 private val loggedUsers = mutableMapOf<String, MutableList<String>>()
 
@@ -36,7 +37,7 @@ suspend fun receive(user: String): String? {
 }
 
 fun main(): Unit = runBlocking {
-    CallableMap.init()
+    CallableMap.putAll(genCallableMap())
     context(ClientContext) {
         println("Enter your name:")
         val name = readln()

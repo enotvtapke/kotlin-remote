@@ -10,8 +10,10 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
+import kotlinx.remote.CallableMap
 import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
+import kotlinx.remote.genCallableMap
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
@@ -38,8 +40,9 @@ data object ServerConfig : RemoteConfig {
 data object ServerContext : RemoteContext
 data object ClientContext : RemoteContext
 
-fun remoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> =
-    embeddedServer(Netty, port = 8080) {
+fun remoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
+    CallableMap.putAll(genCallableMap())
+    return embeddedServer(Netty, port = 8080) {
         install(CallLogging)
         install(ServerContentNegotiation) {
             json()
@@ -49,3 +52,4 @@ fun remoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyApplicat
             remote("/call")
         }
     }
+}

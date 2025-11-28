@@ -1,22 +1,18 @@
 package messagerPolling
 
-import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.application.install
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.routing.routing
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.routing.*
 import kotlinx.remote.CallableMap
-import kotlinx.remote.RemoteParameter
-import kotlinx.remote.RemoteType
-import kotlinx.remote.RemoteCallable
-import kotlinx.remote.RemoteInvokator
+import kotlinx.remote.genCallableMap
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
-import kotlin.reflect.typeOf
 
 fun main() {
-    CallableMap.init()
+    CallableMap.putAll(genCallableMap())
     embeddedServer(Netty, port = 8080) {
         install(ContentNegotiation) {
             json()

@@ -243,6 +243,10 @@ class RpcIrContext(
             callableMap.namedFunction("init")
         }
 
+        val genCallableMap by lazy {
+            namedFunction("kotlinx.remote", "genCallableMap")
+        }
+
         val rpcClientCloseService by lazy {
             remoteClient.namedFunction("closeService")
         }

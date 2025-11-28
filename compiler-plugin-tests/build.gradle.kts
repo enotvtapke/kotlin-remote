@@ -116,7 +116,7 @@ tasks.test {
     dependsOn(tasks.getByName("jar"))
 //    dependsOn(project(":").tasks.getByName("jvmJar"))
 //    dependsOn(project(":utils").tasks.getByName("jvmJar"))
-//    dependsOn(project(":krpc:krpc-core").tasks.getByName("jvmJar"))
+    dependsOn(project(":core").tasks.getByName("jvmJar"))
 
     useJUnitPlatform()
 

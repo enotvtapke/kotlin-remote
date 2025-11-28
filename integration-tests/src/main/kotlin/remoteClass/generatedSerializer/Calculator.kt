@@ -7,6 +7,7 @@ import kotlinx.remote.CallableMap
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.classes.RemoteSerializable
+import kotlinx.remote.genCallableMap
 import kotlinx.serialization.Serializable
 
 @RemoteSerializable
@@ -33,7 +34,7 @@ suspend fun calculator(init: Int): Calculator {
 }
 
 fun main(): Unit = runBlocking {
-    CallableMap.init()
+    CallableMap.putAll(genCallableMap())
     context(ClientContext) {
         val x = calculator(5)
         println(x.multiply(6))

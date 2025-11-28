@@ -12,7 +12,6 @@ import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.remoteClient
 import kotlinx.rpc.codegen.test.ServerConfig
 import kotlinx.rpc.codegen.test.ClientContext
-import kotlinx.remote.CallableMap
 
 open class Calculator(private var init: Long) {
     @Remote(ServerConfig::class)
@@ -26,7 +25,6 @@ open class Calculator(private var init: Long) {
 class CalculatorStub(): Calculator(0)
 
 fun box(): String = runBlocking {
-    CallableMap.init()
     context(ClientContext) {
         val c = Calculator(1)
         val test1 = c.multiply(5)

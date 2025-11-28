@@ -18,6 +18,7 @@ import kotlinx.remote.Remote
 import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.classes.RemoteSerializable
+import kotlinx.remote.genCallableMap
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
@@ -32,7 +33,7 @@ class ApplicationTests {
         @BeforeAll
         @JvmStatic
         fun setup() {
-            CallableMap.init()
+            CallableMap.putAll(genCallableMap())
         }
     }
 

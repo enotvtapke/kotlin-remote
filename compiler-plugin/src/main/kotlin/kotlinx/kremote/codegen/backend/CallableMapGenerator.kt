@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunctions: MutableList<IrFunction>) {
 
-    fun generate(parent: IrFunction): IrExpression {
+    fun generate(parent: IrDeclarationParent): IrExpression {
         return irMapOf(
             ctx.irBuiltIns.stringType,
             ctx.remoteCallable.defaultType,
@@ -43,7 +44,7 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
         )
     }
 
-    private fun irRpcCallable(parent: IrFunction, callable: IrFunction): IrExpression {
+    private fun irRpcCallable(parent: IrDeclarationParent, callable: IrFunction): IrExpression {
         return IrConstructorCallImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
@@ -121,8 +122,8 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
         }
     }
 
-    private fun genInvocator(parent: IrFunction, callable: IrFunction): IrExpression {
-        val functionLambda = parent.factory.buildFun {
+    private fun genInvocator(parent: IrDeclarationParent, callable: IrFunction): IrExpression {
+        val functionLambda = callable.factory.buildFun {
             origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             name = SpecialNames.ANONYMOUS
             visibility = DescriptorVisibilities.LOCAL

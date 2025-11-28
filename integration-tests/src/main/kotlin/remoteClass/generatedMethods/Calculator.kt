@@ -8,6 +8,7 @@ import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.classes.RemoteInstancesPool.instances
 import kotlinx.remote.classes.StubIdGenerator
+import kotlinx.remote.genCallableMap
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind.LONG
@@ -60,7 +61,7 @@ suspend fun calculator(init: Int): Calculator {
 }
 
 fun main(): Unit = runBlocking {
-    CallableMap.init()
+    CallableMap.putAll(genCallableMap())
     context(ClientContext) {
         val x = calculator(5)
         println(x.multiply(6))
