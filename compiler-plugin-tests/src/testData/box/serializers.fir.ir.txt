@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/serializers.kt
-  CLASS CLASS name:Calculator modality:FINAL visibility:public superTypes:[kotlin.Any]
+  CLASS CLASS name:Calculator modality:OPEN visibility:public superTypes:[kotlin.Any]
     annotations:
       RemoteSerializable
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Calculator
@@ -87,6 +87,9 @@ FILE fqName:<root> fileName:/serializers.kt
             RETURN type=kotlin.Nothing from='public final fun <get-id> (): kotlin.Long declared in <root>.Calculator.RemoteClassStub'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]' type=kotlin.Long origin=null
                 receiver: GET_VAR '<this>: <root>.Calculator.RemoteClassStub declared in <root>.Calculator.RemoteClassStub.<get-id>' type=<root>.Calculator.RemoteClassStub origin=null
+      CONSTRUCTOR visibility:public returnType:<root>.Calculator.RemoteClassStub
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in <root>.Calculator'
       CONSTRUCTOR visibility:public returnType:<root>.Calculator.RemoteClassStub [primary]
         VALUE_PARAMETER kind:Regular name:id index:0 type:kotlin.Long
         BLOCK_BODY
@@ -122,7 +125,7 @@ FILE fqName:<root> fileName:/serializers.kt
           CONST Long type=kotlin.Long value=0
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Calculator modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Calculator modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?

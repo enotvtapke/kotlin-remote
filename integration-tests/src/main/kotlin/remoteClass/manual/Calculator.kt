@@ -4,7 +4,7 @@ import ClientContext
 import ServerConfig
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
-import kotlinx.remote.classes.RemoteInstancesPool.instances
+import kotlinx.remote.classes.RemoteInstancesPool
 import kotlinx.remote.classes.addInstance
 import kotlinx.remote.network.RemoteCall
 import kotlinx.remote.network.call
@@ -46,7 +46,7 @@ open class Calculator(private var init: Int) {
 
         override fun deserialize(decoder: Decoder): Calculator {
             val id = decoder.decodeLong()
-            return instances.getOrDefault(id, CalculatorStub(id)) as Calculator
+            return RemoteInstancesPool.getOrDefault(id, CalculatorStub(id)) as Calculator
         }
     }
 }

@@ -1,40 +1,5 @@
-allprojects {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        maven("https://maven.google.com")
-        maven("https://plugins.gradle.org/m2/")
-        google()
-    }
-}
-
 plugins {
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.serialization)
-    alias(libs.plugins.atomicfu)
-}
-
-group = "org.jetbrains.kotlinx"
-version = "1.0-SNAPSHOT"
-
-dependencies {
-    implementation(libs.serialization.core)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.server.core)
-    implementation(libs.ktor.server.status.pages)
-    implementation(libs.ktor.serialization.json)
-
-    implementation(libs.logback.classic)
-    testImplementation(kotlin("test"))
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(21)
-    compilerOptions {
-        freeCompilerArgs.add("-Xcontext-parameters")
-    }
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.atomicfu) apply false
 }

@@ -1,5 +1,3 @@
-import kotlinx.kremote.TestCompilerExtension
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlinx.remote)
@@ -7,22 +5,15 @@ plugins {
     alias(libs.plugins.serialization)
 }
 
-configure<TestCompilerExtension> {
-    enabled = true
-}
-
 group = "org.jetbrains.kotlinx"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    implementation(project(":"))
+    implementation(project(":core"))
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiations)
+    implementation(libs.logback.classic)
 
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.call.logging)

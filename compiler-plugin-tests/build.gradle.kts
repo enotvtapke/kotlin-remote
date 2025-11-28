@@ -70,7 +70,7 @@ dependencies {
     implementation(libs.coroutines.core)
     implementation(libs.ktor.utils)
 
-    implementation(project(":"))
+    implementation(project(":core"))
     testRuntimeOnly(libs.kotlin.test)
     testRuntimeOnly(libs.kotlin.script.runtime)
     testRuntimeOnly(libs.kotlin.annotations.jvm)

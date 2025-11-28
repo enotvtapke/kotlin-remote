@@ -8,7 +8,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-abstract class RemoteSerializer<T> : KSerializer<T> {
+abstract class RemoteSerializer<T: Any> : KSerializer<T> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("id", LONG)
 
     override fun serialize(encoder: Encoder, value: T) {
