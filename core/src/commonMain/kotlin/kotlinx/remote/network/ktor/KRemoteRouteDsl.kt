@@ -17,29 +17,33 @@ import kotlinx.serialization.serializer
 @KtorDsl
 fun Route.remote(path: String) {
     post(path) {
-        val remoteCall = call.receive<RemoteCall>()
-        val callable = CallableMap[remoteCall.callableName]
-        if (callable.returnsStream) {
-            call.response.header(HttpHeaders.ContentType, "application/x-ndjson")
-            call.response.header(HttpHeaders.CacheControl, "no-cache")
+        handleRemoteCall()
+    }
+}
 
-            call.respondBytesWriter {
-                val serializer = serializer(callable.returnType.kType)
-                val result = CallableMap[remoteCall.callableName].invokator.call(remoteCall.parameters) as Flow<Any?>
-                result.collect { item ->
-                    writeStringUtf8(DefaultJson.encodeToString(serializer, item))
-                    writeStringUtf8("\n")
-                    flush()
-                }
+suspend fun RoutingContext.handleRemoteCall() {
+    val remoteCall = call.receive<RemoteCall>()
+    val callable = CallableMap[remoteCall.callableName]
+    if (callable.returnsStream) {
+        call.response.header(HttpHeaders.ContentType, "application/x-ndjson")
+        call.response.header(HttpHeaders.CacheControl, "no-cache")
+
+        call.respondBytesWriter {
+            val serializer = serializer(callable.returnType.kType)
+            val result = CallableMap[remoteCall.callableName].invokator.call(remoteCall.parameters) as Flow<Any?>
+            result.collect { item ->
+                writeStringUtf8(DefaultJson.encodeToString(serializer, item))
+                writeStringUtf8("\n")
+                flush()
             }
-        } else {
-            call.respond(
-                RemoteServerImpl.handleCall(remoteCall),
-                TypeInfo(
-                    callable.returnType.kType.rpcInternalKClass<Any>(),
-                    callable.returnType.kType
-                )
-            )
         }
+    } else {
+        call.respond(
+            RemoteServerImpl.handleCall(remoteCall),
+            TypeInfo(
+                callable.returnType.kType.rpcInternalKClass<Any>(),
+                callable.returnType.kType
+            )
+        )
     }
 }
