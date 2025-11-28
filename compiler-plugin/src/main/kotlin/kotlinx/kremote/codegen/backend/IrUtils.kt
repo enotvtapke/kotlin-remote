@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.getValueArgument
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -153,6 +154,8 @@ fun IrFunction.remoteFunctionName(): String = fqNameWhenAvailable?.asString()
 fun IrBuilderWithScope.irSafeAs(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.SAFE_CAST, type, argument)
 
-fun IrFunction.supportedParameters(): List<IrValueParameter> = parameters.filter {
-    it.kind in listOf(IrParameterKind.DispatchReceiver, IrParameterKind.Regular)
+fun IrFunction.nonStaticParameters(ctx: RpcIrContext): List<IrValueParameter> = parameters.filter {
+    !it.isRemoteContext(ctx)
 }
+
+fun IrValueParameter.isRemoteContext(ctx: RpcIrContext) = kind == IrParameterKind.Context && type.isSubtypeOfClass(ctx.remoteContext)

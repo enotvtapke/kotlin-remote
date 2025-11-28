@@ -68,6 +68,37 @@ class ApplicationTests {
         }
 
     @Test
+    fun `extension function call`() =
+        testApplication {
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
+
+            @Remote(ServerConfig::class)
+            context(ctx: RemoteContext)
+            suspend fun Long.multiply(rhs: Long) = this * rhs
+
+            context(ClientContext) {
+                assertEquals(100, 10L.multiply(10))
+            }
+        }
+
+    @Test
+    fun `function with additional context parameters call`() =
+        testApplication {
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
+
+            @Remote(ServerConfig::class)
+            context(_: RemoteContext, x: Int)
+            suspend fun Long.multiply(rhs: Long) = this * rhs * x
+
+            context(ClientContext, 10) {
+                assertEquals(1000, 10L.multiply(10))
+            }
+        }
+
+
+    @Test
     fun `streaming local call`() =
         testApplication {
             configureApplication()

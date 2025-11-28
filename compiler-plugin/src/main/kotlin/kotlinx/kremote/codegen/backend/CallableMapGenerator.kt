@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -54,7 +52,7 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
             constructorTypeArgumentsCount = 0,
         ).apply {
             val invokator = genInvocator(parent, callable)
-            val parameters = callable.supportedParameters()
+            val parameters = callable.nonStaticParameters(ctx)
             val callee =
                 if (parameters.isEmpty()) ctx.functions.emptyArray
                 else ctx.irBuiltIns.arrayOf
@@ -140,7 +138,10 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
 
             body = ctx.irBuilder(symbol).irBlockBody {
                 val call = irCall(callable).apply {
-                    val argValues = callable.supportedParameters().memoryOptimizedMapIndexed { argIndex, arg ->
+                    callable.parameters.filter { it.isRemoteContext(ctx) }.forEach {
+                        arguments[it.indexInParameters] = remoteConfigContextCall(callable, ctx)
+                    }
+                    callable.nonStaticParameters(ctx).forEachIndexed { index, param ->
                         val argValue = irCall(
                             callee = ctx.functions.arrayGet.symbol,
                             type = ctx.anyNullable,
@@ -151,18 +152,10 @@ class CallableMapGenerator(private val ctx: RpcIrContext, private val remoteFunc
                                 startOffset = startOffset,
                                 endOffset = endOffset,
                                 type = ctx.irBuiltIns.intType,
-                                value = argIndex,
+                                value = index,
                             )
                         }
-                        if (arg.type.isNullable()) irSafeAs(argValue, arg.type) else irAs(argValue, arg.type)
-                    }
-                    val remoteContextParameter = callable.parameters.singleOrNull {
-                        it.kind == IrParameterKind.Context && it.type.isSubtypeOfClass(ctx.remoteContext)
-                    }
-                        ?: error("Remote function `${callable.name}` should have a single context parameter of type `${ctx.remoteContext.defaultType.render()}`")
-                    arguments[remoteContextParameter.indexInParameters] = remoteConfigContextCall(callable, ctx)
-                    callable.supportedParameters().forEachIndexed { index, param ->
-                        arguments[param.indexInParameters] = argValues[index]
+                        arguments[param.indexInParameters] = if (param.type.isNullable()) irSafeAs(argValue, param.type) else irAs(argValue, param.type)
                     }
                 }
                 +irReturn(call)

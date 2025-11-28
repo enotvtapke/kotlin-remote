@@ -3,7 +3,6 @@ package kotlinx.kremote.codegen.backend
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
@@ -20,9 +19,8 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
         if (!declaration.remote() || declaration.isFakeOverride) return super.visitFunction(declaration, data)
         val originalBody = declaration.body ?: error("Remote function `${declaration.name}` should have a body")
         val context = declaration.parameters.singleOrNull {
-            it.type == data.remoteContext.defaultType && it.kind == IrParameterKind.Context
-        }
-            ?: error("Remote function `${declaration.name}` should have a single context parameter of type ${data.remoteContext.defaultType.render()}")
+            it.isRemoteContext(data)
+        } ?: error("Remote function `${declaration.name}` should have a single context parameter of type ${data.remoteContext.defaultType.render()}")
         val remoteConfigSymbol = declaration.remoteConfigObject()
         declaration.body = data.irBuilder(declaration.symbol).irBlockBody {
             val configClient = irCall(data.remoteConfigClient.owner.getter!!.symbol).apply {
@@ -44,7 +42,7 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RpcIrContext>() {
                         typeArguments[0] = data.anyNullable
                         arguments[0] = irVararg(
                             elementType = data.anyNullable,
-                            values = declaration.supportedParameters().memoryOptimizedMap {
+                            values = declaration.nonStaticParameters(data).memoryOptimizedMap {
                                 irGet(it)
                             },
                         )

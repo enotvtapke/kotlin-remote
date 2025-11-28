@@ -52,6 +52,18 @@ public class BoxTestGenerated extends AbstractBoxTest {
   }
 
   @Test
+  @TestMetadata("contextParameters.kt")
+  public void testContextParameters() {
+    runTest("src/testData/box/contextParameters.kt");
+  }
+
+  @Test
+  @TestMetadata("extensionFunction.kt")
+  public void testExtensionFunction() {
+    runTest("src/testData/box/extensionFunction.kt");
+  }
+
+  @Test
   @TestMetadata("initCallableMap.kt")
   public void testInitCallableMap() {
     runTest("src/testData/box/initCallableMap.kt");
