@@ -13,6 +13,6 @@ object CallableMap {
 }
 
 /**
- * This function call will be replace with generated CallableMap by compiler plugin
+ * The compiler plugin will replace every call to this function with generated CallableMap
  */
 fun genCallableMap(): MutableMap<String, RemoteCallable> = mutableMapOf()

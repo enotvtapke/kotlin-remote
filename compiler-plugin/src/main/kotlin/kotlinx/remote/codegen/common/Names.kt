@@ -13,6 +13,7 @@ object RemoteClassId {
     val remoteSerializableAnnotation = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("RemoteSerializable"))
 
     val remoteSerializer = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("RemoteSerializer"))
+    val flow = ClassId(FqName("kotlinx.coroutines.flow"), Name.identifier("Flow"))
     val stubInterface = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("Stub"))
     val remoteContext = ClassId(FqName("kotlinx.remote"), Name.identifier("RemoteContext"))
 }
