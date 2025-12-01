@@ -23,7 +23,3 @@ data class RemoteCallable(
 fun interface RemoteInvokator {
     suspend fun call(parameters: Array<Any?>): Any?
 }
-
-fun main() {
-    println("a")
-}

@@ -66,6 +66,10 @@ class RemoteIrContext(
         getRemoteIrClassSymbol("RemoteCall", "network")
     }
 
+    val remoteResponse by lazy {
+        getRemoteIrClassSymbol("RemoteResponse", "network")
+    }
+
     val remoteCallable by lazy {
         getRemoteIrClassSymbol("RemoteCallable")
     }

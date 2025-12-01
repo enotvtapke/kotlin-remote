@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/class.kt
                           ARG name: CONST String type=kotlin.String value="multiply"
                           ARG returnType: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
                             ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
-                              TYPE_ARG T: kotlin.Long
+                              TYPE_ARG T: kotlinx.remote.network.RemoteResponse<kotlin.Long>
                           ARG invokator: TYPE_OP type=kotlinx.remote.RemoteInvokator origin=SAM_CONVERSION typeOperand=kotlinx.remote.RemoteInvokator
                             FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Any?> origin=LAMBDA
                               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any? [suspend]

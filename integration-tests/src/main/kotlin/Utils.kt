@@ -1,3 +1,4 @@
+import experiments.exceptionSerializer
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -18,6 +19,11 @@ import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
 import kotlinx.remote.network.remoteClient
+import kotlinx.remote.network.serialization.setupExceptionSerializers
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
 
 data object ServerConfig : RemoteConfig {
@@ -29,7 +35,11 @@ data object ServerConfig : RemoteConfig {
             contentType(ContentType.Application.Json)
         }
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                serializersModule = SerializersModule {
+                    setupExceptionSerializers()
+                }
+            })
         }
         install(Logging) {
             level = LogLevel.BODY

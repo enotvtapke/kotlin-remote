@@ -1,9 +1,9 @@
 package manual
 
+import ServerConfig
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.network.RemoteCall
 import kotlinx.remote.network.call
@@ -12,7 +12,7 @@ import kotlinx.remote.network.callStreaming
 context(ctx: RemoteContext)
 suspend fun multiply(lhs: Long, rhs: Long) =
     if (ctx == ServerConfig.context) {
-        lhs * rhs
+        lhs / rhs
     } else {
         ServerConfig.client.call<Long>(
             RemoteCall("multiply", arrayOf(lhs, rhs))

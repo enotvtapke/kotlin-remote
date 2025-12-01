@@ -23,9 +23,13 @@ import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
 import kotlinx.remote.network.remoteClient
+import kotlinx.remote.network.serialization.setupExceptionSerializers
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 class ApplicationTests {
@@ -64,6 +68,39 @@ class ApplicationTests {
 
             context(ClientContext) {
                 assertEquals(100, multiply(10, 10))
+            }
+        }
+
+    @Test
+    fun `erroneous call`() =
+        testApplication {
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
+
+            @Remote(ServerConfig::class)
+            context(ctx: RemoteContext)
+            suspend fun multiply(lhs: Long, rhs: Long): Long = throw IllegalStateException("Exception")
+
+            context(ClientContext) {
+                assertThrows<IllegalStateException>("Exception") { multiply(10, 10) }
+            }
+        }
+
+    @Test
+    fun `direct recursion`() =
+        testApplication {
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
+
+            @Remote(ServerConfig::class)
+            context(ctx: RemoteContext)
+            suspend fun power(base: Long, p: Long): Long {
+                if (p == 0L) return 1L
+                return base * power(base, p - 1L)
+            }
+
+            context(ClientContext) {
+                assertEquals(1024L, power(2, 10))
             }
         }
 
@@ -193,7 +230,11 @@ class ApplicationTests {
                 contentType(ContentType.Application.Json)
             }
             install(ClientContentNegotiation) {
-                json()
+                json(Json {
+                    serializersModule = SerializersModule {
+                        setupExceptionSerializers()
+                    }
+                })
             }
         }.remoteClient("/call")
 
@@ -201,7 +242,11 @@ class ApplicationTests {
         application {
             install(CallLogging)
             install(ServerContentNegotiation) {
-                json()
+                json(Json {
+                    serializersModule = SerializersModule {
+                        setupExceptionSerializers()
+                    }
+                })
             }
             install(KRemote)
             routing {

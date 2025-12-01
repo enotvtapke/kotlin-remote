@@ -10,12 +10,19 @@ import kotlinx.remote.CallableMap
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
+import kotlinx.remote.network.serialization.setupExceptionSerializers
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 
 fun main() {
     CallableMap.putAll(genCallableMap())
     embeddedServer(Netty, port = 8080) {
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                serializersModule = SerializersModule {
+                    setupExceptionSerializers()
+                }
+            })
         }
         install(KRemote)
         routing {

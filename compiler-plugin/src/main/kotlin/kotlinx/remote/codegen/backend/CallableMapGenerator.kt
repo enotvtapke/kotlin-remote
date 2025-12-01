@@ -112,7 +112,7 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
                 IrConstImpl.string(startOffset, endOffset, ctx.irBuiltIns.stringType, callable.name.asString())
             arguments[1] = irRemoteTypeCall(
                 if (isStreaming) (callable.returnType as IrSimpleType).arguments.single().typeOrFail
-                else callable.returnType
+                else ctx.remoteResponse.typeWith(listOf(callable.returnType))
             )
             arguments[2] = invokator
             arguments[3] = parametersCall

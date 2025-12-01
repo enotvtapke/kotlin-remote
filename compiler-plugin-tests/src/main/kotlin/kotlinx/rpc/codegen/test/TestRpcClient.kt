@@ -9,13 +9,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.remote.network.RemoteCall
 import kotlinx.remote.network.RemoteClient
+import kotlinx.remote.network.RemoteResponse
 
 object TestRpcClient : RemoteClient {
     override suspend fun call(
         call: RemoteCall,
         returnType: TypeInfo
     ): Any? {
-        return 42L
+        return RemoteResponse.Success(42L)
     }
 
     override fun callStreaming(

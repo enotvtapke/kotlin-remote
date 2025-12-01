@@ -45,6 +45,11 @@ class RemoteClientImpl(private val httpClient: HttpClient, private val path: Str
 
 inline fun <reified T> RemoteClient.callStreaming(call: RemoteCall) = callStreaming(call, typeInfo<T>()) as Flow<T>
 
-suspend inline fun <reified T> RemoteClient.call(call: RemoteCall) = call(call, typeInfo<T>()) as T
+suspend inline fun <reified T> RemoteClient.call(call: RemoteCall): T {
+    when (val response = call(call, typeInfo<RemoteResponse<T>>()) as RemoteResponse<T>) {
+        is RemoteResponse.Success -> return response.value
+        is RemoteResponse.Failure -> throw response.error
+    }
+}
 
 fun HttpClient.remoteClient(path: String): RemoteClient = RemoteClientImpl(this, path)
