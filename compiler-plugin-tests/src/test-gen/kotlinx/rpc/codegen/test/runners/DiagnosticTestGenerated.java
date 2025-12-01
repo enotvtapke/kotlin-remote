@@ -22,6 +22,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
   }
 
   @Test
+  @TestMetadata("genericRemoteFunction.kt")
+  public void testGenericRemoteFunction() {
+    runTest("src/testData/diagnostics/genericRemoteFunction.kt");
+  }
+
+  @Test
   @TestMetadata("noContext.kt")
   public void testNoContext() {
     runTest("src/testData/diagnostics/noContext.kt");
