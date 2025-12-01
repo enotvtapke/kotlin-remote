@@ -32,4 +32,10 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
   public void testNoContext() {
     runTest("src/testData/diagnostics/noContext.kt");
   }
+
+  @Test
+  @TestMetadata("noSuspend.kt")
+  public void testNoSuspend() {
+    runTest("src/testData/diagnostics/noSuspend.kt");
+  }
 }

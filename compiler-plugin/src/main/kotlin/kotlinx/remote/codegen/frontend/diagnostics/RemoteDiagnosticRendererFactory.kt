@@ -20,6 +20,11 @@ object RemoteDiagnosticRendererFactory : BaseDiagnosticRendererFactory() {
             factory = FirRemoteDiagnostics.GENERIC_REMOTE_FUNCTION,
             message = "Remote function cannot have type parameters.",
         )
+
+        map.put(
+            factory = FirRemoteDiagnostics.NON_SUSPENDING_REMOTE_FUNCTION,
+            message = "Remote function should be suspend.",
+        )
     }
 }
 

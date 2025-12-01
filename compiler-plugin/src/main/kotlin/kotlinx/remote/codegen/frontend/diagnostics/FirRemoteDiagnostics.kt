@@ -20,4 +20,5 @@ import org.jetbrains.kotlin.psi.KtElement
 object FirRemoteDiagnostics {
     val WRONG_REMOTE_FUNCTION_CONTEXT by error1<KtElement, ConeKotlinType>()
     val GENERIC_REMOTE_FUNCTION by error0<KtElement>()
+    val NON_SUSPENDING_REMOTE_FUNCTION by error0<KtElement>()
 }

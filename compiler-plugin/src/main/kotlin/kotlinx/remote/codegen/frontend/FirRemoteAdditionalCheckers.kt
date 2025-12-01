@@ -6,6 +6,7 @@ package kotlinx.remote.codegen.frontend
 
 import kotlinx.remote.codegen.common.RemoteClassId
 import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.GENERIC_REMOTE_FUNCTION
+import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.NON_SUSPENDING_REMOTE_FUNCTION
 import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.WRONG_REMOTE_FUNCTION_CONTEXT
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
@@ -71,6 +73,12 @@ class FirGenericRemoteFunctionChecker : FirFunctionChecker(MppCheckerKind.Common
             reporter.reportOn(
                 source = declaration.source,
                 factory = GENERIC_REMOTE_FUNCTION,
+            )
+        }
+        if (!declaration.isSuspend) {
+            reporter.reportOn(
+                source = declaration.source,
+                factory = NON_SUSPENDING_REMOTE_FUNCTION,
             )
         }
     }
