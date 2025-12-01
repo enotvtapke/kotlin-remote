@@ -16,11 +16,21 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.initIdeaConfiguration
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.services.EnvironmentBasedStandardLibrariesPathProvider
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
+import org.junit.jupiter.api.BeforeAll
 
 open class AbstractBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    companion object {
+        @BeforeAll
+        @JvmStatic
+        fun setUp() {
+            initIdeaConfiguration()
+        }
+    }
+
     override fun createKotlinStandardLibrariesPathProvider(): KotlinStandardLibrariesPathProvider {
         return EnvironmentBasedStandardLibrariesPathProvider
     }
@@ -44,7 +54,6 @@ open class AbstractBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
                 +DUMP_IR
                 +WITH_STDLIB
                 +WITH_REFLECT
-                LanguageSettingsDirectives.LANGUAGE with "+${LanguageFeature.ContextParameters.name}"
             }
 
             commonFirWithPluginFrontendConfiguration()
@@ -52,12 +61,13 @@ open class AbstractBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     }
 }
 
-private fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
+fun TestConfigurationBuilder.commonFirWithPluginFrontendConfiguration() {
     defaultDirectives {
         +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
         +FirDiagnosticsDirectives.FIR_DUMP
         +JvmEnvironmentConfigurationDirectives.FULL_JDK
         +CodegenTestDirectives.IGNORE_DEXING
+        LanguageSettingsDirectives.LANGUAGE with "+${LanguageFeature.ContextParameters.name}"
     }
 
     useConfigurators(
