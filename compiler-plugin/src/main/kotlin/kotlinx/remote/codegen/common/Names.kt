@@ -14,6 +14,7 @@ object RemoteClassId {
 
     val remoteSerializer = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("RemoteSerializer"))
     val stubInterface = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("Stub"))
+    val remoteContext = ClassId(FqName("kotlinx.remote"), Name.identifier("RemoteContext"))
 }
 
 object RemoteNames {

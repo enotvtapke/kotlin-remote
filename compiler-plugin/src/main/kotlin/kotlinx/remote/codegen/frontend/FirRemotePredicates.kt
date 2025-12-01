@@ -7,4 +7,8 @@ object FirRemotePredicates {
     internal val remoteSerializable = DeclarationPredicate.create {
         annotated(RemoteClassId.remoteSerializableAnnotation.asSingleFqName())
     }
+
+    internal val remote = DeclarationPredicate.create {
+        annotated(RemoteClassId.remoteAnnotation.asSingleFqName())
+    }
 }
