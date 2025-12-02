@@ -1,25 +1,50 @@
 plugins {
-    `kotlin-dsl`
-    kotlin("jvm") version ("2.0.21")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.buildconfig)
+    alias(libs.plugins.gradle.plugin)
 }
 
-group = "org.jetbrains.kotlinx"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
+sourceSets {
+    main {
+        java.setSrcDirs(listOf("src"))
+        resources.setSrcDirs(listOf("resources"))
+    }
+    test {
+        java.setSrcDirs(listOf("test"))
+        resources.setSrcDirs(listOf("testResources"))
+    }
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0")
+    implementation(libs.kotlin.gradle.plugin.api)
+    testImplementation(libs.kotlin.test.junit5)
+}
+
+buildConfig {
+    packageName(project.group.toString())
+
+    buildConfigField("String", "KOTLIN_PLUGIN_ID", "\"${rootProject.group}\"")
+
+    val pluginProject = project(":compiler-plugin")
+    buildConfigField("String", "KOTLIN_PLUGIN_GROUP", "\"${pluginProject.group}\"")
+    buildConfigField("String", "KOTLIN_PLUGIN_NAME", "\"${pluginProject.name}\"")
+    buildConfigField("String", "KOTLIN_PLUGIN_VERSION", "\"${pluginProject.version}\"")
+
+    val annotationsProject = project(":plugin-annotations")
+    buildConfigField(
+        type = "String",
+        name = "ANNOTATIONS_LIBRARY_COORDINATES",
+        expression = "\"${annotationsProject.group}:${annotationsProject.name}:${annotationsProject.version}\""
+    )
 }
 
 gradlePlugin {
     plugins {
-        create("plugin") {
-            id = "org.jetbrains.kotlinx.kremote.plugin"
-
-            implementationClass = "kotlinx.kremote.KRemoteGradlePlugin"
+        create("SimplePlugin") {
+            id = rootProject.group.toString()
+            displayName = "SimplePlugin"
+            description = "SimplePlugin"
+            implementationClass = "org.jetbrains.kotlin.compiler.plugin.template.SimpleGradlePlugin"
         }
     }
 }

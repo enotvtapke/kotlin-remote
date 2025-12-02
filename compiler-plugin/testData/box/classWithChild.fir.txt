@@ -1,0 +1,53 @@
+FILE: classWithChild.kt
+    package box
+
+    public open class Calculator : R|kotlin/Any| {
+        public constructor(init: R|kotlin/Long|): R|box/Calculator| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final var init: R|kotlin/Long| = R|<local>/init|
+            private get(): R|kotlin/Long|
+            private set(value: R|kotlin/Long|): R|kotlin/Unit|
+
+        context(ctx: R|kotlinx/remote/RemoteContext|)
+        @R|kotlinx/remote/Remote|(config = <getClass>(Q|kotlinx/remote/codegen/test/ServerConfig|)) public final suspend fun multiply(x: R|kotlin/Long|): R|kotlin/Long| {
+            this@R|box/Calculator|.R|box/Calculator.init| = this@R|box/Calculator|.R|box/Calculator.init|.R|kotlin/Long.times|(R|<local>/x|)
+            ^multiply this@R|box/Calculator|.R|box/Calculator.init|
+        }
+
+    }
+    public final class CalculatorStub : R|box/Calculator| {
+        public constructor(): R|box/CalculatorStub| {
+            super<R|box/Calculator|>(Long(0))
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {
+            ^ R|kotlin/context|<R|kotlinx/remote/codegen/test/ClientContext|, R|kotlin/String|>(Q|kotlinx/remote/codegen/test/ClientContext|, <L> = context(<unused var>: R|kotlinx/remote/codegen/test/ClientContext|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                lval c: R|box/Calculator| = R|box/Calculator.Calculator|(Long(1))
+                lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) R|<local>/c|.R|box/Calculator.multiply|(Long(5))
+                ^ when () {
+                    ==(R|<local>/test1|, Long(42)) ->  {
+                        String(OK)
+                    }
+                    else ->  {
+                        <strcat>(String(Fail: test1=), R|<local>/test1|)
+                    }
+                }
+
+            }
+            )
+        }
+        )
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package foo.bar
+
+    public final class MyClass : R|kotlin/Any| {
+        public final fun foo(): R|kotlin/String|
+
+        public constructor(): R|foo/bar/MyClass|
+
+    }

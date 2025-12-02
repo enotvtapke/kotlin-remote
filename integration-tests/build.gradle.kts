@@ -1,20 +1,24 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.kotlinx.remote)
+    id("org.jetbrains.kotlin.compiler.plugin.template")
     alias(libs.plugins.atomicfu)
     alias(libs.plugins.serialization)
 }
 
-group = "org.jetbrains.kotlinx"
+group = "org.example"
 version = "1.0-SNAPSHOT"
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
-    implementation(project(":core"))
+//    implementation(project(".."))
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiations)
     implementation(libs.ktor.client.auth)
-    
+
     implementation(libs.logback.classic)
 
     implementation(libs.ktor.server.netty)
@@ -34,8 +38,8 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
-
 kotlin {
+    jvmToolchain(21)
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-parameters")
     }

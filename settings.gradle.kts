@@ -1,21 +1,19 @@
-rootProject.name = "kotlin-remote"
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    
+}
 
 dependencyResolutionManagement {
     repositories {
-        mavenLocal()
         mavenCentral()
-        maven("https://maven.google.com")
-        maven("https://plugins.gradle.org/m2/")
-        google()
     }
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
-}
+rootProject.name = "compiler-plugin-template"
 
-includeBuild("gradle-plugin")
-includeBuild("compiler-plugin")
-include("integration-tests")
-include("compiler-plugin-tests")
-include("core")
+include("compiler-plugin")
+include("gradle-plugin")
+include("plugin-annotations")
