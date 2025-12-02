@@ -26,6 +26,7 @@ class ExceptionSerializer<T : Exception>(
 
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor(name) {
         element<String?>("message")
+        element<String?>("stackTrace")
     }
 
     @OptIn(ExperimentalSerializationApi::class)
@@ -37,12 +38,19 @@ class ExceptionSerializer<T : Exception>(
                 serializer<String?>(),
                 value.message
             )
+            encodeNullableSerializableElement(
+                descriptor,
+                1,
+                serializer<String?>(),
+                value.stackTraceToString()
+            )
         }
     }
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun deserialize(decoder: Decoder): T {
         var message: String? = null
+        var stackTrace: String? = null
 
         decoder.decodeStructure(descriptor) {
             while (true) {
@@ -53,13 +61,24 @@ class ExceptionSerializer<T : Exception>(
                         serializer<String?>(),
                         null
                     )
+                    1 -> stackTrace = decodeNullableSerializableElement(
+                        descriptor,
+                        1,
+                        serializer<String?>(),
+                        null
+                    )
                     DECODE_DONE -> break
                     else -> error("Unexpected index: $index")
                 }
             }
         }
 
-        return exceptionFactory(message)
+        val finalMessage = if (stackTrace != null) {
+            val base = message ?: "Remote exception"
+            "$base\n--- Remote stack trace ---\n$stackTrace--- End of remote stack trace ---"
+        } else message
+
+        return exceptionFactory(finalMessage)
     }
 }
 
