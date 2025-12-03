@@ -285,6 +285,27 @@ Because constructors cannot have context parameters, remote classes should be in
 The client in the main function works with a stub of the class. `instances` map is a special storage where all the
 remote class instances are stored.
 
+Compiler plugin generates serializers and stubs automatically.
+
+```kotlin
+@RemoteSerializable
+@Serializable(with = Calculator.RemoteClassSerializer::class)
+class Calculator(private var init: Int) {
+    @Remote(ServerConfig::class)
+    context(_: RemoteContext)
+    suspend fun multiply(x: Int): Int {
+        init *= x
+        return init
+    }
+
+    @Remote(ServerConfig::class)
+    context(_: RemoteContext)
+    suspend fun result(): Int {
+        return init
+    }
+}
+```
+
 ### Features
 
 The project is completely kotlin multiplatform and supports all the KMP compilation targets.
