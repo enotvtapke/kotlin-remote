@@ -23,7 +23,7 @@ idea {
     module.generatedSourceDirs.add(projectDir.resolve("test-gen"))
 }
 
-val annotationsRuntimeClasspath: Configuration by configurations.creating { isTransitive = false }
+val coreRuntimeClasspath: Configuration by configurations.creating { isTransitive = false }
 
 dependencies {
     compileOnly(libs.kotlin.compiler)
@@ -32,11 +32,11 @@ dependencies {
     testFixturesApi(libs.kotlin.test.framework)
     testFixturesApi(libs.kotlin.compiler)
 
-    annotationsRuntimeClasspath(project(":core"))
-    annotationsRuntimeClasspath(libs.kotlin.reflect)
-    annotationsRuntimeClasspath(libs.coroutines.core)
-    annotationsRuntimeClasspath(libs.ktor.utils)
-    annotationsRuntimeClasspath(libs.serialization.core)
+    coreRuntimeClasspath(project(":core"))
+    coreRuntimeClasspath(libs.kotlin.reflect)
+    coreRuntimeClasspath(libs.coroutines.core)
+    coreRuntimeClasspath(libs.ktor.utils)
+    coreRuntimeClasspath(libs.serialization.core)
 
     // Dependencies required to run the internal test framework.
     testRuntimeOnly(libs.junit)
@@ -56,12 +56,12 @@ buildConfig {
 }
 
 tasks.test {
-    dependsOn(annotationsRuntimeClasspath)
+    dependsOn(coreRuntimeClasspath)
 
     useJUnitPlatform()
     workingDir = rootDir
 
-    systemProperty("annotationsRuntime.classpath", annotationsRuntimeClasspath.asPath)
+    systemProperty("coreRuntime.classpath", coreRuntimeClasspath.asPath)
 
     // Properties required to run the internal test framework.
     setLibraryProperty("org.jetbrains.kotlin.test.kotlin-stdlib", "kotlin-stdlib")

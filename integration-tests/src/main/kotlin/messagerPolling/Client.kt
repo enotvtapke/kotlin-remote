@@ -13,7 +13,7 @@ import kotlinx.remote.genCallableMap
 private val loggedUsers = mutableMapOf<String, MutableList<String>>()
 
 @Remote(ServerConfig::class)
-context(ctx: RemoteContext)
+context(_: RemoteContext)
 suspend fun login(name: String) {
     loggedUsers[name] = mutableListOf()
 }

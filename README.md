@@ -284,6 +284,9 @@ fun main(): Unit = runBlocking {
 }
 ```
 
+You can find more examples in the [integration tests](integration-tests/src/test/kotlin/ApplicationTests.kt) or in the
+[chat example](integration-tests/src/main/kotlin/messagerPolling/Client.kt).
+
 Because constructors cannot have context parameters, remote classes should be instantiated with a factory function.
 The client in the main function works with a stub of the class. `instances` map is a special storage where all the
 remote class instances are stored. As for now there are no means by which this storage can be cleaned up.
