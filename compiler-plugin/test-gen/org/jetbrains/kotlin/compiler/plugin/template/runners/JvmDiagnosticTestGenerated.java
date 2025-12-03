@@ -38,10 +38,4 @@ public class JvmDiagnosticTestGenerated extends AbstractJvmDiagnosticTest {
   public void testNoSuspend() {
     runTest("compiler-plugin/testData/diagnostics/noSuspend.kt");
   }
-
-  @Test
-  @TestMetadata("simple.kt")
-  public void testSimple() {
-    runTest("compiler-plugin/testData/diagnostics/simple.kt");
-  }
 }
