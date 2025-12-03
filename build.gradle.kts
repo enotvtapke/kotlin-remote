@@ -7,6 +7,6 @@ plugins {
 }
 
 allprojects {
-    group = "org.jetbrains.kotlin.compiler.plugin.template"
+    group = "org.jetbrains.kotlin.plugin.remote"
     version = "0.1.0-SNAPSHOT"
 }
