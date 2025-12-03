@@ -1,5 +1,12 @@
 ## Kotlin Remote
 
+### Goals
+* Develop a technology for network interactions that does not require to write boilerplate code
+
+### Objectives
+* Make possible to call Kotlin functions from application on different machine
+* Call Kotlin class constructors and methods from application on different machine
+
 ### Idea and intuition behind
 
 Idea is to allow calling usual kotlin functions from another machine. To make it possible, both machines have to use the
@@ -279,10 +286,16 @@ The client in the main function works with a stub of the class. `instances` map 
 remote class instances are stored.
 
 ### Features
+
 The project is completely kotlin multiplatform and supports all the KMP compilation targets.
 
 ### Current state
+
 All the features described above are implemented and to some extent tested.
+
+* The first thesis objective is reached. 
+* The second objective is almost reached. Manual or automatic memory management of remote class instances is still
+under development.
 
 ### Problems and open questions
 
@@ -296,6 +309,9 @@ All the features described above are implemented and to some extent tested.
   client cannot be restored. To fix it, changes inside the Kotlin compiler should be made, which is complicated.
 * Parameters with default values are passed on the network even if they have default values. Because we know the
   function signature statically, it can be fixed.
+* Remote functions does not preserve coroutine context. All the suspend calls inside remote functions are executed
+  in Ktor coroutine context. It basically means that user should provide correct coroutine context inside remote
+  function bodies with suspend calls.
 
 ### Used technologies
 
