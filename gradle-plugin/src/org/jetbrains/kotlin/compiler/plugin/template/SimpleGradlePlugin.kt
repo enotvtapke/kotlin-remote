@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.compiler.plugin.template
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.compiler.plugin.template.BuildConfig.ANNOTATIONS_LIBRARY_COORDINATES
+import org.jetbrains.kotlin.compiler.plugin.template.BuildConfig.CORE_LIBRARY_COORDINATES
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
@@ -29,9 +29,9 @@ class SimpleGradlePlugin : KotlinCompilerPluginSupportPlugin {
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
 
-        kotlinCompilation.dependencies { implementation(ANNOTATIONS_LIBRARY_COORDINATES) }
+        kotlinCompilation.dependencies { implementation(CORE_LIBRARY_COORDINATES) }
         if (kotlinCompilation.implementationConfigurationName == "metadataCompilationImplementation") {
-            project.dependencies.add("commonMainImplementation", ANNOTATIONS_LIBRARY_COORDINATES)
+            project.dependencies.add("commonMainImplementation", CORE_LIBRARY_COORDINATES)
         }
 
         return project.provider {

@@ -16,4 +16,4 @@ rootProject.name = "kotlin-remote"
 
 include("compiler-plugin")
 include("gradle-plugin")
-include("plugin-annotations")
+include("core")

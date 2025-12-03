@@ -32,7 +32,7 @@ dependencies {
     testFixturesApi(libs.kotlin.test.framework)
     testFixturesApi(libs.kotlin.compiler)
 
-    annotationsRuntimeClasspath(project(":plugin-annotations"))
+    annotationsRuntimeClasspath(project(":core"))
     annotationsRuntimeClasspath(libs.kotlin.reflect)
     annotationsRuntimeClasspath(libs.coroutines.core)
     annotationsRuntimeClasspath(libs.ktor.utils)
