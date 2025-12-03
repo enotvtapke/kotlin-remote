@@ -70,6 +70,12 @@ public class JvmBoxTestGenerated extends AbstractJvmBoxTest {
   }
 
   @Test
+  @TestMetadata("genericRemoteFunction.kt")
+  public void testGenericRemoteFunction() {
+    runTest("compiler-plugin/testData/box/genericRemoteFunction.kt");
+  }
+
+  @Test
   @TestMetadata("initCallableMap.kt")
   public void testInitCallableMap() {
     runTest("compiler-plugin/testData/box/initCallableMap.kt");

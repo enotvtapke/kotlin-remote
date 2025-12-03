@@ -1,24 +1,17 @@
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.request.accept
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.plugins.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.calllogging.CallLogging
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
+import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
-import kotlinx.remote.CallableMap
-import kotlinx.remote.Remote
-import kotlinx.remote.RemoteConfig
-import kotlinx.remote.RemoteContext
+import kotlinx.remote.*
 import kotlinx.remote.classes.RemoteSerializable
-import kotlinx.remote.genCallableMap
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
@@ -30,7 +23,11 @@ import kotlinx.serialization.modules.SerializersModule
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.io.path.Path
+import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
 
 class ApplicationTests {
     companion object {
@@ -82,7 +79,29 @@ class ApplicationTests {
             suspend fun multiply(lhs: Long, rhs: Long): Long = throw IllegalStateException("Exception")
 
             context(ClientContext) {
-                assertThrows<IllegalStateException>("Exception") { multiply(10, 10) }
+                val exception = assertThrows<IllegalStateException> { multiply(10, 10) }
+                val msg = Path("./src/test/kotlin/exceptionMessage.txt").readText()
+                assertEquals(msg, exception.message)
+            }
+        }
+
+    @Test
+    fun `generic function`() =
+        testApplication {
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
+
+            @Remote(ServerConfig::class)
+            context(_: RemoteContext)
+            suspend fun <T: Int> numberMap(list: List<T>): List<Long> = list.map { it.toLong() }
+
+            @Remote(ServerConfig::class)
+            context(_: RemoteContext)
+            suspend fun <K: Long, P: List<Int>, T: Map<K, List<P>>> genericFunction(t: T) = t.entries.first().value.first()
+
+            context(ClientContext) {
+                assertEquals(listOf(2), genericFunction(mapOf(1L to listOf(listOf(2)))))
+                assertEquals(listOf(1L, 2L), numberMap(listOf(1, 2)))
             }
         }
 
@@ -133,7 +152,6 @@ class ApplicationTests {
                 assertEquals(1000, 10L.multiply(10))
             }
         }
-
 
     @Test
     fun `streaming local call`() =

@@ -1,5 +1,7 @@
 package kotlinx.remote
 
+import io.ktor.util.reflect.*
+import kotlinx.remote.network.serialization.rpcInternalKClass
 import kotlin.reflect.KType
 
 data class RemoteType(
@@ -23,3 +25,8 @@ data class RemoteCallable(
 fun interface RemoteInvokator {
     suspend fun call(parameters: Array<Any?>): Any?
 }
+
+fun RemoteCallable.returnTypeInfo(): TypeInfo = TypeInfo(
+    returnType.kType.rpcInternalKClass<Any>(),
+    returnType.kType
+)

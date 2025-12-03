@@ -28,12 +28,6 @@ public class JvmDiagnosticTestGenerated extends AbstractJvmDiagnosticTest {
   }
 
   @Test
-  @TestMetadata("genericRemoteFunction.kt")
-  public void testGenericRemoteFunction() {
-    runTest("compiler-plugin/testData/diagnostics/genericRemoteFunction.kt");
-  }
-
-  @Test
   @TestMetadata("noContext.kt")
   public void testNoContext() {
     runTest("compiler-plugin/testData/diagnostics/noContext.kt");

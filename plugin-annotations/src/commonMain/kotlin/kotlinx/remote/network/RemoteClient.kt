@@ -8,19 +8,22 @@ import io.ktor.util.reflect.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.remote.CallableMap
+import kotlinx.remote.network.serialization.rpcInternalKClass
+import kotlinx.remote.returnTypeInfo
 import kotlinx.serialization.serializer
 
 interface RemoteClient {
-    suspend fun call(call: RemoteCall, returnType: TypeInfo): Any?
+    suspend fun call(call: RemoteCall): Any?
     fun callStreaming(call: RemoteCall, returnType: TypeInfo): Flow<Any?>
 }
 
 class RemoteClientImpl(private val httpClient: HttpClient, private val path: String) : RemoteClient {
-    override suspend fun call(call: RemoteCall, returnType: TypeInfo): Any? {
+    override suspend fun call(call: RemoteCall): Any? {
         val post = httpClient.post(path) {
             setBody(call)
         }
-        return post.body(returnType)
+        return post.body(CallableMap[call.callableName].returnTypeInfo())
     }
 
     override fun callStreaming(
@@ -45,8 +48,8 @@ class RemoteClientImpl(private val httpClient: HttpClient, private val path: Str
 
 inline fun <reified T> RemoteClient.callStreaming(call: RemoteCall) = callStreaming(call, typeInfo<T>()) as Flow<T>
 
-suspend inline fun <reified T> RemoteClient.call(call: RemoteCall): T {
-    when (val response = call(call, typeInfo<RemoteResponse<T>>()) as RemoteResponse<T>) {
+suspend fun <T> RemoteClient.call(call: RemoteCall): T {
+    when (val response = call(call) as RemoteResponse<T>) {
         is RemoteResponse.Success -> return response.value
         is RemoteResponse.Failure -> throw response.error
     }

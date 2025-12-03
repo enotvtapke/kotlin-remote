@@ -12,6 +12,7 @@ import kotlinx.remote.CallableMap
 import kotlinx.remote.network.RemoteCall
 import kotlinx.remote.network.RemoteServerImpl
 import kotlinx.remote.network.serialization.rpcInternalKClass
+import kotlinx.remote.returnTypeInfo
 import kotlinx.serialization.serializer
 
 @KtorDsl
@@ -40,10 +41,7 @@ suspend fun RoutingContext.handleRemoteCall() {
     } else {
         call.respond(
             RemoteServerImpl.handleCall(remoteCall),
-            TypeInfo(
-                callable.returnType.kType.rpcInternalKClass<Any>(),
-                callable.returnType.kType
-            )
+            callable.returnTypeInfo(),
         )
     }
 }

@@ -14,7 +14,6 @@ import kotlinx.remote.network.RemoteResponse
 object TestRpcClient : RemoteClient {
     override suspend fun call(
         call: RemoteCall,
-        returnType: TypeInfo
     ): Any? {
         return RemoteResponse.Success(42L)
     }

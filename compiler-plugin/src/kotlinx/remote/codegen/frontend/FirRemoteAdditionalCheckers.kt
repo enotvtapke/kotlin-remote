@@ -6,7 +6,6 @@ package kotlinx.remote.codegen.frontend
 
 import kotlinx.remote.codegen.common.RemoteClassId
 import kotlinx.remote.codegen.common.RemoteClassId.flow
-import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.GENERIC_REMOTE_FUNCTION
 import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.NON_SUSPENDING_REMOTE_FUNCTION
 import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.WRONG_REMOTE_FUNCTION_CONTEXT
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -39,7 +38,7 @@ class FirRemoteAdditionalCheckers(
 class FirRemoteDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker> = setOf(
         FirRemoteFunctionContextChecker(),
-        FirGenericRemoteFunctionChecker(),
+        FirRemoteFunctionSuspendChecker(),
     )
 }
 
@@ -66,22 +65,14 @@ class FirRemoteFunctionContextChecker : FirFunctionChecker(MppCheckerKind.Common
     }
 }
 
-class FirGenericRemoteFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
+class FirRemoteFunctionSuspendChecker : FirFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
         if (!context.session.predicateBasedProvider.matches(FirRemotePredicates.remote, declaration)) {
             return
         }
-        if (declaration.typeParameters.isNotEmpty()) {
-            reporter.reportOn(
-                source = declaration.source,
-                factory = GENERIC_REMOTE_FUNCTION,
-            )
-        }
-        if (!declaration.returnTypeRef.coneType.isSubtypeOf(
-                flow.createConeType(context.session),
-                context.session
-            ) && !declaration.isSuspend
+        if (!declaration.returnTypeRef.coneType.isSubtypeOf(flow.createConeType(context.session), context.session)
+            && !declaration.isSuspend
         ) {
             reporter.reportOn(
                 source = declaration.source,
@@ -90,4 +81,3 @@ class FirGenericRemoteFunctionChecker : FirFunctionChecker(MppCheckerKind.Common
         }
     }
 }
-

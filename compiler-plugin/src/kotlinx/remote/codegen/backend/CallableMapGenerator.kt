@@ -16,12 +16,19 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeArgument
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -191,7 +198,7 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
             typeArgumentsCount = 0,
             constructorTypeArgumentsCount = 0,
         ).apply {
-            arguments[0] = irTypeOfCall(type)
+            arguments[0] = irTypeOfCall(substituteTypeParametersWithUpperBounds(type))
         }
     }
 
@@ -206,6 +213,36 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
             .apply {
                 typeArguments[0] = type
             }
+    }
+
+    private fun substituteTypeParametersWithUpperBounds(type: IrType): IrType {
+        return when (type) {
+            is IrSimpleType -> {
+                val classifier = type.classifier
+                if (classifier is IrTypeParameterSymbol) {
+                    val upperBound = classifier.owner.superTypes.firstOrNull() ?: ctx.anyNullable
+                    val substituted = substituteTypeParametersWithUpperBounds(upperBound)
+                    if (type.isNullable()) substituted.makeNullable() else substituted.makeNotNull()
+                } else {
+                    val newArgs: List<IrTypeArgument> = type.arguments.memoryOptimizedMap { arg ->
+                        when (arg) {
+                            is IrTypeProjection -> makeTypeProjection(
+                                substituteTypeParametersWithUpperBounds(arg.type),
+                                arg.variance
+                            )
+                            else -> arg
+                        }
+                    }
+                    IrSimpleTypeImpl(
+                        classifier = classifier,
+                        nullability = type.nullability,
+                        arguments = newArgs,
+                        annotations = type.annotations,
+                    )
+                }
+            }
+            else -> type
+        }
     }
 
     private fun irMapOf(
