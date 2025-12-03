@@ -229,6 +229,25 @@ class ApplicationTests {
             }
         }
 
+    object IdObject {
+        @Remote(ServerConfig::class)
+        context(_: RemoteContext)
+        suspend fun id(x: Int): Int {
+            return x
+        }
+    }
+
+    @Test
+    fun `static this parameter should not be serialized`() =
+        testApplication {
+            configureApplication()
+            ServerConfig._client = testRemoteClient()
+
+            context(ClientContext) {
+                assertEquals(42, IdObject.id(42))
+            }
+        }
+
     private data object ServerConfig : RemoteConfig {
         override val context = ServerContext
 

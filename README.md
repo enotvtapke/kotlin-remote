@@ -1,9 +1,11 @@
 ## Kotlin Remote
 
 ### Goals
+
 * Develop a technology for network interactions that does not require to write boilerplate code
 
 ### Objectives
+
 * Make possible to call Kotlin functions from application on different machine
 * Call Kotlin class constructors and methods from application on different machine
 
@@ -222,19 +224,20 @@ suspend fun fibonacciRecursive(n: Int): Long {
     }
     return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2) // Called locally
 }
-
 ```
 
 ### Remote classes
 
-It was said that remote functions can be class methods, even non-static ones. This is implemented by treating
-implicit `this` parameter of methods as a first argument of remote function. Obviously, `this` parameter must be
-serializable. But it is not always convenient. That is why special serializers for classes can be generated, that
-serialize `this` parameter as a single long value. This is how it works.
+It was said that remote functions can be class methods. Static and non-static. This is implemented by treating
+implicit `this` parameter of methods as a first argument of remote function in case of non-static methods.
+When method is static, in other words its dispatch receiver is an object, than its `this` parameter will not be
+transferred on the network. When method is not static than `this` parameter must be serializable. But writing your own 
+serializer for the class is not always convenient. That is why special serializers for classes can be used, that 
+serialize class instances as a single long value. This is how it works.
 
 ```kotlin
 @Serializable(with = Calculator.CalculatorSerializer::class)
-open class Calculator(private var init: Int) {
+open class Calculator private constructor(private var init: Int) {
     @Remote(ServerConfig::class)
     context(_: RemoteContext)
     open suspend fun multiply(x: Int): Int {
@@ -262,18 +265,18 @@ open class Calculator(private var init: Int) {
             return instances[id]?.let { it as Calculator } ?: CalculatorStub(id)
         }
     }
-}
 
-@Remote(ServerConfig::class)
-context(ctx: RemoteContext)
-suspend fun calculator(init: Int): Calculator {
-    return Calculator(init)
+    companion object {
+        @Remote(ServerConfig::class)
+        context(_: RemoteContext)
+        suspend operator fun invoke(init: Int) = Calculator(init)
+    }
 }
 
 fun main(): Unit = runBlocking {
     CallableMap.putAll(genCallableMap())
     context(ClientContext) {
-        val x = calculator(5)
+        val x = Сalculator(5)
         println(x.multiply(6))
         println(x.multiply(7))
         println(x.result())
@@ -283,14 +286,14 @@ fun main(): Unit = runBlocking {
 
 Because constructors cannot have context parameters, remote classes should be instantiated with a factory function.
 The client in the main function works with a stub of the class. `instances` map is a special storage where all the
-remote class instances are stored.
+remote class instances are stored. As for now there are no means by which this storage can be cleaned up.
 
 Compiler plugin generates serializers and stubs automatically.
 
 ```kotlin
 @RemoteSerializable
 @Serializable(with = Calculator.RemoteClassSerializer::class)
-class Calculator(private var init: Int) {
+class Calculator private constructor(private var init: Int) {
     @Remote(ServerConfig::class)
     context(_: RemoteContext)
     suspend fun multiply(x: Int): Int {
@@ -303,6 +306,12 @@ class Calculator(private var init: Int) {
     suspend fun result(): Int {
         return init
     }
+
+    companion object {
+        @Remote(ServerConfig::class)
+        context(_: RemoteContext)
+        suspend operator fun invoke(init: Int) = Calculator(init)
+    }
 }
 ```
 
@@ -314,9 +323,9 @@ The project is completely kotlin multiplatform and supports all the KMP compilat
 
 All the features described above are implemented and to some extent tested.
 
-* The first thesis objective is reached. 
+* The first thesis objective is reached.
 * The second objective is almost reached. Manual or automatic memory management of remote class instances is still
-under development.
+  under development.
 
 ### Problems and open questions
 

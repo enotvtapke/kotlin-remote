@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 
 @RemoteSerializable
 @Serializable(with = Calculator.RemoteClassSerializer::class)
-class Calculator(private var init: Int) {
+class Calculator private constructor(private var init: Int) {
     @Remote(ServerConfig::class)
     context(_: RemoteContext)
     suspend fun multiply(x: Int): Int {
@@ -25,18 +25,18 @@ class Calculator(private var init: Int) {
     suspend fun result(): Int {
         return init
     }
-}
 
-@Remote(ServerConfig::class)
-context(ctx: RemoteContext)
-suspend fun calculator(init: Int): Calculator {
-    return Calculator(init)
+    companion object {
+        @Remote(ServerConfig::class)
+        context(_: RemoteContext)
+        suspend operator fun invoke(init: Int) = Calculator(init)
+    }
 }
 
 fun main(): Unit = runBlocking {
     CallableMap.putAll(genCallableMap())
     context(ClientContext) {
-        val x = calculator(5)
+        val x = Calculator(5)
         println(x.multiply(6))
         println(x.multiply(7))
         println(x.result())

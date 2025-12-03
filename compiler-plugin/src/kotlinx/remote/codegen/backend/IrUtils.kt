@@ -4,6 +4,7 @@
 
 package kotlinx.remote.codegen.backend
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import kotlinx.remote.codegen.common.RemoteClassId.remoteAnnotation
 import kotlinx.remote.codegen.common.RemoteClassId.remoteSerializableAnnotation
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.ir.types.getClass
 
 fun IrClassifierSymbol.typeWith(type: IrType, variance: Variance): IrType {
     return IrSimpleTypeImpl(
@@ -92,8 +94,16 @@ fun IrFunction.remoteFunctionName(): String = fqNameWhenAvailable?.asString()
 fun IrBuilderWithScope.irSafeAs(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.SAFE_CAST, type, argument)
 
-fun IrFunction.nonStaticParameters(ctx: RemoteIrContext): List<IrValueParameter> = parameters.filter {
-    !it.isRemoteContext(ctx)
+fun IrFunction.nonStaticParameters(ctx: RemoteIrContext): List<IrValueParameter> = parameters.filter { param ->
+    if (param.isRemoteContext(ctx)) return@filter false
+
+    val dispatch = dispatchReceiverParameter
+    if (param == dispatch) {
+        val receiverClass = dispatch.type.getClass()
+        if (receiverClass?.kind == ClassKind.OBJECT) return@filter false
+    }
+
+    true
 }
 
 fun IrValueParameter.isRemoteContext(ctx: RemoteIrContext) = kind == IrParameterKind.Context && type.isSubtypeOfClass(ctx.remoteContext)

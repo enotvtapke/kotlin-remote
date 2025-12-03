@@ -88,6 +88,12 @@ public class JvmBoxTestGenerated extends AbstractJvmBoxTest {
   }
 
   @Test
+  @TestMetadata("object.kt")
+  public void testObject() {
+    runTest("compiler-plugin/testData/box/object.kt");
+  }
+
+  @Test
   @TestMetadata("serializers.kt")
   public void testSerializers() {
     runTest("compiler-plugin/testData/box/serializers.kt");

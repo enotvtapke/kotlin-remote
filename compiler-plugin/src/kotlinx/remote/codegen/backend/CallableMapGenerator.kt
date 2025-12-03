@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -147,6 +149,13 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
 
             body = ctx.irBuilder(symbol).irBlockBody {
                 val call = irCall(callable).apply {
+                    val dispatch = callable.dispatchReceiverParameter
+                    if (dispatch != null) {
+                        val receiverClass = dispatch.type.getClass()
+                        if (receiverClass != null && receiverClass.kind == ClassKind.OBJECT) {
+                            arguments[dispatch.indexInParameters] = irGetObjectValue(receiverClass.symbol.defaultType, receiverClass.symbol)
+                        }
+                    }
                     callable.parameters.filter { it.isRemoteContext(ctx) }.forEach {
                         arguments[it.indexInParameters] = remoteConfigContextCall(callable, ctx)
                     }
