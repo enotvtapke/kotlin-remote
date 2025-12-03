@@ -340,3 +340,6 @@ under development.
 * Kotlin compiler plugins
 * Kotlinx serialization
 * Kotlin Ktor
+
+[Not updated proposal](https://docs.google.com/document/d/128EKwvuhGH6ZR8HTmQvixLaYfMQq2nwm7kQZ1i4RQSc/edit?usp=sharing)  
+[Not updated presentation](https://docs.google.com/presentation/d/1IZ0D4VAie_OU0kUIY3lDtlDDSp9s02DN/edit?slide=id.g2cf53e53948_0_31#slide=id.g2cf53e53948_0_31)
