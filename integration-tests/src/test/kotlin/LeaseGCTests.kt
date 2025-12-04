@@ -1,4 +1,5 @@
 import kotlinx.remote.classes.RemoteInstancesPool
+import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.lease.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -89,10 +90,13 @@ class LeaseGCTests {
         assertFalse(RemoteInstancesPool.hasInstance(1L))
         assertFalse(LeaseManager.hasActiveLease(1L))
     }
-    
+
     @Test
     fun `LeaseRenewalClient tracks stubs`() {
-        LeaseRenewalClient.registerStubId(1L)
+        LeaseRenewalClient.registerStub(object : Stub {
+            override val id: Long
+                get() = 1L
+        })
         
         assertTrue(LeaseRenewalClient.isTracking(1L))
         assertEquals(1, LeaseRenewalClient.trackedCount())

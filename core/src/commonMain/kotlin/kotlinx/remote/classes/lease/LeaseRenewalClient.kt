@@ -19,11 +19,13 @@ object LeaseRenewalClient : SynchronizedObject() {
     var releaseFunction: (suspend (LeaseReleaseRequest) -> Unit)? = null
     var onLeaseExpired: ((Long) -> Unit)? = null
     
-    private data class StubEntry(
+    private class StubEntry(
         val id: Long,
-        val weakRef: Any,
+        stub: Stub
+    ) {
+        val weakRef = WeakRef(stub)
         var lastRenewedMs: Long = 0
-    )
+    }
     
     fun configure(newConfig: LeaseRenewalClientConfig) {
         config.value = newConfig
@@ -34,12 +36,6 @@ object LeaseRenewalClient : SynchronizedObject() {
     fun registerStub(stub: Stub): Unit = synchronized(this) {
         trackedStubs.computeIfAbsent(stub.id) {
             StubEntry(stub.id, stub)
-        }
-    }
-    
-    fun registerStubId(id: Long): Unit = synchronized(this) {
-        trackedStubs.computeIfAbsent(id) {
-            StubEntry(id, Unit)
         }
     }
     
@@ -67,12 +63,37 @@ object LeaseRenewalClient : SynchronizedObject() {
         }
     }
     
+    private fun collectGarbageAndGetActiveIds(): Pair<List<Long>, List<Long>> = synchronized(this) {
+        val activeIds = mutableListOf<Long>()
+        val collectedIds = mutableListOf<Long>()
+        
+        for (entry in trackedStubs.entries) {
+            if (entry.value.weakRef.get() != null) {
+                activeIds.add(entry.key)
+            } else {
+                collectedIds.add(entry.key)
+            }
+        }
+        
+        for (id in collectedIds) {
+            trackedStubs.remove(id)
+        }
+        
+        activeIds to collectedIds
+    }
+    
     suspend fun renewAllLeases(): LeaseRenewalResponse? {
         val renewal = renewalFunction ?: return null
-        val stubIds = synchronized(this) { trackedStubs.keys.toList() }
-        if (stubIds.isEmpty()) return null
         
-        val request = LeaseRenewalRequest(stubIds, config.value.clientId)
+        val (activeIds, collectedIds) = collectGarbageAndGetActiveIds()
+        
+        if (collectedIds.isNotEmpty()) {
+            releaseFunction?.invoke(LeaseReleaseRequest(collectedIds, config.value.clientId))
+        }
+        
+        if (activeIds.isEmpty()) return null
+        
+        val request = LeaseRenewalRequest(activeIds, config.value.clientId)
         val response = renewal(request)
         
         synchronized(this) {

@@ -27,8 +27,13 @@ abstract class RemoteSerializer<T: Any> : KSerializer<T> {
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(decoder: Decoder): T {
         val id = decoder.decodeLong()
-        LeaseRenewalClient.registerStubId(id)
-        return instances[id]?.let { it as T } ?: createStub(id)
+        if (instances.containsKey(id)) {
+            return instances[id]!! as T
+        } else {
+            val stub = createStub(id)
+            LeaseRenewalClient.registerStub(stub as Stub)
+            return stub
+        }
     }
 
     abstract fun createStub(id: Long): T
