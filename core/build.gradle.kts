@@ -56,6 +56,7 @@ kotlin {
             implementation(libs.ktor.server.status.pages)
             implementation(libs.ktor.serialization.json)
             implementation(libs.atomicfu)
+            implementation(libs.datetime)
         }
     }
 

@@ -25,20 +25,13 @@ val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
 
     application.attributes.put(KRemoteServerPluginAttributesKey, pluginConfig)
     
-    // Configure and start lease-based GC if enabled
     if (pluginConfig.enableLeasing) {
         LeaseManager.configure(pluginConfig.leaseConfig)
-        
-        // Create a coroutine scope for the cleanup job
         val cleanupScope = CoroutineScope(SupervisorJob())
         LeaseManager.startCleanupJob(cleanupScope)
         
-        logger.info("KRemote: Lease-based GC enabled with config: ${pluginConfig.leaseConfig}")
-        
-        // Stop cleanup job when application stops
         application.monitor.subscribe(ApplicationStopped) {
             LeaseManager.stopCleanupJob()
-            logger.info("KRemote: Lease cleanup job stopped")
         }
     }
 }
