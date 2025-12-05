@@ -1,7 +1,7 @@
 Exception
 --- Remote stack trace ---
 java.lang.IllegalStateException: Exception
-	at ApplicationTests$erroneous call$1.invokeSuspend$multiply(ApplicationTests.kt:79)
+	at ApplicationTests$erroneous call$1.invokeSuspend$multiply(ApplicationTests.kt:83)
 	at ApplicationTests$erroneous call$1.access$invokeSuspend$multiply(ApplicationTests.kt)
 	at ApplicationTests$Companion$setup$3.call(ApplicationTests.kt)
 	at kotlinx.remote.network.RemoteServerImpl.handleCall(RemoteServer.kt:12)

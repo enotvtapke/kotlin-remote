@@ -17,6 +17,8 @@ FILE: serializers.kt
         }
 
         public final class RemoteClassStub : R|box/Calculator|, R|kotlinx/remote/classes/Stub| {
+            public constructor(id: R|kotlin/Long|): R|box/Calculator.RemoteClassStub|
+
         }
 
         public final class RemoteClassSerializer : R|kotlinx/remote/classes/RemoteSerializer<box/Calculator>| {

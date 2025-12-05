@@ -2,21 +2,26 @@ package kotlinx.remote.codegen.frontend
 
 import kotlinx.remote.codegen.common.RemoteClassId
 import kotlinx.remote.codegen.common.RemoteNames
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
+import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
+import org.jetbrains.kotlin.fir.plugin.createConstructor
 import org.jetbrains.kotlin.fir.plugin.createNestedClass
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
+import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 
 class FirRemoteClassTransformer(
     session: FirSession,
@@ -34,6 +39,31 @@ class FirRemoteClassTransformer(
         } else {
             emptySet()
         }
+    }
+
+    override fun getCallableNamesForClass(
+        classSymbol: FirClassSymbol<*>,
+        context: MemberGenerationContext,
+    ): Set<Name> {
+        return if (classSymbol.isGeneratedByKey(FirRemoteClassStubKey)) {
+            setOf(SpecialNames.INIT)
+        } else {
+            emptySet()
+        }
+    }
+
+    override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
+        val classSymbol = context.owner
+        if (!classSymbol.isGeneratedByKey(FirRemoteClassStubKey)) {
+            return emptyList()
+        }
+
+        return listOf(
+            createConstructor(classSymbol, FirRemoteClassStubKey, isPrimary = true) {
+                visibility = Visibilities.Public
+                valueParameter(Name.identifier("id"), session.builtinTypes.longType.coneType)
+            }.symbol
+        )
     }
 
     override fun generateNestedClassLikeDeclaration(
@@ -72,5 +102,9 @@ class FirRemoteClassTransformer(
             superType(owner.defaultType())
             superType(RemoteClassId.stubInterface.constructClassLikeType())
         }.symbol
+    }
+
+    private fun FirClassSymbol<*>.isGeneratedByKey(key: GeneratedDeclarationKey): Boolean {
+        return (origin as? FirDeclarationOrigin.Plugin)?.key == key
     }
 }

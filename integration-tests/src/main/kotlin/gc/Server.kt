@@ -30,7 +30,7 @@ fun main() {
         }
         install(KRemote) {
             enableLeasing = true
-            leaseConfig = LeaseConfig(2000, 2000, 2000)
+            leaseConfig = LeaseConfig(2000, 200, 0)
         }
         routing {
             remote("/call")

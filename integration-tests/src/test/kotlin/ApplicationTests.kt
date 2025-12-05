@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.lease.LeaseConfig
@@ -251,26 +252,12 @@ class ApplicationTests {
         }
 
     @Test
-    fun `leased class is expired`() =
-        testApplication {
-            configureApplication(LeaseConfig(1000, 1000, 1000))
-            ServerConfig._client = testRemoteClient()
-
-            @Remote(ServerConfig::class)
-            context(_: RemoteContext)
-            suspend fun calculator(init: Int): Calculator {
-                return Calculator(init)
-            }
-
-//            startLeaseRenewal(leaseClient.leaseClient(), CoroutineScope(Dispatchers.IO), LeaseRenewalClientConfig(3000))
-
-            context(ClientContext) {
-                val x = calculator(5)
-                assertEquals(30, x.multiply(6))
-                delay(5000)
-                assertThrows<IllegalStateException> { x.multiply(7) }
-            }
+    fun `cannot call stub methods in local context`() = runBlocking {
+        context<_, Unit>(ServerContext) {
+            val e = assertThrows<IllegalArgumentException> { Calculator.RemoteClassStub(1L).multiply(42) }
+            assertEquals("Method of the stub `ApplicationTests.Calculator.RemoteClassStub` was called in a local context. This may be caused by lease expiration.", e.message)
         }
+    }
 
     private data object ServerConfig : RemoteConfig {
         override val context = ServerContext

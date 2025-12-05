@@ -87,14 +87,14 @@ FILE fqName:box fileName:/serializers.kt
             RETURN type=kotlin.Nothing from='public final fun <get-id> (): kotlin.Long declared in box.Calculator.RemoteClassStub'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]' type=kotlin.Long origin=null
                 receiver: GET_VAR '<this>: box.Calculator.RemoteClassStub declared in box.Calculator.RemoteClassStub.<get-id>' type=box.Calculator.RemoteClassStub origin=null
-      CONSTRUCTOR visibility:public returnType:box.Calculator.RemoteClassStub
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in box.Calculator'
-      CONSTRUCTOR visibility:public returnType:box.Calculator.RemoteClassStub [primary]
-        VALUE_PARAMETER kind:Regular name:id index:0 type:kotlin.Long
+      CONSTRUCTOR GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] visibility:public returnType:box.Calculator.RemoteClassStub [primary]
+        VALUE_PARAMETER GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] kind:Regular name:id index:0 type:kotlin.Long
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in box.Calculator'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[box.Calculator; kotlinx.remote.classes.Stub]' type=kotlin.Unit
+      CONSTRUCTOR visibility:public returnType:box.Calculator.RemoteClassStub
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in box.Calculator'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?

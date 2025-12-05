@@ -15,8 +15,11 @@ import kotlinx.remote.CallableMap
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.classes.RemoteSerializable
+import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
+import kotlinx.remote.classes.lease.startLeaseRenewal
 import kotlinx.remote.classes.lease.stopLeaseRenewal
 import kotlinx.remote.genCallableMap
+import kotlinx.remote.network.leaseClient
 import kotlinx.serialization.Serializable
 
 @RemoteSerializable
@@ -58,15 +61,11 @@ val leaseClient = HttpClient {
 
 fun main(): Unit = runBlocking {
     CallableMap.putAll(genCallableMap())
-//    startLeaseRenewal(leaseClient.leaseClient(), this, LeaseRenewalClientConfig(3000))
+    startLeaseRenewal(leaseClient.leaseClient(), this, LeaseRenewalClientConfig(3000))
     context(ClientContext) {
         val x = Calculator(5)
-        println(x.multiply(6))
-        println(x.multiply(7))
         println(x.result())
-        delay(10_000)
-        val y = Calculator(42)
-        println(y.result())
+        delay(5_000)
         println(x.result())
     }
     stopLeaseRenewal()
