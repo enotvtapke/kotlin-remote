@@ -56,13 +56,17 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
                 listOf(
                     irBranch(
                         irEquals(irGet(context), configContext),
-                        when (originalBody) {
-                            is IrBlockBody -> irBlock {
-                                originalBody.statements.forEach { +it }
+                        irBlock {
+                            declaration.dispatchReceiverParameter?.also {
+                                +irCall(data.functions.checkIsNotStubForRemoteClassMethod).apply { arguments[0] = irGet(it) }
                             }
+                            when (originalBody) {
+                                is IrBlockBody -> originalBody.statements.forEach { +it }
 
-                            is IrExpressionBody -> irReturn(originalBody.expression)
-                            is IrSyntheticBody -> error("Remote function can't have synthetic body")
+
+                                is IrExpressionBody -> +irReturn(originalBody.expression)
+                                is IrSyntheticBody -> error("Remote function can't have synthetic body")
+                            }
                         }
                     ),
                     irBranch(

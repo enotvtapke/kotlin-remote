@@ -14,8 +14,8 @@ internal class RemoteClassStatusTransformer : IrTransformer<RemoteIrContext>() {
         declaration: IrClass,
         data: RemoteIrContext
     ): IrStatement {
-        if (!declaration.remoteSerializable()) return declaration
+        if (!declaration.remoteSerializable()) return super.visitClass(declaration, data)
         declaration.modality = Modality.OPEN
-        return declaration
+        return super.visitClass(declaration, data)
     }
 }

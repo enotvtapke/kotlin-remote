@@ -32,6 +32,8 @@ FILE fqName:<root> fileName:/object.kt
               ARG arg1: CALL 'public abstract fun <get-context> (): kotlinx.remote.RemoteContext declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.RemoteContext origin=null
                 ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlinx.remote.codegen.test.ServerConfig
             then: BLOCK type=kotlin.Nothing origin=null
+              CALL 'public final fun checkIsNotStubForRemoteClassMethod (value: kotlin.Any): kotlin.Unit declared in kotlinx.remote.classes' type=kotlin.Unit origin=null
+                ARG value: GET_VAR '<this>: <root>.IdObject declared in <root>.IdObject.id' type=<root>.IdObject origin=null
               RETURN type=kotlin.Nothing from='public final fun id (<unused var>: kotlinx.remote.RemoteContext, x: kotlin.Int): kotlin.Int declared in <root>.IdObject'
                 GET_VAR 'x: kotlin.Int declared in <root>.IdObject.id' type=kotlin.Int origin=null
           BRANCH

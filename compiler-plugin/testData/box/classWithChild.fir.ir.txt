@@ -52,6 +52,8 @@ FILE fqName:box fileName:/classWithChild.kt
               ARG arg1: CALL 'public abstract fun <get-context> (): kotlinx.remote.RemoteContext declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.RemoteContext origin=null
                 ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlinx.remote.codegen.test.ServerConfig
             then: BLOCK type=kotlin.Nothing origin=null
+              CALL 'public final fun checkIsNotStubForRemoteClassMethod (value: kotlin.Any): kotlin.Unit declared in kotlinx.remote.classes' type=kotlin.Unit origin=null
+                ARG value: GET_VAR '<this>: box.Calculator declared in box.Calculator.multiply' type=box.Calculator origin=null
               CALL 'private final fun <set-init> (<set-?>: kotlin.Long): kotlin.Unit declared in box.Calculator' type=kotlin.Unit origin=MULTEQ
                 ARG <this>: GET_VAR '<this>: box.Calculator declared in box.Calculator.multiply' type=box.Calculator origin=IMPLICIT_ARGUMENT
                 ARG <set-?>: CALL 'public final fun times (other: kotlin.Long): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=MULTEQ

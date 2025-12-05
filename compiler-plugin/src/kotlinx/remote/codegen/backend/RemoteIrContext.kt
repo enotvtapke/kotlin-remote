@@ -107,6 +107,10 @@ class RemoteIrContext(
             }
         }
 
+        val checkIsNotStubForRemoteClassMethod by lazy {
+            namedFunction("kotlinx.remote.classes", "checkIsNotStubForRemoteClassMethod")
+        }
+
         val remoteClientCall by lazy {
             namedFunction("kotlinx.remote.network", "call")
         }

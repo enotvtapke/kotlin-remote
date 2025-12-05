@@ -12,8 +12,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.remote.*
 import kotlinx.remote.classes.RemoteSerializable
+import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
+import kotlinx.remote.network.ktor.leaseRoutes
 import kotlinx.remote.network.ktor.remote
 import kotlinx.remote.network.remoteClient
 import kotlinx.remote.network.serialization.setupExceptionSerializers
@@ -248,6 +250,28 @@ class ApplicationTests {
             }
         }
 
+    @Test
+    fun `leased class is expired`() =
+        testApplication {
+            configureApplication(LeaseConfig(1000, 1000, 1000))
+            ServerConfig._client = testRemoteClient()
+
+            @Remote(ServerConfig::class)
+            context(_: RemoteContext)
+            suspend fun calculator(init: Int): Calculator {
+                return Calculator(init)
+            }
+
+//            startLeaseRenewal(leaseClient.leaseClient(), CoroutineScope(Dispatchers.IO), LeaseRenewalClientConfig(3000))
+
+            context(ClientContext) {
+                val x = calculator(5)
+                assertEquals(30, x.multiply(6))
+                delay(5000)
+                assertThrows<IllegalStateException> { x.multiply(7) }
+            }
+        }
+
     private data object ServerConfig : RemoteConfig {
         override val context = ServerContext
 
@@ -275,7 +299,7 @@ class ApplicationTests {
             }
         }.remoteClient("/call")
 
-    private fun ApplicationTestBuilder.configureApplication() {
+    private fun ApplicationTestBuilder.configureApplication(leaseConfig: LeaseConfig? = null) {
         application {
             install(CallLogging)
             install(ServerContentNegotiation) {
@@ -285,9 +309,15 @@ class ApplicationTests {
                     }
                 })
             }
-            install(KRemote)
+            install(KRemote) {
+                if (leaseConfig != null) {
+                    enableLeasing = true
+                    this.leaseConfig = leaseConfig
+                }
+            }
             routing {
                 remote("/call")
+                if (leaseConfig != null) leaseRoutes("/lease")
             }
         }
     }
