@@ -1,4 +1,4 @@
-package manual
+package manualFunctionCalling
 
 import ClientContext
 import kotlinx.coroutines.runBlocking

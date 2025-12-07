@@ -1,4 +1,4 @@
-package generatedCallableMap
+package proposalExamples
 
 import remoteEmbeddedServer
 

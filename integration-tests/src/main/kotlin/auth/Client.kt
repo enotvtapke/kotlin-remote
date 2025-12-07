@@ -13,8 +13,12 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
+import kotlinx.remote.classes.genRemoteClassList
+import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.remoteClient
+import kotlinx.serialization.json.Json
+import leaseRenewalClient
 
 data object AuthServerConfig : RemoteConfig {
     override val context = ServerContext
@@ -25,7 +29,14 @@ data object AuthServerConfig : RemoteConfig {
             contentType(ContentType.Application.Json)
         }
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                serializersModule = remoteSerializersModule(
+                    remoteClasses = genRemoteClassList(),
+                    callableMap = CallableMapClass(genCallableMap()),
+                    leaseManager = null,
+                    leaseRenewalClient = leaseRenewalClient,
+                )
+            })
         }
         install(Logging) {
             level = LogLevel.BODY

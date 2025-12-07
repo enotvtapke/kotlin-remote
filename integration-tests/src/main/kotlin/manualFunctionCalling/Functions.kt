@@ -1,4 +1,4 @@
-package manual
+package manualFunctionCalling
 
 import ServerConfig
 import kotlinx.coroutines.delay

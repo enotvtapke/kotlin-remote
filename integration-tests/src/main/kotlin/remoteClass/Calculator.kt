@@ -1,4 +1,4 @@
-package remoteClass.generatedSerializer
+package remoteClass
 
 import ClientContext
 import ServerConfig

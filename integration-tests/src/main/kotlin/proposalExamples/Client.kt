@@ -1,4 +1,4 @@
-package proposal
+package proposalExamples
 
 import ClientContext
 import ServerConfig
