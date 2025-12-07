@@ -1,4 +1,4 @@
-import gc.CalculatorGC
+import gc.genRemoteClassList
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -14,13 +14,16 @@ import io.ktor.server.routing.*
 import kotlinx.remote.CallableMapClass
 import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.classes.RemoteSerializer
+import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
+import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.network.RemoteCall
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
+import kotlinx.remote.network.ktor.KRemoteServerPluginAttributesKey
+import kotlinx.remote.network.ktor.leaseRoutes
 import kotlinx.remote.network.ktor.remote
 import kotlinx.remote.network.leaseClient
 import kotlinx.remote.network.remoteClient
@@ -48,7 +51,6 @@ val leaseRenewalClient = LeaseRenewalClient(
 )
 
 data object ServerConfig : RemoteConfig {
-    private val callableMap = CallableMapClass(genCallableMap())
     override val context = ServerContext
     override val client: RemoteClient = HttpClient {
         defaultRequest {
@@ -58,21 +60,18 @@ data object ServerConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                val remoteClassSerializersModule = SerializersModule {
-                    contextual(
-                        CalculatorGC::class, RemoteSerializer(
-                            leaseRenewalClient = leaseRenewalClient,
-                            stubFabric = { CalculatorGC.RemoteClassStub(it) }
-                        )
-                    )
-                }
-                serializersModule = SerializersModule{}.remoteSerializersModule(callableMap, remoteClassSerializersModule)
+                serializersModule = remoteSerializersModule(
+                    remoteClasses = genRemoteClassList(),
+                    callableMap = CallableMapClass(genCallableMap()),
+                    leaseManager = null,
+                    leaseRenewalClient = leaseRenewalClient,
+                )
             })
         }
         install(Logging) {
             level = LogLevel.BODY
         }
-    }.remoteClient(callableMap, "/call")
+    }.remoteClient(CallableMapClass(genCallableMap()), "/call")
 }
 
 fun SerializersModule.remoteSerializersModule(
@@ -80,28 +79,37 @@ fun SerializersModule.remoteSerializersModule(
     remoteClassSerializersModule: SerializersModule
 ): SerializersModule =
     this + remoteClassSerializersModule + SerializersModule {
-        contextual(RemoteCall::class, RpcCallSerializer(callableMap, this@remoteSerializersModule + remoteClassSerializersModule))
+        contextual(RemoteCall::class,
+            RpcCallSerializer(callableMap, this@remoteSerializersModule + remoteClassSerializersModule)
+        )
         setupExceptionSerializers()
     }
 
 data object ServerContext : RemoteContext
 data object ClientContext : RemoteContext
 
-fun remoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
-    val callableMap = CallableMapClass(genCallableMap())
-    return embeddedServer(Netty, port = 8080) {
+fun remoteEmbeddedServer(leaseConfig: LeaseConfig = LeaseConfig()): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
+    return embeddedServer(Netty, port = 8080, watchPaths = listOf()) {
         install(CallLogging)
+        install(KRemote) {
+            this.callableMap = CallableMapClass(genCallableMap())
+            this.leaseConfig = leaseConfig
+        }
         install(ServerContentNegotiation) {
             json(Json {
-                serializersModule = SerializersModule {
-                }.remoteSerializersModule(callableMap, SerializersModule { })
+                val leaseManager = this@embeddedServer.attributes[KRemoteServerPluginAttributesKey].leaseManager
+                val callableMap = this@embeddedServer.attributes[KRemoteServerPluginAttributesKey].callableMap
+                serializersModule = remoteSerializersModule(
+                    remoteClasses = genRemoteClassList(),
+                    callableMap = callableMap,
+                    leaseManager = leaseManager,
+                    leaseRenewalClient = leaseRenewalClient
+                )
             })
-        }
-        install(KRemote) {
-            this.callableMap = callableMap
         }
         routing {
             remote("/call")
+            leaseRoutes()
         }
     }
 }

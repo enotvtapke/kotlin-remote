@@ -7,8 +7,10 @@ import io.ktor.server.response.*
 import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.remote.classes.RemoteInstancesPool
+import kotlinx.remote.classes.lease.LeaseManager
 
-internal val KRemoteServerPluginAttributesKey = AttributeKey<KRemoteConfigBuilder>("KRemoteServerPluginAttributesKey")
+val KRemoteServerPluginAttributesKey = AttributeKey<KRemoteConfigBuilder>("KRemoteServerPluginAttributesKey")
 
 val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
     name = "KRemote",
@@ -23,6 +25,7 @@ val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
         }
     }
 
+    pluginConfig.leaseManager = LeaseManager(pluginConfig.leaseConfig, RemoteInstancesPool())
     application.attributes.put(KRemoteServerPluginAttributesKey, pluginConfig)
     val cleanupScope = CoroutineScope(SupervisorJob())
     pluginConfig.leaseManager.startCleanupJob(cleanupScope)
