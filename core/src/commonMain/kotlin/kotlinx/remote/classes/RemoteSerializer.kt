@@ -84,4 +84,4 @@ fun remoteClassSerializersModule(
 /**
  * The compiler plugin will replace every call to this function with generated code
  */
-fun genRemoteClassList(): List<Pair<KClass<*>, (Long) -> Any?>> = RemoteIntrinsic
+fun genRemoteClassList(): List<Pair<KClass<Any>, (Long) -> Any>> = RemoteIntrinsic

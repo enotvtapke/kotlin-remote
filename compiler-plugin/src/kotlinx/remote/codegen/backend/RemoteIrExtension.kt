@@ -22,5 +22,8 @@ class RemoteIrExtension : IrGenerationExtension {
         classScanner.visitModuleFragment(moduleFragment)
         val remoteClassInitializer = RemoteClassInitializer(context)
         classScanner.remoteClasses.forEach { remoteClassInitializer.init(it) }
+        RemoteClassListInjector(context, RemoteClassListGenerator(context, classScanner.remoteClasses)).visitModuleFragment(
+            moduleFragment
+        )
     }
 }

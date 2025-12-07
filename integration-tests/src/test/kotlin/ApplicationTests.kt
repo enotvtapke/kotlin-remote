@@ -1,8 +1,6 @@
-import io.ktor.client.HttpClient
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -10,28 +8,29 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
 import io.ktor.server.testing.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
-import kotlinx.remote.classes.RemoteInstancesPool
 import kotlinx.remote.classes.RemoteSerializable
-import kotlinx.remote.classes.RemoteSerializer
+import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
-import kotlinx.remote.classes.lease.LeaseManager
 import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
+import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.network.LeaseClient
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
+import kotlinx.remote.network.ktor.KRemoteServerPluginAttributesKey
 import kotlinx.remote.network.ktor.leaseRoutes
 import kotlinx.remote.network.ktor.remote
 import kotlinx.remote.network.leaseClient
 import kotlinx.remote.network.remoteClient
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.Path
@@ -265,7 +264,7 @@ class ApplicationTests {
     @Test
     fun `leased class is expired`() =
         testApplication {
-            configureApplication(LeaseConfig(2000, 200, 0))
+            configureApplication(LeaseConfig(100, 50, 0))
             ServerConfig._client = testRemoteClient()
 
             @Remote(ServerConfig::class)
@@ -274,13 +273,32 @@ class ApplicationTests {
                 return TestCalculator(init)
             }
 
-//            startLeaseRenewal(leaseClient.leaseClient(), CoroutineScope(Dispatchers.IO), LeaseRenewalClientConfig(3000))
+            context(ClientContext) {
+                val x = testCalculator(5)
+                assertEquals(30, x.multiply(6))
+                delay(200)
+                val e = assertThrows<IllegalArgumentException> { x.multiply(7) }
+                assertEquals("Method of the stub `RemoteClassStub` was called in a local context. This may be caused by lease expiration.", e.message?.lines()?.firstOrNull())
+            }
+        }
+
+    @Test
+    fun `leased class is not expired when renewal is active`() =
+        testApplication {
+            configureApplication(LeaseConfig(100, 50, 0))
+            ServerConfig._client = testRemoteClient(LeaseRenewalClientConfig(renewalIntervalMs = 50))
+
+            @Remote(ServerConfig::class)
+            context(_: RemoteContext)
+            suspend fun testCalculator(init: Int): TestCalculator {
+                return TestCalculator(init)
+            }
 
             context(ClientContext) {
                 val x = testCalculator(5)
                 assertEquals(30, x.multiply(6))
-                delay(5000)
-                assertThrows<IllegalStateException> { println(x.multiply(7)) }
+                delay(200)
+                assertEquals(210, x.multiply(7))
             }
         }
 
@@ -299,7 +317,7 @@ class ApplicationTests {
     private fun ApplicationTestBuilder.testLeaseClient(): LeaseClient {
         return createClient {
             defaultRequest {
-                url("http://localhost:8080")
+                url("http://localhost:80")
                 accept(ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
             }
@@ -312,20 +330,7 @@ class ApplicationTests {
         }.leaseClient()
     }
 
-    fun remoteClassSerializersModule(leaseClient: LeaseClient) = SerializersModule {
-        contextual(
-            TestCalculator::class, RemoteSerializer(
-                leaseManager = LeaseManager(LeaseConfig(1000, 200), RemoteInstancesPool()),
-                leaseRenewalClient = LeaseRenewalClient(
-                    LeaseRenewalClientConfig(2000),
-                    leaseClient
-                ),
-                stubFabric = { TestCalculator.RemoteClassStub(it) }
-            ))
-    }
-
-    private fun ApplicationTestBuilder.testRemoteClient(): RemoteClient {
-        val callableMap = CallableMapClass(genCallableMap())
+    private fun ApplicationTestBuilder.testRemoteClient(leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()): RemoteClient {
         return createClient {
             defaultRequest {
                 url("http://localhost:80")
@@ -334,31 +339,48 @@ class ApplicationTests {
             }
             install(ClientContentNegotiation) {
                 json(Json {
-                    serializersModule = SerializersModule { }.remoteSerializersModule(callableMap,
-                        remoteClassSerializersModule(leaseClient = this@testRemoteClient.testLeaseClient())
+                    serializersModule = remoteSerializersModule(
+                        remoteClasses = genRemoteClassList(),
+                        callableMap = CallableMapClass(genCallableMap()),
+                        leaseManager = null,
+                        leaseRenewalClient = LeaseRenewalClient(
+                            leaseRenewalClientConfig,
+                            this@testRemoteClient.testLeaseClient(),
+                        ).also {
+                            it.startRenewalJob(CoroutineScope(Dispatchers.IO))
+                        }
                     )
                 })
             }
-        }.remoteClient(callableMap, "/call")
+        }.remoteClient(CallableMapClass(genCallableMap()), "/call")
     }
 
-    private fun ApplicationTestBuilder.configureApplication(leaseConfig: LeaseConfig? = null) {
-        val callableMap = CallableMapClass(genCallableMap())
+    private fun ApplicationTestBuilder.configureApplication(leaseConfig: LeaseConfig = LeaseConfig(), leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()) {
         application {
             install(CallLogging)
+            install(KRemote) {
+                this.callableMap = CallableMapClass(genCallableMap())
+                this.leaseConfig = leaseConfig
+            }
             install(ServerContentNegotiation) {
                 json(Json {
-                    serializersModule =
-                        SerializersModule { }.remoteSerializersModule(callableMap, remoteClassSerializersModule(leaseClient = this@configureApplication.testLeaseClient()))
+                    val leaseManager = this@application.attributes[KRemoteServerPluginAttributesKey].leaseManager
+                    val callableMap = this@application.attributes[KRemoteServerPluginAttributesKey].callableMap
+                    serializersModule = remoteSerializersModule(
+                        remoteClasses = genRemoteClassList(),
+                        callableMap = callableMap,
+                        leaseManager = leaseManager,
+                        leaseRenewalClient = LeaseRenewalClient(
+                            leaseRenewalClientConfig,
+                            this@configureApplication.testLeaseClient(),
+                        )
+                    )
                 })
             }
-            install(KRemote) {
-                this.callableMap = callableMap
-                this.leaseManager = LeaseManager(leaseConfig ?: LeaseConfig(1000, 200, 0), RemoteInstancesPool())
-            }
+
             routing {
                 remote("/call")
-                if (leaseConfig != null) leaseRoutes("/lease")
+                leaseRoutes("/lease")
             }
         }
     }

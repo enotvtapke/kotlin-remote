@@ -38,6 +38,14 @@ class RemoteIrContext(
         getIrClassSymbol("kotlin.reflect", "KType")
     }
 
+    val kClass by lazy {
+        getIrClassSymbol("kotlin.reflect", "KClass")
+    }
+
+    val function1 by lazy {
+        getIrClassSymbol("kotlin", "Function1")
+    }
+
     val suspendFunction1 by lazy {
         getIrClassSymbol("kotlin.coroutines", "SuspendFunction1")
     }
@@ -121,6 +129,20 @@ class RemoteIrContext(
 
         val genCallableMap by lazy {
             namedFunction("kotlinx.remote", "genCallableMap")
+        }
+
+        val genRemoteClassList by lazy {
+            namedFunction("kotlinx.remote.classes", "genRemoteClassList")
+        }
+
+        val listOf by lazy {
+            namedFunction("kotlin.collections", "listOf") { f ->
+                f.owner.parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.isVararg ?: false
+            }
+        }
+
+        val emptyList by lazy {
+            namedFunction("kotlin.collections", "emptyList")
         }
 
         val println by lazy {

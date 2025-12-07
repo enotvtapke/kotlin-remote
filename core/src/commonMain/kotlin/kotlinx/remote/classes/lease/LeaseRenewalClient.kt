@@ -109,7 +109,8 @@ class LeaseRenewalClient(private val config: LeaseRenewalClientConfig, private v
                 delay(config.renewalIntervalMs)
                 try {
                     renewAllLeases()
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    println(e.printStackTrace())
                     // TODO Log error
                 }
             }

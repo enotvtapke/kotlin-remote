@@ -1,4 +1,4 @@
-import gc.genRemoteClassList
+import kotlinx.remote.classes.genRemoteClassList
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
