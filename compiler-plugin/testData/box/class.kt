@@ -25,7 +25,7 @@ class Calculator(private var init: Long) {
 }
 
 fun box(): String = runBlocking {
-    CallableMap.putAll(genCallableMap())
+    genCallableMap()
     context(ClientContext) {
         val c = Calculator(1)
         val test1 = c.multiply(5)

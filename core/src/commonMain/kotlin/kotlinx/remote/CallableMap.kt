@@ -1,18 +1,16 @@
 package kotlinx.remote
 
-object CallableMap {
-    private val callableMap: MutableMap<String, RemoteCallable> = mutableMapOf()
-
+class CallableMapClass(private val callableMap: Map<String, RemoteCallable> = mapOf()) {
     operator fun get(name: String): RemoteCallable = callableMap[name]
-        ?: throw IllegalStateException(
+        ?: error(
             "Function $name is not registered in CallableMap. Registered functions: ${callableMap.keys.joinToString()}."
         )
-    operator fun set(name: String, callable: RemoteCallable) { callableMap[name] = callable }
-
-    fun putAll(newMap: Map<String, RemoteCallable>) { callableMap.putAll(newMap) }
 }
+
+internal val RemoteIntrinsic: Nothing
+    get() = throw IllegalStateException("Intrinsic function was called directly")
 
 /**
  * The compiler plugin will replace every call to this function with generated CallableMap
  */
-fun genCallableMap(): MutableMap<String, RemoteCallable> = mutableMapOf()
+fun genCallableMap(): MutableMap<String, RemoteCallable> = RemoteIntrinsic

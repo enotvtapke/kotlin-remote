@@ -8,9 +8,8 @@ FILE fqName:box fileName:/initCallableMap.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String [suspend]
               VALUE_PARAMETER kind:ExtensionReceiver name:$this$runBlocking index:0 type:kotlinx.coroutines.CoroutineScope
               BLOCK_BODY
-                CALL 'public final fun putAll (newMap: kotlin.collections.Map<kotlin.String, kotlinx.remote.RemoteCallable>): kotlin.Unit declared in kotlinx.remote.CallableMap' type=kotlin.Unit origin=null
-                  ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:CallableMap modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlinx.remote.CallableMap
-                  ARG newMap: CALL 'public final fun mapOf <K, V> (vararg pairs: kotlin.Pair<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf>): kotlin.collections.Map<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf> declared in kotlin.collections' type=kotlin.collections.Map<kotlin.String, kotlinx.remote.RemoteCallable> origin=INITIALIZE_FIELD
+                TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                  CALL 'public final fun mapOf <K, V> (vararg pairs: kotlin.Pair<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf>): kotlin.collections.Map<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf> declared in kotlin.collections' type=kotlin.collections.Map<kotlin.String, kotlinx.remote.RemoteCallable> origin=INITIALIZE_FIELD
                     TYPE_ARG K: kotlin.String
                     TYPE_ARG V: kotlinx.remote.RemoteCallable
                     ARG pairs: VARARG type=kotlin.Array<out kotlin.Pair<kotlin.String, kotlinx.remote.RemoteCallable>> varargElementType=kotlin.Pair<kotlin.String, kotlinx.remote.RemoteCallable>

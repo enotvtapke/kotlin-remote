@@ -7,7 +7,6 @@ import io.ktor.server.response.*
 import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.remote.classes.lease.LeaseManager
 
 internal val KRemoteServerPluginAttributesKey = AttributeKey<KRemoteConfigBuilder>("KRemoteServerPluginAttributesKey")
 
@@ -15,6 +14,7 @@ val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
     name = "KRemote",
     createConfiguration = { KRemoteConfigBuilder() },
 ) {
+    pluginConfig.callableMap // Checking that CallableMap is initialized
     val logger = application.log
     application.install(StatusPages) {
         exception<Throwable> { call, cause ->
@@ -24,14 +24,9 @@ val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
     }
 
     application.attributes.put(KRemoteServerPluginAttributesKey, pluginConfig)
-    
-    if (pluginConfig.enableLeasing) {
-        LeaseManager.configure(pluginConfig.leaseConfig)
-        val cleanupScope = CoroutineScope(SupervisorJob())
-        LeaseManager.startCleanupJob(cleanupScope)
-        
-        application.monitor.subscribe(ApplicationStopped) {
-            LeaseManager.stopCleanupJob()
-        }
+    val cleanupScope = CoroutineScope(SupervisorJob())
+    pluginConfig.leaseManager.startCleanupJob(cleanupScope)
+    application.monitor.subscribe(ApplicationStopped) {
+        pluginConfig.leaseManager.stopCleanupJob()
     }
 }

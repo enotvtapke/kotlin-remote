@@ -1,17 +1,45 @@
 package generatedBodies
 
 import ServerConfig
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.install
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.calllogging.CallLogging
+import io.ktor.server.routing.routing
 import kotlinx.remote.*
-import remoteEmbeddedServer
+import kotlinx.remote.CallableMapClass
+import kotlinx.remote.genCallableMap
+import kotlinx.remote.network.ktor.KRemote
+import kotlinx.remote.network.ktor.remote
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import remoteSerializersModule
 import kotlin.reflect.typeOf
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
 
 fun main() {
-    initCallableMap()
-    remoteEmbeddedServer().start(wait = true)
+    val callableMap = CallableMapClass(initCallableMap())
+    embeddedServer(Netty, port = 8080) {
+        install(CallLogging)
+        install(ServerContentNegotiation) {
+            json(Json {
+                serializersModule = SerializersModule {
+                }.remoteSerializersModule(callableMap, SerializersModule { })
+            })
+        }
+        install(KRemote) {
+            this.callableMap = callableMap
+        }
+        routing {
+            remote("/call")
+        }
+    }.start(wait = true)
 }
 
-fun initCallableMap() {
-    CallableMap["generated.multiply"] = RemoteCallable(
+fun initCallableMap(): Map<String, RemoteCallable> {
+    val callableMap = mutableMapOf<String, RemoteCallable>()
+    callableMap["generated.multiply"] = RemoteCallable(
         name = "multiply",
         returnType = RemoteType(typeOf<Long>()),
         invokator = RemoteInvokator { args ->
@@ -25,7 +53,7 @@ fun initCallableMap() {
         ),
         returnsStream = false,
     )
-    CallableMap["generated.multiplyStreaming"] = RemoteCallable(
+    callableMap["generated.multiplyStreaming"] = RemoteCallable(
         name = "multiplyStreaming",
         returnType = RemoteType(typeOf<Long>()),
         invokator = RemoteInvokator { args ->
@@ -39,4 +67,5 @@ fun initCallableMap() {
         ),
         returnsStream = true,
     )
+    return callableMap
 }

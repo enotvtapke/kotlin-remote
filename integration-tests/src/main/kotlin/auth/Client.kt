@@ -41,7 +41,7 @@ data object AuthServerConfig : RemoteConfig {
                 }
             }
         }
-    }.remoteClient("/callAuth")
+    }.remoteClient(CallableMapClass(genCallableMap()), "/callAuth")
 }
 
 @Remote(AuthServerConfig::class)
@@ -49,7 +49,6 @@ context(ctx: RemoteContext)
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
 fun main(): Unit = runBlocking {
-    CallableMap.putAll(genCallableMap())
     with(ClientContext) {
         println(multiply(100, 600))
     }

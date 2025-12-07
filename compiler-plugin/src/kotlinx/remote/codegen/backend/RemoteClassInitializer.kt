@@ -21,7 +21,7 @@ import kotlin.properties.Delegates
 class RemoteClassInitializer(private val ctx: RemoteIrContext) {
     fun init(remoteClass: RemoteClass) {
         initStubClass(remoteClass.stub, remoteClass.declaration)
-        initSerializer(remoteClass.serializer)
+//        initSerializer(remoteClass.serializer)
     }
 
     private var stubConstructor: IrConstructor by Delegates.notNull()

@@ -22,54 +22,6 @@ FILE fqName:box fileName:/serializers.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:init type:kotlin.Long visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: box.Calculator declared in box.Calculator.<set-init>' type=box.Calculator origin=null
             value: GET_VAR '<set-?>: kotlin.Long declared in box.Calculator.<set-init>' type=kotlin.Long origin=null
-    CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassSerializerKey] CLASS name:RemoteClassSerializer modality:FINAL visibility:public superTypes:[kotlinx.remote.classes.RemoteSerializer<box.Calculator>]
-      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:box.Calculator.RemoteClassSerializer
-      CONSTRUCTOR visibility:public returnType:box.Calculator.RemoteClassSerializer [primary]
-        BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlinx.remote.classes.RemoteSerializer'
-            TYPE_ARG T: <none>
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassSerializerKey] CLASS name:RemoteClassSerializer modality:FINAL visibility:public superTypes:[kotlinx.remote.classes.RemoteSerializer<box.Calculator>]' type=kotlin.Unit
-      FUN FAKE_OVERRIDE name:deserialize visibility:public modality:OPEN returnType:box.Calculator [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlinx.remote.classes.RemoteSerializer<box.Calculator>
-        VALUE_PARAMETER kind:Regular name:decoder index:1 type:kotlinx.serialization.encoding.Decoder
-        overridden:
-          public open fun deserialize (decoder: kotlinx.serialization.encoding.Decoder): T of kotlinx.remote.classes.RemoteSerializer declared in kotlinx.remote.classes.RemoteSerializer
-      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-        overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlinx.remote.classes.RemoteSerializer
-      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-        overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlinx.remote.classes.RemoteSerializer
-      FUN FAKE_OVERRIDE name:serialize visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlinx.remote.classes.RemoteSerializer<box.Calculator>
-        VALUE_PARAMETER kind:Regular name:encoder index:1 type:kotlinx.serialization.encoding.Encoder
-        VALUE_PARAMETER kind:Regular name:value index:2 type:box.Calculator
-        overridden:
-          public open fun serialize (encoder: kotlinx.serialization.encoding.Encoder, value: T of kotlinx.remote.classes.RemoteSerializer): kotlin.Unit declared in kotlinx.remote.classes.RemoteSerializer
-      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-        overridden:
-          public open fun toString (): kotlin.String declared in kotlinx.remote.classes.RemoteSerializer
-      FUN name:createStub visibility:public modality:FINAL returnType:box.Calculator
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlinx.remote.classes.RemoteSerializer<box.Calculator>
-        VALUE_PARAMETER kind:Regular name:id index:1 type:kotlin.Long
-        overridden:
-          public abstract fun createStub (id: kotlin.Long): T of kotlinx.remote.classes.RemoteSerializer declared in kotlinx.remote.classes.RemoteSerializer
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun createStub (id: kotlin.Long): box.Calculator declared in box.Calculator.RemoteClassSerializer'
-            CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.Long) declared in box.Calculator.RemoteClassStub' type=box.Calculator.RemoteClassStub origin=null
-              ARG id: GET_VAR 'id: kotlin.Long declared in box.Calculator.RemoteClassSerializer.createStub' type=kotlin.Long origin=null
-      PROPERTY FAKE_OVERRIDE name:descriptor visibility:public modality:OPEN [fake_override,val]
-        overridden:
-          public open descriptor: kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.remote.classes.RemoteSerializer
-        FUN FAKE_OVERRIDE name:<get-descriptor> visibility:public modality:OPEN returnType:kotlinx.serialization.descriptors.SerialDescriptor [fake_override]
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlinx.remote.classes.RemoteSerializer<box.Calculator>
-          correspondingProperty: PROPERTY FAKE_OVERRIDE name:descriptor visibility:public modality:OPEN [fake_override,val]
-          overridden:
-            public open fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.remote.classes.RemoteSerializer
     CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[box.Calculator; kotlinx.remote.classes.Stub]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:box.Calculator.RemoteClassStub
       PROPERTY name:id visibility:public modality:FINAL [val]

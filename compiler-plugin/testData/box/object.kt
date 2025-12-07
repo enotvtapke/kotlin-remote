@@ -18,7 +18,7 @@ object IdObject {
 }
 
 fun box(): String = runBlocking {
-    CallableMap.putAll(genCallableMap())
+    genCallableMap()
 
     context(ClientContext) {
         val test1 = IdObject.id(5).toLong()

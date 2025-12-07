@@ -1,14 +1,16 @@
-package remoteClass.generatedSerializer
+package gc
 
 import ClientContext
 import ServerConfig
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.classes.RemoteSerializable
+import leaseRenewalClient
 
 @RemoteSerializable
-class Calculator private constructor(private var init: Int) {
+class CalculatorGC private constructor(private var init: Int) {
     @Remote(ServerConfig::class)
     context(_: RemoteContext)
     suspend fun multiply(x: Int): Int {
@@ -25,15 +27,17 @@ class Calculator private constructor(private var init: Int) {
     companion object {
         @Remote(ServerConfig::class)
         context(_: RemoteContext)
-        suspend operator fun invoke(init: Int) = Calculator(init)
+        suspend operator fun invoke(init: Int) = CalculatorGC(init)
     }
 }
 
 fun main(): Unit = runBlocking {
+    leaseRenewalClient.startRenewalJob(this)
     context(ClientContext) {
-        val x = Calculator(5)
-        println(x.multiply(6))
-        println(x.multiply(7))
+        val x = CalculatorGC(5)
+        println(x.result())
+        delay(5_000)
         println(x.result())
     }
+    leaseRenewalClient.shutdown()
 }

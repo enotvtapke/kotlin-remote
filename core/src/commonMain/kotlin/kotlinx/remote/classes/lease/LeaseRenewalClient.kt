@@ -1,6 +1,5 @@
 package kotlinx.remote.classes.lease
 
-import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.CoroutineScope
@@ -9,30 +8,21 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.remote.classes.InternalConcurrentHashMap
 import kotlinx.remote.classes.Stub
+import kotlinx.remote.network.LeaseClient
 
-object LeaseRenewalClient : SynchronizedObject() {
+class LeaseRenewalClient(private val config: LeaseRenewalClientConfig, private val leaseClient: LeaseClient, val onLeaseExpired: ((Long) -> Unit) = {}) : SynchronizedObject() {
     private val trackedStubs = InternalConcurrentHashMap<Long, StubEntry>()
-    private val config = atomic(LeaseRenewalClientConfig())
     private var renewalJob: Job? = null
-    
-    var renewalFunction: (suspend (LeaseRenewalRequest) -> LeaseRenewalResponse)? = null
-    var releaseFunction: (suspend (LeaseReleaseRequest) -> Unit)? = null
-    var onLeaseExpired: ((Long) -> Unit)? = null
-    
+
     private class StubEntry(
         val id: Long,
-        stub: Stub
+        stub: Stub,
+        var lastRenewedMs: Long = 0,
     ) {
         val weakRef = WeakRef(stub)
-        var lastRenewedMs: Long = 0
+
     }
-    
-    fun configure(newConfig: LeaseRenewalClientConfig) {
-        config.value = newConfig
-    }
-    
-    fun getConfig(): LeaseRenewalClientConfig = config.value
-    
+
     fun registerStub(stub: Stub): Unit = synchronized(this) {
         trackedStubs.computeIfAbsent(stub.id) {
             StubEntry(stub.id, stub)
@@ -48,7 +38,7 @@ object LeaseRenewalClient : SynchronizedObject() {
             trackedStubs.remove(id)
         }
         if (releaseOnServer) {
-            releaseFunction?.invoke(LeaseReleaseRequest(listOf(id), config.value.clientId))
+            leaseClient.releaseLeases(LeaseReleaseRequest(listOf(id), config.clientId))
         }
     }
     
@@ -59,7 +49,7 @@ object LeaseRenewalClient : SynchronizedObject() {
             }
         }
         if (releaseOnServer && ids.isNotEmpty()) {
-            releaseFunction?.invoke(LeaseReleaseRequest(ids, config.value.clientId))
+            leaseClient.releaseLeases(LeaseReleaseRequest(ids, config.clientId))
         }
     }
     
@@ -83,18 +73,16 @@ object LeaseRenewalClient : SynchronizedObject() {
     }
     
     suspend fun renewAllLeases(): LeaseRenewalResponse? {
-        val renewal = renewalFunction ?: return null
-        
         val (activeIds, collectedIds) = collectGarbageAndGetActiveIds()
         
         if (collectedIds.isNotEmpty()) {
-            releaseFunction?.invoke(LeaseReleaseRequest(collectedIds, config.value.clientId))
+            leaseClient.releaseLeases(LeaseReleaseRequest(collectedIds, config.clientId))
         }
         
         if (activeIds.isEmpty()) return null
         
-        val request = LeaseRenewalRequest(activeIds, config.value.clientId)
-        val response = renewal(request)
+        val request = LeaseRenewalRequest(activeIds, config.clientId)
+        val response = leaseClient.renewLeases(request)
         
         synchronized(this) {
             for (failedId in response.failedIds) {
@@ -108,7 +96,7 @@ object LeaseRenewalClient : SynchronizedObject() {
         }
         
         for (failedId in response.failedIds) {
-            onLeaseExpired?.invoke(failedId)
+            onLeaseExpired.invoke(failedId)
         }
         
         return response
@@ -118,7 +106,7 @@ object LeaseRenewalClient : SynchronizedObject() {
         stopRenewalJob()
         renewalJob = coroutineScope.launch {
             while (true) {
-                delay(config.value.renewalIntervalMs)
+                delay(config.renewalIntervalMs)
                 try {
                     renewAllLeases()
                 } catch (_: Exception) {
@@ -141,7 +129,7 @@ object LeaseRenewalClient : SynchronizedObject() {
             ids
         }
         if (allIds.isNotEmpty()) {
-            releaseFunction?.invoke(LeaseReleaseRequest(allIds, config.value.clientId))
+            leaseClient.releaseLeases(LeaseReleaseRequest(allIds, config.clientId))
         }
     }
     

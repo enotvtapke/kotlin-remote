@@ -8,8 +8,7 @@ import io.ktor.util.reflect.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.remote.CallableMap
-import kotlinx.remote.network.serialization.rpcInternalKClass
+import kotlinx.remote.CallableMapClass
 import kotlinx.remote.returnTypeInfo
 import kotlinx.serialization.serializer
 
@@ -18,12 +17,12 @@ interface RemoteClient {
     fun callStreaming(call: RemoteCall, returnType: TypeInfo): Flow<Any?>
 }
 
-class RemoteClientImpl(private val httpClient: HttpClient, private val path: String) : RemoteClient {
+class RemoteClientImpl(private val httpClient: HttpClient, private val path: String, private val callableMap: CallableMapClass) : RemoteClient {
     override suspend fun call(call: RemoteCall): Any? {
         val post = httpClient.post(path) {
             setBody(call)
         }
-        return post.body(CallableMap[call.callableName].returnTypeInfo())
+        return post.body(callableMap[call.callableName].returnTypeInfo())
     }
 
     override fun callStreaming(
@@ -55,4 +54,4 @@ suspend fun <T> RemoteClient.call(call: RemoteCall): T {
     }
 }
 
-fun HttpClient.remoteClient(path: String): RemoteClient = RemoteClientImpl(this, path)
+fun HttpClient.remoteClient(callableMap: CallableMapClass, path: String): RemoteClient = RemoteClientImpl(this, path, callableMap)

@@ -6,6 +6,6 @@ interface Stub {
 
 fun checkIsNotStubForRemoteClassMethod(value: Any) { // used in compiler plugin
     require(value !is Stub) {
-        "Method of the stub `${value::class.qualifiedName}` was called in a local context. This may be caused by lease expiration."
+        "Method of the stub `${value::class.simpleName}` was called in a local context. This may be caused by lease expiration."
     }
 }

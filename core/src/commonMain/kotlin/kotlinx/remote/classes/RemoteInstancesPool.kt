@@ -1,34 +1,28 @@
 package kotlinx.remote.classes
 
-import kotlinx.remote.classes.RemoteInstancesPool.instances
-import kotlinx.remote.classes.lease.LeaseManager
+import kotlinx.atomicfu.AtomicLong
+import kotlinx.atomicfu.atomic
 
-object RemoteInstancesPool {
-    val instances = InternalConcurrentHashMap<Long, Any>()
+class RemoteInstancesPool {
+    private val instances = InternalConcurrentHashMap<Long, Any>()
 
-    @Suppress("UNUSED")
+    private val idCounter: AtomicLong = atomic(0L)
+
     fun getOrDefault(id: Long, default: Any?) = instances[id] ?: default
+
+    fun addInstance(value: Any): Long {
+        return idCounter.incrementAndGet().also {
+            instances[it] = value
+        }
+    }
     
-    fun removeInstance(id: Long): Any? = instances.remove(id)
+    fun remove(id: Long): Any? = instances.remove(id)
     
-    fun hasInstance(id: Long): Boolean = instances.containsKey(id)
+    fun containsKey(id: Long): Boolean = instances.containsKey(id)
     
     fun instanceCount(): Int = instances.entries.size
     
     fun clear() {
         instances.clear()
     }
-}
-
-fun addInstance(value: Any, clientId: String? = null): Long {
-    val id = StubIdGenerator.nextId()
-    instances[id] = value
-    LeaseManager.createLease(id, clientId)
-    return id
-}
-
-fun addInstanceWithoutLease(value: Any): Long {
-    val id = StubIdGenerator.nextId()
-    instances[id] = value
-    return id
 }

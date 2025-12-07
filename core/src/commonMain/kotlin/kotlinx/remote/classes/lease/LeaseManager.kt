@@ -1,6 +1,5 @@
 package kotlinx.remote.classes.lease
 
-import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 import kotlinx.coroutines.CoroutineScope
@@ -10,9 +9,8 @@ import kotlinx.coroutines.launch
 import kotlinx.remote.classes.InternalConcurrentHashMap
 import kotlinx.remote.classes.RemoteInstancesPool
 
-object LeaseManager : SynchronizedObject() {
+class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInstancesPool) : SynchronizedObject() {
     private val leases = InternalConcurrentHashMap<Long, LeaseEntry>()
-    private val config = atomic(LeaseConfig())
     private var cleanupJob: Job? = null
     var timeProvider: TimeProvider = SystemTimeProvider
     
@@ -21,15 +19,19 @@ object LeaseManager : SynchronizedObject() {
         var expirationTimeMs: Long,
         val clientIds: MutableSet<String> = mutableSetOf()
     )
-    
-    fun configure(newConfig: LeaseConfig) {
-        config.value = newConfig
+
+    fun addInstanceWithLease(value: Any, clientId: String? = null): Long {
+        val id = pool.addInstance(value)
+        createLease(id, clientId)
+        return id
+    }
+
+    fun getInstance(leaseId: Long): Any? {
+        return pool.getOrDefault(leaseId, null)
     }
     
-    fun getConfig(): LeaseConfig = config.value
-    
-    fun createLease(instanceId: Long, clientId: String? = null): LeaseInfo = synchronized(this) {
-        val currentConfig = config.value
+    private fun createLease(instanceId: Long, clientId: String? = null): LeaseInfo = synchronized(this) {
+        val currentConfig = config
         val expirationTime = timeProvider.currentTimeMillis() + currentConfig.leaseDurationMs
         
         val entry = leases.computeIfAbsent(instanceId) {
@@ -46,14 +48,14 @@ object LeaseManager : SynchronizedObject() {
     }
     
     fun renewLeases(request: LeaseRenewalRequest): LeaseRenewalResponse = synchronized(this) {
-        val currentConfig = config.value
+        val currentConfig = config
         val currentTime = timeProvider.currentTimeMillis()
         val renewedLeases = mutableListOf<LeaseInfo>()
         val failedIds = mutableListOf<Long>()
         
         for (instanceId in request.instanceIds) {
             val entry = leases[instanceId]
-            if (entry != null && RemoteInstancesPool.instances.containsKey(instanceId)) {
+            if (entry != null && pool.containsKey(instanceId)) {
                 entry.expirationTimeMs = currentTime + currentConfig.leaseDurationMs
                 if (request.clientId != null) {
                     entry.clientIds.add(request.clientId)
@@ -82,7 +84,7 @@ object LeaseManager : SynchronizedObject() {
     }
     
     fun hasActiveLease(instanceId: Long): Boolean = synchronized(this) {
-        val currentConfig = config.value
+        val currentConfig = config
         val entry = leases[instanceId] ?: return false
         return entry.expirationTimeMs + currentConfig.gracePeriodMs > timeProvider.currentTimeMillis()
     }
@@ -92,9 +94,9 @@ object LeaseManager : SynchronizedObject() {
             LeaseInfo(entry.instanceId, entry.expirationTimeMs)
         }
     }
-    
+
     fun cleanupExpiredInstances(): Int = synchronized(this) {
-        val currentConfig = config.value
+        val currentConfig = config
         val currentTime = timeProvider.currentTimeMillis()
         val expiredIds = mutableListOf<Long>()
         
@@ -107,7 +109,7 @@ object LeaseManager : SynchronizedObject() {
         
         for (id in expiredIds) {
             leases.remove(id)
-            RemoteInstancesPool.instances.remove(id)
+            pool.remove(id)
         }
         
         expiredIds.size
@@ -117,7 +119,7 @@ object LeaseManager : SynchronizedObject() {
         stopCleanupJob()
         cleanupJob = coroutineScope.launch {
             while (true) {
-                delay(config.value.cleanupIntervalMs)
+                delay(config.cleanupIntervalMs)
                 cleanupExpiredInstances()
             }
         }
@@ -130,7 +132,7 @@ object LeaseManager : SynchronizedObject() {
     
     fun clear() = synchronized(this) {
         leases.clear()
-        RemoteInstancesPool.instances.clear()
+        pool.clear()
     }
     
     fun leaseCount(): Int = synchronized(this) {

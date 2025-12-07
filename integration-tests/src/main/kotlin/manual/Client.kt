@@ -10,7 +10,7 @@ private suspend fun expression(a: Long, b: Long): Long {
 }
 
 fun main() = runBlocking {
-    initCallableMap()
+    manualCallableMap()
     with(ClientContext) {
         println(expression(6, 1))
         multiplyStreaming(5, 6).collect { println(it) }

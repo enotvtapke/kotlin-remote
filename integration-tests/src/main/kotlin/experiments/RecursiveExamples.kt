@@ -1,11 +1,10 @@
 package experiments
 
 import ClientContext
+import ServerConfig
 import kotlinx.coroutines.runBlocking
-import kotlinx.remote.CallableMap
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.genCallableMap
 
 @Remote(ServerConfig::class)
 context(_: RemoteContext)
@@ -34,7 +33,6 @@ suspend fun isOdd(n: Int): Boolean {
 }
 
 fun main() = runBlocking {
-    CallableMap.putAll(genCallableMap())
     context(ClientContext) {
         val n = 20
         val result = fibonacciRecursive(n)

@@ -21,9 +21,6 @@ FILE: serializers.kt
 
         }
 
-        public final class RemoteClassSerializer : R|kotlinx/remote/classes/RemoteSerializer<box/Calculator>| {
-        }
-
     }
     public final fun box(): R|kotlin/String| {
         ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {

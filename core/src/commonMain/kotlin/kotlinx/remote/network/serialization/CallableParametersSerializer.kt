@@ -1,5 +1,9 @@
 package kotlinx.remote.network.serialization
 
+import kotlinx.remote.CallableMapClass
+import kotlinx.remote.RemoteCallable
+import kotlinx.remote.RemoteType
+import kotlinx.remote.network.RemoteCall
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.nullable
@@ -9,10 +13,6 @@ import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.serializer
-import kotlinx.remote.CallableMap
-import kotlinx.remote.RemoteCallable
-import kotlinx.remote.RemoteType
-import kotlinx.remote.network.RemoteCall
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
@@ -96,8 +96,7 @@ private class CallableParametersSerializer(
 }
 
 
-class RpcCallSerializer() : KSerializer<RemoteCall> {
-    private val module: SerializersModule = SerializersModule {}
+class RpcCallSerializer(private val callableMap: CallableMapClass, private val module: SerializersModule) : KSerializer<RemoteCall> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("RpcCall") {
         element<String>("callableName")
         element("parameters", buildClassSerialDescriptor("Parameters"))
@@ -108,7 +107,7 @@ class RpcCallSerializer() : KSerializer<RemoteCall> {
             encodeStringElement(descriptor, 0, value.callableName)
 
             // Find the callable and create serializer for parameters
-            val callable = CallableMap[value.callableName]
+            val callable = callableMap[value.callableName]
             val parametersSerializer = CallableParametersSerializer(callable, module)
 
             encodeSerializableElement(descriptor, 1, parametersSerializer, value.parameters)
@@ -126,7 +125,7 @@ class RpcCallSerializer() : KSerializer<RemoteCall> {
                     1 -> {
                         // We need the callable name first to create the parameters serializer
                         val name = callableName ?: error("Callable name must be decoded before parameters")
-                        val callable = CallableMap[name]
+                        val callable = callableMap[name]
                         val parametersSerializer = CallableParametersSerializer(callable, module)
                         parameters = decodeSerializableElement(descriptor, 1, parametersSerializer)
                     }

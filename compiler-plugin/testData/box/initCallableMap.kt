@@ -20,7 +20,7 @@ context(ctx: RemoteContext)
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
 fun box(): String = runBlocking {
-    CallableMap.putAll(genCallableMap())
+    genCallableMap()
     context(ClientContext) {
         val test1 = multiply(5, 6)
         if (test1 == 42L) "OK" else "Fail: test1=$test1"

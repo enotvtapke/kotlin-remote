@@ -8,19 +8,21 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
-import kotlinx.remote.CallableMap
+import kotlinx.remote.CallableMapClass
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.handleRemoteCall
 import kotlinx.remote.network.ktor.remote
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import remoteSerializersModule
 
 fun main() {
-    CallableMap.putAll(genCallableMap())
     authRemoteEmbeddedServer().start(wait = true)
 }
 
 fun authRemoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
-    CallableMap.putAll(genCallableMap())
+    val callableMapClass = CallableMapClass(genCallableMap())
     return embeddedServer(Netty, port = 8080) {
         install(Authentication) {
             basic("auth-basic") {
@@ -36,9 +38,13 @@ fun authRemoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyAppl
         }
         install(CallLogging)
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                serializersModule = SerializersModule {}.remoteSerializersModule(callableMapClass, SerializersModule { })
+            })
         }
-        install(KRemote)
+        install(KRemote) {
+            callableMap = callableMapClass
+        }
         routing {
             authenticate("auth-basic") {
                 post("/callAuth") {

@@ -1,11 +1,10 @@
 package proposal
 
 import ClientContext
+import ServerConfig
 import kotlinx.coroutines.runBlocking
-import kotlinx.remote.CallableMap
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.genCallableMap
 
 @Remote(ServerConfig::class)
 context(_: RemoteContext)
@@ -20,7 +19,6 @@ private suspend fun power(base: Long, power: Int): Long {
 }
 
 fun main(): Unit = runBlocking {
-    CallableMap.putAll(genCallableMap())
     with(ClientContext) {
         // Power is called on the client
         println(power(2, 10))

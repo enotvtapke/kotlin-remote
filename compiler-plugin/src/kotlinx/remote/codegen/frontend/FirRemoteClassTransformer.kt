@@ -35,7 +35,7 @@ class FirRemoteClassTransformer(
         context: NestedClassGenerationContext,
     ): Set<Name> {
         return if (session.predicateBasedProvider.matches(FirRemotePredicates.remoteSerializable, classSymbol)) {
-            setOf(RemoteNames.REMOTE_CLASS_STUB_NAME, RemoteNames.REMOTE_CLASS_SERIALIZER_NAME)
+            setOf(RemoteNames.REMOTE_CLASS_STUB_NAME)
         } else {
             emptySet()
         }
@@ -76,9 +76,9 @@ class FirRemoteClassTransformer(
                 generateRpcServiceStubClass(owner)
             }
 
-            RemoteNames.REMOTE_CLASS_SERIALIZER_NAME -> {
-                generateSerializerObjectForRpcService(owner)
-            }
+//            RemoteNames.REMOTE_CLASS_SERIALIZER_NAME -> {
+//                generateSerializerObjectForRpcService(owner)
+//            }
 
             else -> {
                 error("Cannot run generation for ${owner.classId.createNestedClassId(name).asSingleFqName()}")

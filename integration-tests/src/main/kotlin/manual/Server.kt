@@ -1,7 +1,6 @@
 package manual
 
 import ServerConfig
-import experiments.exceptionSerializer
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -14,36 +13,31 @@ import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.remote
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
+import remoteSerializersModule
 import kotlin.reflect.typeOf
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
 
 fun main() {
-    initCallableMap()
-    CallableMap.putAll(genCallableMap())
+    val callableMap = CallableMapClass(manualCallableMap())
     embeddedServer(Netty, port = 8080) {
         install(CallLogging)
         install(ServerContentNegotiation) {
             json(Json {
-                serializersModule = SerializersModule {
-                    polymorphic(Exception::class) {
-                        subclass(exceptionSerializer(::IllegalArgumentException))
-                        subclass(exceptionSerializer(::IllegalStateException))
-                        subclass(exceptionSerializer(::ArithmeticException))
-                    }
-                }
+                serializersModule = SerializersModule {}.remoteSerializersModule(callableMap, SerializersModule { })
             })
         }
-        install(KRemote)
+        install(KRemote) {
+            this.callableMap = callableMap
+        }
         routing {
             remote("/call")
         }
     }.start(wait = true)
 }
 
-fun initCallableMap() {
-    CallableMap["multiply"] = RemoteCallable(
+fun manualCallableMap(): Map<String, RemoteCallable> {
+    val callableMap = mutableMapOf<String, RemoteCallable>()
+    callableMap["multiply"] = RemoteCallable(
         name = "multiply",
         returnType = RemoteType(typeOf<RemoteResponse<Long>>()),
         invokator = RemoteInvokator { args ->
@@ -57,7 +51,7 @@ fun initCallableMap() {
         ),
         returnsStream = false,
     )
-    CallableMap["multiplyStreaming"] = RemoteCallable(
+    callableMap["multiplyStreaming"] = RemoteCallable(
         name = "multiplyStreaming",
         returnType = RemoteType(typeOf<Long>()),
         invokator = RemoteInvokator { args ->
@@ -71,4 +65,5 @@ fun initCallableMap() {
         ),
         returnsStream = true,
     )
+    return callableMap
 }

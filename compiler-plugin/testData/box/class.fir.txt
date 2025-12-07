@@ -19,7 +19,7 @@ FILE: class.kt
     }
     public final fun box(): R|kotlin/String| {
         ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {
-            Q|kotlinx/remote/CallableMap|.R|kotlinx/remote/CallableMap.putAll|(R|kotlinx/remote/genCallableMap|())
+            R|kotlinx/remote/genCallableMap|()
             ^ R|kotlin/context|<R|kotlinx/remote/codegen/test/ClientContext|, R|kotlin/String|>(Q|kotlinx/remote/codegen/test/ClientContext|, <L> = context(<unused var>: R|kotlinx/remote/codegen/test/ClientContext|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                 lval c: R|box/Calculator| = R|box/Calculator.Calculator|(Long(1))
                 lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) R|<local>/c|.R|box/Calculator.multiply|(Long(5))

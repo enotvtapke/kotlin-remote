@@ -1,6 +1,6 @@
 package kotlinx.remote.classes
 
-import kotlinx.remote.classes.RemoteInstancesPool.instances
+import kotlinx.remote.RemoteIntrinsic
 import kotlinx.remote.classes.lease.LeaseManager
 import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.serialization.KSerializer
@@ -9,8 +9,13 @@ import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.modules.SerializersModule
 
-abstract class RemoteSerializer<T: Any> : KSerializer<T> {
+class RemoteSerializer<T : Any>(
+    private val leaseManager: LeaseManager? = null,
+    private val leaseRenewalClient: LeaseRenewalClient? = null,
+    private val stubFabric: ((Long) -> T)? = null
+) : KSerializer<T> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("id", LONG)
 
     override fun serialize(encoder: Encoder, value: T) {
@@ -18,23 +23,27 @@ abstract class RemoteSerializer<T: Any> : KSerializer<T> {
             encoder.encodeLong(value.id)
             return
         }
-        val id = StubIdGenerator.nextId()
-        instances[id] = value
-        LeaseManager.createLease(id)
+        val id =
+            leaseManager?.addInstanceWithLease(value) ?: error("Cannot serialize `$value`. No lease manager provided.")
         encoder.encodeLong(id)
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(decoder: Decoder): T {
         val id = decoder.decodeLong()
-        if (instances.containsKey(id)) {
-            return instances[id]!! as T
+        val instance = leaseManager?.getInstance(id)
+        if (instance != null) {
+            return instance as T
         } else {
-            val stub = createStub(id)
-            LeaseRenewalClient.registerStub(stub as Stub)
+            val stub = stubFabric?.invoke(id) ?: error("Cannot deserialize stub with id `$id`. No stub fabric provided.")
+            leaseRenewalClient?.registerStub(stub as Stub)
+                ?: error("Cannot deserialize stub `$stub`. No lease renewal client provided.")
             return stub
         }
     }
-
-    abstract fun createStub(id: Long): T
 }
+
+/**
+ * The compiler plugin will replace every call to this function with generated SerializersModule
+ */
+fun genRemoteClassSerializersModule(): SerializersModule = RemoteIntrinsic
