@@ -2,8 +2,8 @@ package manualFunctionCalling
 
 import kotlinx.remote.LocalContext
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.network.RemoteCall
-import kotlinx.remote.network.call
+import kotlinx.remote.RemoteCall
+import kotlinx.remote.call
 
 context(ctx: RemoteContext)
 suspend fun multiply(lhs: Long, rhs: Long) =

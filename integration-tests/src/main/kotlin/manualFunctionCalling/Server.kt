@@ -7,9 +7,9 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
 import kotlinx.remote.*
-import kotlinx.remote.network.RemoteResponse
-import kotlinx.remote.network.ktor.KRemote
-import kotlinx.remote.network.ktor.remote
+import kotlinx.remote.RemoteResponse
+import kotlinx.remote.ktor.KRemote
+import kotlinx.remote.ktor.remote
 import kotlin.reflect.typeOf
 
 fun main() {

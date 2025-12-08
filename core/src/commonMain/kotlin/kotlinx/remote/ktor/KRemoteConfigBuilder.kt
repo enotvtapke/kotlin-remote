@@ -1,4 +1,4 @@
-package kotlinx.remote.network.ktor
+package kotlinx.remote.ktor
 
 import kotlinx.remote.CallableMapClass
 import kotlinx.remote.classes.lease.LeaseConfig

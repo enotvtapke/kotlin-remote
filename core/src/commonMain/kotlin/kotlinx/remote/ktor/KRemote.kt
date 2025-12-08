@@ -1,4 +1,4 @@
-package kotlinx.remote.network.ktor
+package kotlinx.remote.ktor
 
 import io.ktor.http.*
 import io.ktor.server.application.*

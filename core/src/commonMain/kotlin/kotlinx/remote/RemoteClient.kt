@@ -1,10 +1,8 @@
-package kotlinx.remote.network
+package kotlinx.remote
 
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import kotlinx.remote.CallableMapClass
-import kotlinx.remote.returnTypeInfo
 
 interface RemoteClient {
     suspend fun call(call: RemoteCall): Any?

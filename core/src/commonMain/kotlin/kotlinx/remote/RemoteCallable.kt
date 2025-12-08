@@ -1,7 +1,7 @@
 package kotlinx.remote
 
 import io.ktor.util.reflect.*
-import kotlinx.remote.network.serialization.rpcInternalKClass
+import kotlinx.remote.serialization.rpcInternalKClass
 import kotlin.reflect.KType
 
 data class RemoteType(

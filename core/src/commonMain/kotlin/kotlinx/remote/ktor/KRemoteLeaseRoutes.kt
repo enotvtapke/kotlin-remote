@@ -1,11 +1,13 @@
-package kotlinx.remote.network.ktor
+package kotlinx.remote.ktor
 
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.utils.io.KtorDsl
 import kotlinx.remote.classes.lease.LeaseReleaseRequest
 import kotlinx.remote.classes.lease.LeaseRenewalRequest
 
+@KtorDsl
 fun Route.leaseRoutes(path: String = "/lease") {
     val leaseManager = application.attributes.getOrNull(KRemoteServerPluginAttributesKey)?.leaseManager
         ?: error("KRemote Ktor plugin not installed")
@@ -22,9 +24,4 @@ fun Route.leaseRoutes(path: String = "/lease") {
             call.respond(mapOf("status" to "ok"))
         }
     }
-}
-
-fun Route.remoteWithLeasing(callPath: String = "/call", leasePath: String = "/lease") {
-    remote(callPath)
-    leaseRoutes(leasePath)
 }

@@ -1,4 +1,4 @@
-package kotlinx.remote.network
+package kotlinx.remote
 
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName

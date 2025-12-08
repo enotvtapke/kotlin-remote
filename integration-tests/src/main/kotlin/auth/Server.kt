@@ -9,9 +9,9 @@ import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
 import kotlinx.remote.CallableMapClass
 import kotlinx.remote.genCallableMap
-import kotlinx.remote.network.ktor.KRemote
-import kotlinx.remote.network.ktor.handleRemoteCall
-import kotlinx.remote.network.ktor.remote
+import kotlinx.remote.ktor.KRemote
+import kotlinx.remote.ktor.handleRemoteCall
+import kotlinx.remote.ktor.remote
 
 fun main() {
     authRemoteEmbeddedServer().start(wait = true)

@@ -14,8 +14,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.remoteSerializersModule
-import kotlinx.remote.network.RemoteClient
-import kotlinx.remote.network.remoteClient
+import kotlinx.remote.RemoteClient
 import kotlinx.serialization.json.Json
 
 data object AuthServerContext : RemoteContext {

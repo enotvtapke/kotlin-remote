@@ -1,9 +1,9 @@
-package kotlinx.remote.network.serialization
+package kotlinx.remote.serialization
 
 import kotlinx.remote.CallableMapClass
 import kotlinx.remote.RemoteCallable
 import kotlinx.remote.RemoteType
-import kotlinx.remote.network.RemoteCall
+import kotlinx.remote.RemoteCall
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.nullable

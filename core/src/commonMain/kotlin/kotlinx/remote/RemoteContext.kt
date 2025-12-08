@@ -1,7 +1,5 @@
 package kotlinx.remote
 
-import kotlinx.remote.network.RemoteClient
-
 @Target(AnnotationTarget.FUNCTION)
 annotation class Remote
 

@@ -4,9 +4,9 @@
 
 package kotlinx.remote.codegen.test
 
-import kotlinx.remote.network.RemoteCall
-import kotlinx.remote.network.RemoteClient
-import kotlinx.remote.network.RemoteResponse
+import kotlinx.remote.RemoteCall
+import kotlinx.remote.RemoteClient
+import kotlinx.remote.RemoteResponse
 
 object TestRpcClient : RemoteClient {
     override suspend fun call(

@@ -22,7 +22,7 @@ FILE fqName:box fileName:/extensionFunction.kt
                           ARG name: CONST String type=kotlin.String value="multiply"
                           ARG returnType: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
                             ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
-                              TYPE_ARG T: kotlinx.remote.network.RemoteResponse<kotlin.Long>
+                              TYPE_ARG T: kotlinx.remote.RemoteResponse<kotlin.Long>
                           ARG invokator: TYPE_OP type=kotlinx.remote.RemoteInvokator origin=SAM_CONVERSION typeOperand=kotlinx.remote.RemoteInvokator
                             FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Any?> origin=LAMBDA
                               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any? [suspend]
@@ -100,11 +100,11 @@ FILE fqName:box fileName:/extensionFunction.kt
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
           then: RETURN type=kotlin.Nothing from='public final fun multiply (ctx: kotlinx.remote.RemoteContext, <this>: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box'
-            CALL 'public final fun call <T> (<this>: kotlinx.remote.network.RemoteClient, call: kotlinx.remote.network.RemoteCall): T of kotlinx.remote.network.call declared in kotlinx.remote.network' type=T of kotlinx.remote.network.call origin=null
+            CALL 'public final fun call <T> (<this>: kotlinx.remote.RemoteClient, call: kotlinx.remote.RemoteCall): T of kotlinx.remote.call declared in kotlinx.remote' type=T of kotlinx.remote.call origin=null
               TYPE_ARG T: kotlin.Long
-              ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.network.RemoteClient declared in kotlinx.remote.RemoteContext' type=kotlinx.remote.network.RemoteClient origin=null
+              ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.RemoteClient declared in kotlinx.remote.RemoteContext' type=kotlinx.remote.RemoteClient origin=null
                 ARG <this>: GET_VAR 'ctx: kotlinx.remote.RemoteContext declared in box.multiply' type=kotlinx.remote.RemoteContext origin=null
-              ARG call: CONSTRUCTOR_CALL 'public constructor <init> (callableName: kotlin.String, parameters: kotlin.Array<kotlin.Any?>) declared in kotlinx.remote.network.RemoteCall' type=kotlinx.remote.network.RemoteCall origin=null
+              ARG call: CONSTRUCTOR_CALL 'public constructor <init> (callableName: kotlin.String, parameters: kotlin.Array<kotlin.Any?>) declared in kotlinx.remote.RemoteCall' type=kotlinx.remote.RemoteCall origin=null
                 ARG callableName: CONST String type=kotlin.String value="box.multiply"
                 ARG parameters: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOf> origin=null
                   TYPE_ARG T: kotlin.Any?

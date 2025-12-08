@@ -1,4 +1,4 @@
-package kotlinx.remote.network.serialization
+package kotlinx.remote.serialization
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer

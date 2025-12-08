@@ -71,11 +71,11 @@ class RemoteIrContext(
     }
 
     val remoteCall by lazy {
-        getRemoteIrClassSymbol("RemoteCall", "network")
+        getRemoteIrClassSymbol("RemoteCall")
     }
 
     val remoteResponse by lazy {
-        getRemoteIrClassSymbol("RemoteResponse", "network")
+        getRemoteIrClassSymbol("RemoteResponse")
     }
 
     val remoteCallable by lazy {
@@ -112,7 +112,7 @@ class RemoteIrContext(
         }
 
         val remoteClientCall by lazy {
-            namedFunction("kotlinx.remote.network", "call")
+            namedFunction("kotlinx.remote", "call")
         }
 
         val genCallableMap by lazy {

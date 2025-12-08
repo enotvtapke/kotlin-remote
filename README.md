@@ -52,7 +52,7 @@ will be called remotely. The client is stored directly in the context, which all
 For example, here function `multiply` is called locally:
 
 ```kotlin
-context(ServerContext) {
+context(LocalContext) {
     println(multiply(6, 5))
 }
 ```
@@ -103,7 +103,8 @@ CallableMap["multiply"] = RemoteCallable(
 ```
 
 Here `CallableMap` is a storage, `invokator` is basically a reference to `multiply` function. Server uses this reference
-to call the function. It is worth noting that remote function inside `invokator` is always called locally.
+to call the function. In reality fully qualified function names are used, not just `multiply`. This prevents collisions. 
+It is worth noting that remote function inside `invokator` is always called locally.
 
 ### Code generation
 

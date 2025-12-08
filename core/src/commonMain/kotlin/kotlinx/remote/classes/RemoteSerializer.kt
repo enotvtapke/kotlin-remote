@@ -3,9 +3,9 @@ package kotlinx.remote.classes
 import kotlinx.remote.CallableMapClass
 import kotlinx.remote.RemoteIntrinsic
 import kotlinx.remote.classes.lease.LeaseManager
-import kotlinx.remote.network.RemoteCall
-import kotlinx.remote.network.serialization.RpcCallSerializer
-import kotlinx.remote.network.serialization.setupExceptionSerializers
+import kotlinx.remote.RemoteCall
+import kotlinx.remote.serialization.RpcCallSerializer
+import kotlinx.remote.serialization.setupExceptionSerializers
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor

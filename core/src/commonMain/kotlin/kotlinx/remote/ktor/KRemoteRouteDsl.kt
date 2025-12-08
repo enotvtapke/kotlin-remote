@@ -1,11 +1,11 @@
-package kotlinx.remote.network.ktor
+package kotlinx.remote.ktor
 
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import io.ktor.utils.io.*
 import kotlinx.remote.RemoteCallable
-import kotlinx.remote.network.RemoteCall
-import kotlinx.remote.network.RemoteResponse
+import kotlinx.remote.RemoteCall
+import kotlinx.remote.RemoteResponse
 import kotlinx.remote.returnTypeInfo
 
 @KtorDsl
