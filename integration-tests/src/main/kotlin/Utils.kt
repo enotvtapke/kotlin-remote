@@ -10,9 +10,12 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.remote.CallableMapClass
 import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
+import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseRenewalClient
@@ -29,21 +32,33 @@ import kotlinx.remote.network.remoteClient
 import kotlinx.serialization.json.Json
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
 
-val leaseRenewalClient = LeaseRenewalClient(
-    LeaseRenewalClientConfig(500), HttpClient {
-        defaultRequest {
-            url("http://localhost:8080")
-            accept(ContentType.Application.Json)
-            contentType(ContentType.Application.Json)
+private val leaseRenewalClients = mutableMapOf<String, LeaseRenewalClient>()
+
+fun getOrCreateLeaseRenewalClient(url: String, config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(500)): LeaseRenewalClient {
+    return leaseRenewalClients.getOrPut(url) {
+        LeaseRenewalClient(
+            config, HttpClient {
+                defaultRequest {
+                    url(url)
+                    accept(ContentType.Application.Json)
+                    contentType(ContentType.Application.Json)
+                }
+                install(ContentNegotiation) {
+                    json()
+                }
+                install(Logging) {
+                    level = LogLevel.BODY
+                }
+            }.leaseClient()
+        ).also {
+            it.startRenewalJob(CoroutineScope(Dispatchers.IO))
         }
-        install(ContentNegotiation) {
-            json()
-        }
-        install(Logging) {
-            level = LogLevel.BODY
-        }
-    }.leaseClient()
-)
+    }
+}
+
+fun createOnStubDeserialization(config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(500)): (Stub) -> Unit = { stub ->
+    getOrCreateLeaseRenewalClient(stub.url, config).registerStub(stub)
+}
 
 data object ServerConfig : RemoteConfig {
     override val context = ServerContext
@@ -59,7 +74,7 @@ data object ServerConfig : RemoteConfig {
                     remoteClasses = genRemoteClassList(),
                     callableMap = CallableMapClass(genCallableMap()),
                     leaseManager = null,
-                    leaseRenewalClient = leaseRenewalClient,
+                    onStubDeserialization = createOnStubDeserialization(),
                 )
             })
         }
@@ -87,7 +102,10 @@ fun remoteEmbeddedServer(leaseConfig: LeaseConfig = LeaseConfig()): EmbeddedServ
     }
 }
 
-fun Application.installRemoteServerContentNegotiation(renewalClient: LeaseRenewalClient = leaseRenewalClient) {
+fun Application.installRemoteServerContentNegotiation(
+    nodeUrl: String = "http://localhost:8080",
+    onStubDeserialization: ((Stub) -> Unit) = createOnStubDeserialization()
+) {
     install(ServerContentNegotiation) {
         json(Json {
             val leaseManager = this@installRemoteServerContentNegotiation.attributes[KRemoteServerPluginAttributesKey].leaseManager
@@ -96,7 +114,8 @@ fun Application.installRemoteServerContentNegotiation(renewalClient: LeaseRenewa
                 remoteClasses = genRemoteClassList(),
                 callableMap = callableMap,
                 leaseManager = leaseManager,
-                leaseRenewalClient = renewalClient
+                nodeUrl = nodeUrl,
+                onStubDeserialization = onStubDeserialization
             )
         })
     }

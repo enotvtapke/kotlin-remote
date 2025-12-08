@@ -2,6 +2,7 @@ package auth
 
 import ClientContext
 import ServerContext
+import createOnStubDeserialization
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
@@ -18,7 +19,6 @@ import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.remoteClient
 import kotlinx.serialization.json.Json
-import leaseRenewalClient
 
 data object AuthServerConfig : RemoteConfig {
     override val context = ServerContext
@@ -34,7 +34,7 @@ data object AuthServerConfig : RemoteConfig {
                     remoteClasses = genRemoteClassList(),
                     callableMap = CallableMapClass(genCallableMap()),
                     leaseManager = null,
-                    leaseRenewalClient = leaseRenewalClient,
+                    onStubDeserialization = createOnStubDeserialization(),
                 )
             })
         }

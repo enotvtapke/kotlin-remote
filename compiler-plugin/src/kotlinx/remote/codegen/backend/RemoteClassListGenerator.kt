@@ -14,11 +14,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -34,11 +31,12 @@ class RemoteClassListGenerator(
 
     fun generate(parent: IrDeclarationParent): IrExpression {
         val kClassAnyType = ctx.kClass.typeWith(ctx.irBuiltIns.anyType, Variance.INVARIANT)
-        val function1LongAnyType = ctx.function1.typeWith(
+        val function2LongStringAnyType = ctx.function2.typeWith(
             ctx.irBuiltIns.longType,
+            ctx.irBuiltIns.stringType,
             ctx.irBuiltIns.anyType,
         )
-        val pairType = ctx.pair.typeWith(kClassAnyType, function1LongAnyType)
+        val pairType = ctx.pair.typeWith(kClassAnyType, function2LongStringAnyType)
         val listType = ctx.irBuiltIns.listClass.typeWith(pairType, Variance.OUT_VARIANCE)
 
         if (remoteClasses.isEmpty()) {
@@ -69,7 +67,7 @@ class RemoteClassListGenerator(
                 type = varargType,
                 varargElementType = pairType,
                 elements = remoteClasses.memoryOptimizedMap { remoteClass ->
-                    generatePair(parent, remoteClass, kClassAnyType, function1LongAnyType, pairType)
+                    generatePair(parent, remoteClass, kClassAnyType, function2LongStringAnyType, pairType)
                 }
             )
         }
@@ -78,9 +76,9 @@ class RemoteClassListGenerator(
     private fun generatePair(
         parent: IrDeclarationParent,
         remoteClass: RemoteClass,
-        kClassAnyType: org.jetbrains.kotlin.ir.types.IrType,
-        function1LongAnyType: org.jetbrains.kotlin.ir.types.IrType,
-        pairType: org.jetbrains.kotlin.ir.types.IrType,
+        kClassAnyType: IrType,
+        function2LongStringAnyType: IrType,
+        pairType: IrType,
     ): IrExpression {
         return IrCallImpl(
             startOffset = UNDEFINED_OFFSET,
@@ -90,13 +88,13 @@ class RemoteClassListGenerator(
             typeArgumentsCount = 2,
         ).apply {
             typeArguments[0] = kClassAnyType
-            typeArguments[1] = function1LongAnyType
+            typeArguments[1] = function2LongStringAnyType
             arguments[0] = generateClassReference(remoteClass, kClassAnyType)
             arguments[1] = generateStubFactory(parent, remoteClass)
         }
     }
 
-    private fun generateClassReference(remoteClass: RemoteClass, kClassAnyType: org.jetbrains.kotlin.ir.types.IrType): IrExpression {
+    private fun generateClassReference(remoteClass: RemoteClass, kClassAnyType: IrType): IrExpression {
         val classType = remoteClass.declaration.defaultType
         val kClassType = ctx.kClass.typeWith(classType, Variance.INVARIANT)
         val classReference = IrClassReferenceImpl(
@@ -133,11 +131,17 @@ class RemoteClassListGenerator(
                 name = Name.identifier("id")
                 type = ctx.irBuiltIns.longType
             }
+            
+            val urlParameter = addValueParameter {
+                name = Name.identifier("url")
+                type = ctx.irBuiltIns.stringType
+            }
 
             body = ctx.irBuilder(symbol).irBlockBody {
                 +irReturn(
                     irCallConstructor(stubConstructor.symbol, listOf()).apply {
                         arguments[0] = irGet(idParameter)
+                        arguments[1] = irGet(urlParameter)
                     }
                 )
             }
@@ -146,8 +150,9 @@ class RemoteClassListGenerator(
         return IrFunctionExpressionImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
-            type = ctx.function1.typeWith(
+            type = ctx.function2.typeWith(
                 ctx.irBuiltIns.longType,
+                ctx.irBuiltIns.stringType,
                 ctx.irBuiltIns.anyType,
             ),
             origin = IrStatementOrigin.LAMBDA,

@@ -2,6 +2,7 @@ package kotlinx.remote.classes
 
 interface Stub {
     val id: Long
+    val url: String
 }
 
 fun checkIsNotStubForRemoteClassMethod(value: Any) { // used in compiler plugin

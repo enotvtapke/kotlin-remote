@@ -15,7 +15,7 @@ FILE: genRemoteClassesList.kt
         }
 
         public final class RemoteClassStub : R|Calculator|, R|kotlinx/remote/classes/Stub| {
-            public constructor(id: R|kotlin/Long|): R|Calculator.RemoteClassStub|
+            public constructor(id: R|kotlin/Long|, url: R|kotlin/String|): R|Calculator.RemoteClassStub|
 
         }
 

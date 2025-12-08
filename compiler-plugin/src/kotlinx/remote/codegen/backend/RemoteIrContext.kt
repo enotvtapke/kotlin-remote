@@ -46,6 +46,10 @@ class RemoteIrContext(
         getIrClassSymbol("kotlin", "Function1")
     }
 
+    val function2 by lazy {
+        getIrClassSymbol("kotlin", "Function2")
+    }
+
     val suspendFunction1 by lazy {
         getIrClassSymbol("kotlin.coroutines", "SuspendFunction1")
     }
@@ -194,6 +198,10 @@ class RemoteIrContext(
     inner class Properties {
         val stubId by lazy {
             stub.namedProperty("id")
+        }
+        
+        val stubUrl by lazy {
+            stub.namedProperty("url")
         }
 
         private fun IrClassSymbol.namedProperty(name: String): IrPropertySymbol {

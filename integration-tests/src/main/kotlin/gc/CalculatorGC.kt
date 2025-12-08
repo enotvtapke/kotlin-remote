@@ -2,12 +2,12 @@ package gc
 
 import ClientContext
 import ServerConfig
+import getOrCreateLeaseRenewalClient
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.classes.RemoteSerializable
-import leaseRenewalClient
 
 @RemoteSerializable
 class CalculatorGC private constructor(private var init: Int) {
@@ -32,7 +32,7 @@ class CalculatorGC private constructor(private var init: Int) {
 }
 
 fun main(): Unit = runBlocking {
-    leaseRenewalClient.startRenewalJob(this)
+    val leaseRenewalClient = getOrCreateLeaseRenewalClient("http://localhost:8080")
     context(ClientContext) {
         val x = CalculatorGC(5)
         println(x.result())

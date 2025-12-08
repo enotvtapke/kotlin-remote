@@ -62,6 +62,7 @@ class FirRemoteClassTransformer(
             createConstructor(classSymbol, FirRemoteClassStubKey, isPrimary = true) {
                 visibility = Visibilities.Public
                 valueParameter(Name.identifier("id"), session.builtinTypes.longType.coneType)
+                valueParameter(Name.identifier("url"), session.builtinTypes.stringType.coneType)
             }.symbol
         )
     }
