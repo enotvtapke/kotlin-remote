@@ -40,21 +40,6 @@ fun manualCallableMap(): Map<String, RemoteCallable> {
             RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),
             RemoteParameter("rhs", RemoteType(typeOf<Long>()), false)
         ),
-        returnsStream = false,
-    )
-    callableMap["multiplyStreaming"] = RemoteCallable(
-        name = "multiplyStreaming",
-        returnType = RemoteType(typeOf<Long>()),
-        invokator = RemoteInvokator { args ->
-            return@RemoteInvokator context(LocalContext) {
-                multiplyStreaming(args[0] as Long, args[1] as Long)
-            }
-        },
-        parameters = arrayOf(
-            RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),
-            RemoteParameter("rhs", RemoteType(typeOf<Long>()), false)
-        ),
-        returnsStream = true,
     )
     return callableMap
 }

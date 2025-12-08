@@ -11,9 +11,6 @@ import io.ktor.server.testing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.LocalContext
@@ -72,20 +69,21 @@ class ApplicationTests {
             }
         }
 
-    @Ignore
     @Test
     fun `erroneous call`() =
         testApplication {
             configureApplication()
 
             @Remote
-            context(ctx: RemoteContext)
-            suspend fun multiply(lhs: Long, rhs: Long): Long = throw IllegalStateException("Exception")
+            context(_: RemoteContext)
+            suspend fun multiply(lhs: Long, rhs: Long): Long = throw IllegalStateException("My exception")
 
             context(testServerRemoteContext()) {
                 val exception = assertThrows<IllegalStateException> { multiply(10, 10) }
-                val msg = Path("./src/test/kotlin/exceptionMessage.txt").readText()
-                assertEquals(msg, exception.message)
+                assertEquals(
+                    "My exception --- Remote stack trace ---",
+                    exception.message?.lines()?.take(2)?.joinToString(" ")
+                )
             }
         }
 
@@ -151,50 +149,6 @@ class ApplicationTests {
 
             context(testServerRemoteContext(), 10) {
                 assertEquals(1000, 10L.multiply(10))
-            }
-        }
-
-    @Test
-    fun `streaming local call`() =
-        testApplication {
-            configureApplication()
-
-            @Remote
-            context(_: RemoteContext)
-            suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
-                return flow {
-                    repeat(50) {
-                        delay(10)
-                        emit(lhs * rhs)
-                    }
-                }
-            }
-
-            context(LocalContext) {
-                val res = multiplyStreaming(10, 10).toList()
-                assertEquals(List(50) { 100L }, res)
-            }
-        }
-
-    @Test
-    fun `streaming non local call`() =
-        testApplication {
-            configureApplication()
-
-            @Remote
-            context(_: RemoteContext)
-            suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
-                return flow {
-                    repeat(50) {
-                        delay(10)
-                        emit(lhs * rhs)
-                    }
-                }
-            }
-
-            context(testServerRemoteContext()) {
-                val res = multiplyStreaming(10, 10).toList()
-                assertEquals(List(50) { 100L }, res)
             }
         }
 

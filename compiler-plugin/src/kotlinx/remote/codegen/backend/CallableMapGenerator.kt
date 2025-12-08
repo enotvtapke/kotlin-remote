@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -116,18 +114,11 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
                     typeArguments[0] = ctx.remoteParameter.defaultType
                     arguments[0] = vararg
                 }
-            val isStreaming = callable.returnType.isSubtypeOfClass(ctx.flow)
             arguments[0] =
                 IrConstImpl.string(startOffset, endOffset, ctx.irBuiltIns.stringType, callable.name.asString())
-            arguments[1] = irRemoteTypeCall(
-                if (isStreaming) (callable.returnType as IrSimpleType).arguments.single().typeOrFail
-                else ctx.remoteResponse.typeWith(listOf(callable.returnType))
-            )
+            arguments[1] = irRemoteTypeCall(ctx.remoteResponse.typeWith(listOf(callable.returnType)))
             arguments[2] = invokator
             arguments[3] = parametersCall
-            arguments[4] =
-                IrConstImpl.boolean(startOffset, endOffset, ctx.irBuiltIns.booleanType, isStreaming)
-
         }
     }
 

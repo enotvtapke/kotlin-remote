@@ -6,9 +6,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBody
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.typeOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -27,10 +25,6 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
             val contextClient = irCall(data.remoteContextClient.owner.getter!!.symbol).apply {
                 arguments[0] = irGet(context)
             }
-            val isStreaming = declaration.returnType.isSubtypeOfClass(data.flow)
-            val call =
-                if (isStreaming) data.functions.remoteClientCallStreaming
-                else data.functions.remoteClientCall
             val remoteCall = irCallConstructor(data.remoteCall.constructors.single(), listOf()).apply {
                 arguments[0] = irString(declaration.remoteFunctionName())
                 arguments[1] = if (declaration.parameters.isEmpty()) {
@@ -67,10 +61,8 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
                     ),
                     irBranch(
                         true.toIrConst(data.irBuiltIns.booleanType, startOffset, endOffset),
-                        irReturn(irCall(call).apply {
-                            typeArguments[0] =
-                                if (isStreaming) (declaration.returnType as IrSimpleType).arguments.single().typeOrFail
-                                else declaration.returnType
+                        irReturn(irCall(data.functions.remoteClientCall).apply {
+                            typeArguments[0] = declaration.returnType
                             arguments[0] = contextClient
                             arguments[1] = remoteCall
                         })

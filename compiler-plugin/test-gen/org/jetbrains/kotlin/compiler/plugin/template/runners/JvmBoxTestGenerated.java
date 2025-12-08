@@ -28,18 +28,6 @@ public class JvmBoxTestGenerated extends AbstractJvmBoxTest {
   }
 
   @Test
-  @TestMetadata("callStreaming.kt")
-  public void testCallStreaming() {
-    runTest("compiler-plugin/testData/box/callStreaming.kt");
-  }
-
-  @Test
-  @TestMetadata("callStreamingSuspend.kt")
-  public void testCallStreamingSuspend() {
-    runTest("compiler-plugin/testData/box/callStreamingSuspend.kt");
-  }
-
-  @Test
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("compiler-plugin/testData/box/class.kt");

@@ -18,7 +18,7 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
                         TYPE_ARG A: kotlin.String
                         TYPE_ARG B: kotlinx.remote.RemoteCallable
                         ARG <this>: CONST String type=kotlin.String value="foo.bar.multiply"
-                        ARG that: CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, returnType: kotlinx.remote.RemoteType, invokator: kotlinx.remote.RemoteInvokator, parameters: kotlin.Array<out kotlinx.remote.RemoteParameter>, returnsStream: kotlin.Boolean) declared in kotlinx.remote.RemoteCallable' type=kotlinx.remote.RemoteCallable origin=null
+                        ARG that: CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, returnType: kotlinx.remote.RemoteType, invokator: kotlinx.remote.RemoteInvokator, parameters: kotlin.Array<out kotlinx.remote.RemoteParameter>) declared in kotlinx.remote.RemoteCallable' type=kotlinx.remote.RemoteCallable origin=null
                           ARG name: CONST String type=kotlin.String value="multiply"
                           ARG returnType: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
                             ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
@@ -45,12 +45,11 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
                                   ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
                                     TYPE_ARG T: kotlin.Any?
                                 ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
-                          ARG returnsStream: CONST Boolean type=kotlin.Boolean value=false
                       CALL 'public final fun to <A, B> (<this>: A of kotlin.to, that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> declared in kotlin' type=kotlin.Pair<kotlin.String, kotlinx.remote.RemoteCallable> origin=null
                         TYPE_ARG A: kotlin.String
                         TYPE_ARG B: kotlinx.remote.RemoteCallable
                         ARG <this>: CONST String type=kotlin.String value="foo.bar.genericFunction"
-                        ARG that: CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, returnType: kotlinx.remote.RemoteType, invokator: kotlinx.remote.RemoteInvokator, parameters: kotlin.Array<out kotlinx.remote.RemoteParameter>, returnsStream: kotlin.Boolean) declared in kotlinx.remote.RemoteCallable' type=kotlinx.remote.RemoteCallable origin=null
+                        ARG that: CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, returnType: kotlinx.remote.RemoteType, invokator: kotlinx.remote.RemoteInvokator, parameters: kotlin.Array<out kotlinx.remote.RemoteParameter>) declared in kotlinx.remote.RemoteCallable' type=kotlinx.remote.RemoteCallable origin=null
                           ARG name: CONST String type=kotlin.String value="genericFunction"
                           ARG returnType: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
                             ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
@@ -79,7 +78,6 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
                                   ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
                                     TYPE_ARG T: kotlin.collections.Map<kotlin.Number, kotlin.collections.List<kotlin.collections.List<kotlin.Int>>>
                                 ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
-                          ARG returnsStream: CONST Boolean type=kotlin.Boolean value=false
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$runBlocking: kotlinx.coroutines.CoroutineScope): kotlin.String declared in foo.bar.box'
                   CALL 'public final fun context <T, R> (with: T of kotlin.context, block: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<T of kotlin.context, R of kotlin.context>): R of kotlin.context declared in kotlin' type=kotlin.String origin=null
                     TYPE_ARG T: kotlinx.remote.codegen.test.ServerContext

@@ -54,10 +54,6 @@ class RemoteIrContext(
         getIrClassSymbol("kotlin.coroutines", "SuspendFunction1")
     }
 
-    val flow by lazy {
-        getIrClassSymbol("kotlinx.coroutines.flow", "Flow")
-    }
-
     val pair by lazy {
         getIrClassSymbol("kotlin", "Pair")
     }
@@ -117,10 +113,6 @@ class RemoteIrContext(
 
         val remoteClientCall by lazy {
             namedFunction("kotlinx.remote.network", "call")
-        }
-
-        val remoteClientCallStreaming by lazy {
-            namedFunction("kotlinx.remote.network", "callStreaming")
         }
 
         val genCallableMap by lazy {

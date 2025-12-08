@@ -13,6 +13,5 @@ fun main() = runBlocking {
     manualCallableMap()
     with(ServerContext) {
         println(expression(6, 1))
-        multiplyStreaming(5, 6).collect { println(it) }
     }
 }

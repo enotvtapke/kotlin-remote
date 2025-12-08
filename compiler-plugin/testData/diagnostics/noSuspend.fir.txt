@@ -2,7 +2,7 @@ FILE: noSuspend.kt
     package foo.bar
 
     context(<unused var>: R|kotlinx/remote/RemoteContext|)
-    @R|kotlinx/remote/Remote|(config = <getClass>(Q|kotlinx/remote/codegen/test/ServerConfig|)) public final fun multiply(lhs: R|kotlin/Long|, rhs: R|kotlin/Long|): R|kotlin/Long| {
+    @R|kotlinx/remote/Remote|() public final fun multiply(lhs: R|kotlin/Long|, rhs: R|kotlin/Long|): R|kotlin/Long| {
         ^multiply R|<local>/lhs|.R|kotlin/Long.times|(R|<local>/rhs|)
     }
     public final fun box(): R|kotlin/String| {
