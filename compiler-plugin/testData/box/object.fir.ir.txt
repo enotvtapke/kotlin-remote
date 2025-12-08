@@ -96,20 +96,20 @@ FILE fqName:<root> fileName:/object.kt
                           ARG returnsStream: CONST Boolean type=kotlin.Boolean value=false
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$runBlocking: kotlinx.coroutines.CoroutineScope): kotlin.String declared in <root>.box'
                   CALL 'public final fun context <T, R> (with: T of kotlin.context, block: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<T of kotlin.context, R of kotlin.context>): R of kotlin.context declared in kotlin' type=kotlin.String origin=null
-                    TYPE_ARG T: kotlinx.remote.codegen.test.ClientContext
+                    TYPE_ARG T: kotlinx.remote.codegen.test.ServerContext
                     TYPE_ARG R: kotlin.String
-                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ClientContext modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.codegen.test.ClientContext
-                    ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.codegen.test.ClientContext, kotlin.String> origin=LAMBDA
+                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerContext modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.codegen.test.ServerContext
+                    ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.codegen.test.ServerContext, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
-                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.codegen.test.ClientContext
+                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.codegen.test.ServerContext
                         BLOCK_BODY
                           VAR name:test1 type:kotlin.Long [val]
                             CALL 'public open fun toLong (): kotlin.Long declared in kotlin.Int' type=kotlin.Long origin=null
                               ARG <this>: CALL 'public final fun id (<unused var>: kotlinx.remote.RemoteContext, x: kotlin.Int): kotlin.Int declared in <root>.IdObject' type=kotlin.Int origin=null
                                 ARG <this>: GET_OBJECT 'CLASS OBJECT name:IdObject modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.IdObject
-                                ARG <unused var>: GET_VAR '<unused var>: kotlinx.remote.codegen.test.ClientContext declared in <root>.box.<anonymous>.<anonymous>' type=kotlinx.remote.codegen.test.ClientContext origin=null
+                                ARG <unused var>: GET_VAR '<unused var>: kotlinx.remote.codegen.test.ServerContext declared in <root>.box.<anonymous>.<anonymous>' type=kotlinx.remote.codegen.test.ServerContext origin=null
                                 ARG x: CONST Int type=kotlin.Int value=5
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.codegen.test.ClientContext): kotlin.String declared in <root>.box.<anonymous>'
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.codegen.test.ServerContext): kotlin.String declared in <root>.box.<anonymous>'
                             WHEN type=kotlin.String origin=IF
                               BRANCH
                                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ

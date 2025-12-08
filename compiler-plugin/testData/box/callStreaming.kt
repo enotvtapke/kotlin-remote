@@ -7,7 +7,7 @@ package box/*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.codegen.test.ClientContext
+import kotlinx.remote.codegen.test.ServerContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.single
@@ -23,7 +23,7 @@ fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
 }
 
 fun box(): String = runBlocking {
-    context(ClientContext) {
+    context(ServerContext) {
         val test1 = multiplyStreaming(5, 6).single()
         if (test1 == 42L) "OK" else "Fail: test1=$test1"
     }

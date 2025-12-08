@@ -82,17 +82,17 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
                           ARG returnsStream: CONST Boolean type=kotlin.Boolean value=false
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$runBlocking: kotlinx.coroutines.CoroutineScope): kotlin.String declared in foo.bar.box'
                   CALL 'public final fun context <T, R> (with: T of kotlin.context, block: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<T of kotlin.context, R of kotlin.context>): R of kotlin.context declared in kotlin' type=kotlin.String origin=null
-                    TYPE_ARG T: kotlinx.remote.codegen.test.ClientContext
+                    TYPE_ARG T: kotlinx.remote.codegen.test.ServerContext
                     TYPE_ARG R: kotlin.String
-                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ClientContext modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.codegen.test.ClientContext
-                    ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.codegen.test.ClientContext, kotlin.String> origin=LAMBDA
+                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerContext modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.codegen.test.ServerContext
+                    ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.codegen.test.ServerContext, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
-                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.codegen.test.ClientContext
+                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.codegen.test.ServerContext
                         BLOCK_BODY
                           VAR name:test1 type:kotlin.Long [val]
                             CALL 'public final fun multiply <T> (<unused var>: kotlinx.remote.RemoteContext, lhs: T of foo.bar.multiply): T of foo.bar.multiply declared in foo.bar' type=kotlin.Long origin=null
                               TYPE_ARG T: kotlin.Long
-                              ARG <unused var>: GET_VAR '<unused var>: kotlinx.remote.codegen.test.ClientContext declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlinx.remote.codegen.test.ClientContext origin=null
+                              ARG <unused var>: GET_VAR '<unused var>: kotlinx.remote.codegen.test.ServerContext declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlinx.remote.codegen.test.ServerContext origin=null
                               ARG lhs: CONST Long type=kotlin.Long value=5
                           VAR name:test2 type:kotlin.Long [val]
                             TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
@@ -100,7 +100,7 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
                                 TYPE_ARG K: kotlin.Int
                                 TYPE_ARG P: kotlin.collections.List<kotlin.Int>
                                 TYPE_ARG T: kotlin.collections.Map<kotlin.Int, kotlin.collections.List<kotlin.collections.List<kotlin.Int>>>
-                                ARG <unused var>: GET_VAR '<unused var>: kotlinx.remote.codegen.test.ClientContext declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlinx.remote.codegen.test.ClientContext origin=null
+                                ARG <unused var>: GET_VAR '<unused var>: kotlinx.remote.codegen.test.ServerContext declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlinx.remote.codegen.test.ServerContext origin=null
                                 ARG t: CALL 'public final fun mapOf <K, V> (pair: kotlin.Pair<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf>): kotlin.collections.Map<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf> declared in kotlin.collections' type=kotlin.collections.Map<kotlin.Int, kotlin.collections.List<kotlin.collections.List<kotlin.Int>>> origin=null
                                   TYPE_ARG K: kotlin.Int
                                   TYPE_ARG V: kotlin.collections.List<kotlin.collections.List<kotlin.Int>>
@@ -113,7 +113,7 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
                                       ARG element: CALL 'public final fun listOf <T> (element: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<kotlin.Int> origin=null
                                         TYPE_ARG T: kotlin.Int
                                         ARG element: CONST Int type=kotlin.Int value=2
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.codegen.test.ClientContext): kotlin.String declared in foo.bar.box.<anonymous>'
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.codegen.test.ServerContext): kotlin.String declared in foo.bar.box.<anonymous>'
                             WHEN type=kotlin.String origin=IF
                               BRANCH
                                 if: WHEN type=kotlin.Boolean origin=ANDAND

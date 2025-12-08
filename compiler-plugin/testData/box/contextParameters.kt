@@ -9,7 +9,7 @@ import kotlinx.remote.Remote
 import kotlinx.remote.CallableMap
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.codegen.test.ClientContext
+import kotlinx.remote.codegen.test.ServerContext
 
 @Remote
 context(_: RemoteContext, _: String)
@@ -17,7 +17,7 @@ suspend fun Long.multiply(rhs: Long) = this * rhs
 
 fun box(): String = runBlocking {
     CallableMap.putAll(genCallableMap())
-    context(ClientContext, "") {
+    context(ServerContext, "") {
         val test1 = 5L.multiply(6)
         if (test1 == 42L) "OK" else "Fail: test1=$test1"
     }

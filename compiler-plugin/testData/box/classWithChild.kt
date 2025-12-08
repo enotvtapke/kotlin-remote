@@ -7,7 +7,7 @@ package box/*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.codegen.test.ClientContext
+import kotlinx.remote.codegen.test.ServerContext
 
 open class Calculator(private var init: Long) {
     @Remote
@@ -21,7 +21,7 @@ open class Calculator(private var init: Long) {
 class CalculatorStub(): Calculator(0)
 
 fun box(): String = runBlocking {
-    context(ClientContext) {
+    context(ServerContext) {
         val c = Calculator(1)
         val test1 = c.multiply(5)
         if (test1 == 42L) "OK" else "Fail: test1=$test1"

@@ -67,23 +67,23 @@ FILE fqName:box fileName:/contextParameters.kt
                           ARG returnsStream: CONST Boolean type=kotlin.Boolean value=false
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$runBlocking: kotlinx.coroutines.CoroutineScope): kotlin.String declared in box.box'
                   CALL 'public final fun context <A, B, Result> (a: A of kotlin.context, b: B of kotlin.context, block: @[ContextFunctionTypeParams(count = 2)] kotlin.Function2<A of kotlin.context, B of kotlin.context, Result of kotlin.context>): Result of kotlin.context declared in kotlin' type=kotlin.String origin=null
-                    TYPE_ARG A: kotlinx.remote.codegen.test.ClientContext
+                    TYPE_ARG A: kotlinx.remote.codegen.test.ServerContext
                     TYPE_ARG B: kotlin.String
                     TYPE_ARG Result: kotlin.String
-                    ARG a: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ClientContext modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.codegen.test.ClientContext
+                    ARG a: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerContext modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.codegen.test.ServerContext
                     ARG b: CONST String type=kotlin.String value=""
-                    ARG block: FUN_EXPR type=kotlin.Function2<kotlinx.remote.codegen.test.ClientContext, kotlin.String, kotlin.String> origin=LAMBDA
+                    ARG block: FUN_EXPR type=kotlin.Function2<kotlinx.remote.codegen.test.ServerContext, kotlin.String, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
-                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.codegen.test.ClientContext
+                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.codegen.test.ServerContext
                         VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:1 type:kotlin.String
                         BLOCK_BODY
                           VAR name:test1 type:kotlin.Long [val]
                             CALL 'public final fun multiply (<unused var>: kotlinx.remote.RemoteContext, <unused var>: kotlin.String, <this>: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box' type=kotlin.Long origin=null
-                              ARG <unused var>(index:0): GET_VAR '<unused var>(index:0): kotlinx.remote.codegen.test.ClientContext declared in box.box.<anonymous>.<anonymous>' type=kotlinx.remote.codegen.test.ClientContext origin=null
+                              ARG <unused var>(index:0): GET_VAR '<unused var>(index:0): kotlinx.remote.codegen.test.ServerContext declared in box.box.<anonymous>.<anonymous>' type=kotlinx.remote.codegen.test.ServerContext origin=null
                               ARG <unused var>(index:1): GET_VAR '<unused var>(index:1): kotlin.String declared in box.box.<anonymous>.<anonymous>' type=kotlin.String origin=null
                               ARG <this>: CONST Long type=kotlin.Long value=5
                               ARG rhs: CONST Long type=kotlin.Long value=6
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.codegen.test.ClientContext, <unused var>: kotlin.String): kotlin.String declared in box.box.<anonymous>'
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.codegen.test.ServerContext, <unused var>: kotlin.String): kotlin.String declared in box.box.<anonymous>'
                             WHEN type=kotlin.String origin=IF
                               BRANCH
                                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ

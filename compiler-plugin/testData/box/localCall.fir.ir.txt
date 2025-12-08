@@ -12,7 +12,7 @@ FILE fqName:box fileName:/localCall.kt
                   CALL 'public final fun context <T, R> (with: T of kotlin.context, block: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<T of kotlin.context, R of kotlin.context>): R of kotlin.context declared in kotlin' type=kotlin.String origin=null
                     TYPE_ARG T: kotlinx.remote.LocalContext
                     TYPE_ARG R: kotlin.String
-                    ARG with: CALL 'public final fun <get-ServerContext> (): kotlinx.remote.LocalContext declared in kotlinx.remote.codegen.test' type=kotlinx.remote.LocalContext origin=GET_PROPERTY
+                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:LocalContext modality:FINAL visibility:public superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.LocalContext
                     ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.LocalContext, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
                         VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.LocalContext

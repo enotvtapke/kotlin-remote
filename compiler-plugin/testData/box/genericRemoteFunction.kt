@@ -5,7 +5,7 @@ package foo.bar
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.codegen.test.ClientContext
+import kotlinx.remote.codegen.test.ServerContext
 import kotlinx.remote.CallableMap
 import kotlinx.remote.genCallableMap
 
@@ -19,7 +19,7 @@ suspend fun <K: Number, P: List<Int>, T: Map<K, List<P>>> genericFunction(t: T) 
 
 fun box(): String = runBlocking {
     CallableMap.putAll(genCallableMap())
-    context(ClientContext) {
+    context(ServerContext) {
         val test1 = multiply(5L)
         val test2 = genericFunction(mapOf(1 to listOf(listOf(2)))) as Long
         if (test1 == 42L && test2 == 42L) "OK" else "Fail: test1=$test1"

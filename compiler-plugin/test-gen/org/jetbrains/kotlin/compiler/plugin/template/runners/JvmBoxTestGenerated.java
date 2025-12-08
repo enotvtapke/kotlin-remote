@@ -22,12 +22,6 @@ public class JvmBoxTestGenerated extends AbstractJvmBoxTest {
   }
 
   @Test
-  @TestMetadata("anotherBoxTest.kt")
-  public void testAnotherBoxTest() {
-    runTest("compiler-plugin/testData/box/anotherBoxTest.kt");
-  }
-
-  @Test
   @TestMetadata("call.kt")
   public void testCall() {
     runTest("compiler-plugin/testData/box/call.kt");
