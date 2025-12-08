@@ -31,8 +31,7 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
                                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (parameters: kotlin.Array<out kotlin.Any?>): kotlin.Any? declared in foo.bar.box.<anonymous>'
                                     CALL 'public final fun multiply <T> (<unused var>: kotlinx.remote.RemoteContext, lhs: T of foo.bar.multiply): T of foo.bar.multiply declared in foo.bar' type=T of foo.bar.multiply origin=null
                                       TYPE_ARG T: <none>
-                                      ARG <unused var>: CALL 'public abstract fun <get-context> (): kotlinx.remote.RemoteContext declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.RemoteContext origin=null
-                                        ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlinx.remote.codegen.test.ServerConfig
+                                      ARG <unused var>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:LocalContext modality:FINAL visibility:public superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.LocalContext
                                       ARG lhs: TYPE_OP type=T of foo.bar.multiply origin=SAFE_CAST typeOperand=T of foo.bar.multiply
                                         CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=GET_ARRAY_ELEMENT
                                           ARG <this>: GET_VAR 'parameters: kotlin.Array<out kotlin.Any?> declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlin.Array<out kotlin.Any?> origin=null
@@ -66,8 +65,7 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
                                       TYPE_ARG K: <none>
                                       TYPE_ARG P: <none>
                                       TYPE_ARG T: <none>
-                                      ARG <unused var>: CALL 'public abstract fun <get-context> (): kotlinx.remote.RemoteContext declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.RemoteContext origin=null
-                                        ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlinx.remote.codegen.test.ServerConfig
+                                      ARG <unused var>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:LocalContext modality:FINAL visibility:public superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.LocalContext
                                       ARG t: TYPE_OP type=T of foo.bar.genericFunction origin=CAST typeOperand=T of foo.bar.genericFunction
                                         CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=GET_ARRAY_ELEMENT
                                           ARG <this>: GET_VAR 'parameters: kotlin.Array<out kotlin.Any?> declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlin.Array<out kotlin.Any?> origin=null
@@ -142,14 +140,13 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
     VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.RemoteContext
     VALUE_PARAMETER kind:Regular name:t index:1 type:T of foo.bar.genericFunction
     annotations:
-      Remote(config = CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlin.reflect.KClass<kotlinx.remote.codegen.test.ServerConfig>)
+      Remote
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
             ARG arg0: GET_VAR '<unused var>: kotlinx.remote.RemoteContext declared in foo.bar.genericFunction' type=kotlinx.remote.RemoteContext origin=null
-            ARG arg1: CALL 'public abstract fun <get-context> (): kotlinx.remote.RemoteContext declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.RemoteContext origin=null
-              ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlinx.remote.codegen.test.ServerConfig
+            ARG arg1: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:LocalContext modality:FINAL visibility:public superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.LocalContext
           then: BLOCK type=kotlin.Nothing origin=null
             RETURN type=kotlin.Nothing from='public final fun genericFunction <K, P, T> (<unused var>: kotlinx.remote.RemoteContext, t: T of foo.bar.genericFunction): P of foo.bar.genericFunction declared in foo.bar'
               CALL 'public final fun first <T> (<this>: kotlin.collections.List<T of kotlin.collections.first>): T of kotlin.collections.first declared in kotlin.collections' type=P of foo.bar.genericFunction origin=null
@@ -164,8 +161,8 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
           then: RETURN type=kotlin.Nothing from='public final fun genericFunction <K, P, T> (<unused var>: kotlinx.remote.RemoteContext, t: T of foo.bar.genericFunction): P of foo.bar.genericFunction declared in foo.bar'
             CALL 'public final fun call <T> (<this>: kotlinx.remote.network.RemoteClient, call: kotlinx.remote.network.RemoteCall): T of kotlinx.remote.network.call declared in kotlinx.remote.network' type=T of kotlinx.remote.network.call origin=null
               TYPE_ARG T: P of foo.bar.genericFunction
-              ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.network.RemoteClient declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.network.RemoteClient origin=null
-                ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlinx.remote.codegen.test.ServerConfig
+              ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.network.RemoteClient declared in kotlinx.remote.RemoteContext' type=kotlinx.remote.network.RemoteClient origin=null
+                ARG <this>: GET_VAR '<unused var>: kotlinx.remote.RemoteContext declared in foo.bar.genericFunction' type=kotlinx.remote.RemoteContext origin=null
               ARG call: CONSTRUCTOR_CALL 'public constructor <init> (callableName: kotlin.String, parameters: kotlin.Array<kotlin.Any?>) declared in kotlinx.remote.network.RemoteCall' type=kotlinx.remote.network.RemoteCall origin=null
                 ARG callableName: CONST String type=kotlin.String value="foo.bar.genericFunction"
                 ARG parameters: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOf> origin=null
@@ -177,14 +174,13 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
     VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.RemoteContext
     VALUE_PARAMETER kind:Regular name:lhs index:1 type:T of foo.bar.multiply
     annotations:
-      Remote(config = CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlin.reflect.KClass<kotlinx.remote.codegen.test.ServerConfig>)
+      Remote
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
           if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
             ARG arg0: GET_VAR '<unused var>: kotlinx.remote.RemoteContext declared in foo.bar.multiply' type=kotlinx.remote.RemoteContext origin=null
-            ARG arg1: CALL 'public abstract fun <get-context> (): kotlinx.remote.RemoteContext declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.RemoteContext origin=null
-              ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlinx.remote.codegen.test.ServerConfig
+            ARG arg1: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:LocalContext modality:FINAL visibility:public superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.LocalContext
           then: BLOCK type=kotlin.Nothing origin=null
             RETURN type=kotlin.Nothing from='public final fun multiply <T> (<unused var>: kotlinx.remote.RemoteContext, lhs: T of foo.bar.multiply): T of foo.bar.multiply declared in foo.bar'
               GET_VAR 'lhs: T of foo.bar.multiply declared in foo.bar.multiply' type=T of foo.bar.multiply origin=null
@@ -193,8 +189,8 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
           then: RETURN type=kotlin.Nothing from='public final fun multiply <T> (<unused var>: kotlinx.remote.RemoteContext, lhs: T of foo.bar.multiply): T of foo.bar.multiply declared in foo.bar'
             CALL 'public final fun call <T> (<this>: kotlinx.remote.network.RemoteClient, call: kotlinx.remote.network.RemoteCall): T of kotlinx.remote.network.call declared in kotlinx.remote.network' type=T of kotlinx.remote.network.call origin=null
               TYPE_ARG T: T of foo.bar.multiply
-              ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.network.RemoteClient declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.network.RemoteClient origin=null
-                ARG <this>: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerConfig modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteConfig]' type=kotlinx.remote.codegen.test.ServerConfig
+              ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.network.RemoteClient declared in kotlinx.remote.RemoteContext' type=kotlinx.remote.network.RemoteClient origin=null
+                ARG <this>: GET_VAR '<unused var>: kotlinx.remote.RemoteContext declared in foo.bar.multiply' type=kotlinx.remote.RemoteContext origin=null
               ARG call: CONSTRUCTOR_CALL 'public constructor <init> (callableName: kotlin.String, parameters: kotlin.Array<kotlin.Any?>) declared in kotlinx.remote.network.RemoteCall' type=kotlinx.remote.network.RemoteCall origin=null
                 ARG callableName: CONST String type=kotlin.String value="foo.bar.multiply"
                 ARG parameters: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOf> origin=null

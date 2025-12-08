@@ -157,7 +157,7 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
                         }
                     }
                     callable.parameters.filter { it.isRemoteContext(ctx) }.forEach {
-                        arguments[it.indexInParameters] = remoteConfigContextCall(callable, ctx)
+                        arguments[it.indexInParameters] = irGetObjectValue(ctx.localContext.defaultType, ctx.localContext)
                     }
                     callable.nonStaticParameters(ctx).forEachIndexed { index, param ->
                         val argValue = irCall(

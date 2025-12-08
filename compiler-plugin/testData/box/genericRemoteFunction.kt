@@ -4,20 +4,16 @@ package foo.bar
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
-import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.network.RemoteClient
-import kotlinx.remote.network.remoteClient
-import kotlinx.remote.codegen.test.ServerConfig
 import kotlinx.remote.codegen.test.ClientContext
 import kotlinx.remote.CallableMap
 import kotlinx.remote.genCallableMap
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun <T> multiply(lhs: T) = lhs
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun <K: Number, P: List<Int>, T: Map<K, List<P>>> genericFunction(t: T) = t.entries.first().value.first()
 

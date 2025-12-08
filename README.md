@@ -31,13 +31,13 @@ To make it possible, three things are required:
 To satisfy these requirements function `multiply` can be rewritten in the following way:
 
 ```kotlin
+@Remote
 context(ctx: RemoteContext)
-@Remote(ServerConfig::class)
 suspend fun multiply(lhs: Long, rhs: Long) =
-    if (ctx == ServerConfig.context) {
+    if (ctx == LocalContext) {
         lhs * rhs
     } else {
-        ServerConfig.client.call<Long>(
+        ctx.client.call<Long>(
             RemoteCall("multiply", arrayOf(lhs, rhs))
         )
     }
@@ -46,13 +46,13 @@ suspend fun multiply(lhs: Long, rhs: Long) =
 Here the context parameter `ctx` is used to determine whether the function should be called on another machine or not.
 When a function is called on another machine, we will be saying that this function is called _remotely_ or that a
 function call results in a _remote call_. We will be calling the target machine of such a call _remote machine_. So
-when function `multiple` is called in a `ServerConfig.context` it will be called locally, and when in another context it
-will be called remotely.
+when function `multiple` is called in `LocalContext` it will be called locally, and when in another context it
+will be called remotely. The client is stored directly in the context, which allows changing the target machine by changing the context.
 
 For example, here function `multiply` is called locally:
 
 ```kotlin
-context(ClientContext) {
+context(ServerContext) {
     println(multiply(6, 5))
 }
 ```
@@ -60,14 +60,15 @@ context(ClientContext) {
 And here it is called remotely:
 
 ```kotlin
-context(ServerConfig.context) {
+context(ServerContext) {
     println(multiply(6, 5))
 }
 ```
 
-`ServerConfig` determines not only in which context remote function is called locally but also what machine should be
-used as a target for remote call. `ServerConfig.client` is just an extended Ktor HTTP client. This client contains IP of
-the remote machine and supports very fine adjustments, like adding HTTP headers for authentication.
+The `RemoteContext` determines whether a remote function is called locally or remotely. When called with `LocalContext`, 
+the function runs locally. When called with a custom context that provides a `client`, the function makes a remote call 
+using that client. The client is just an extended Ktor HTTP client that contains the IP of the remote machine and 
+supports very fine adjustments, like adding HTTP headers for authentication.
 
 And `suspend` modifier is used so that the function can make network calls. This is needed because all the network calls
 in Ktor are asynchronous.
@@ -90,7 +91,7 @@ CallableMap["multiply"] = RemoteCallable(
     name = "multiply",
     returnType = RemoteType(typeOf<RemoteResponse<Long>>()),
     invokator = RemoteInvokator { args ->
-        return@RemoteInvokator with(ServerConfig.context) {
+        return@RemoteInvokator with(LocalContext) {
             multiply(args[0] as Long, args[1] as Long)
         }
     },
@@ -114,7 +115,7 @@ With a compiler plugin writing and calling remote functions is as simple as writ
 For example, here is how `multiply` remote function is called:
 
 ```kotlin
-@Remote(ServerConfig::class)
+@Remote
 context(ctx: RemoteContext)
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
@@ -127,17 +128,13 @@ fun main(): Unit = runBlocking {
 ```
 
 The compiler plugin rewrites remote function bodies and substitutes `genCallableMap()` with callable map entries
-generated for all the function marked as `@Remote(..)`. User still needs to provide a context to call remote functions,
-because only the user knows should a remote function be called remotely or locally.
+generated for all the function marked as `@Remote`. User still needs to provide a context to call remote functions,
+because only the user knows where a remote function should be called.
 
-User should also set up `ServerConfig`. For example, in the following way:
+User should set up their context. The context determines whether the function runs locally or remotely based on whether it's `LocalContext` or a custom context with a client:
 
 ```kotlin
-data object ServerContext : RemoteContext
-data object ClientContext : RemoteContext
-
-data object ServerConfig : RemoteConfig {
-    override val context = ServerContext
+data object ServerContext : RemoteContext {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")
@@ -180,18 +177,18 @@ client. Remote functions can also be recursive (direct or indirect), in this cas
 the following functions are valid remote functions:
 
 ```kotlin
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun divide(lhs: Long, rhs: Long): Long =
     if (rhs == 0) throw ArithmeticException("Division by zero") else lhs / rhs
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 fun <T : Comparable<T>> Iterable<T>.maxOrNull(): T? { /* ... */
 }
 
 class Calculator(private var init: Int) {
-    @Remote(ServerConfig::class)
+    @Remote
     context(_: RemoteContext)
     suspend fun multiply(x: Int): Int {
         init *= x
@@ -201,7 +198,7 @@ class Calculator(private var init: Int) {
 
 fun main(): Unit = runBlocking {
     CallableMap.putAll(genCallableMap())
-    @Remote(ServerConfig::class)
+    @Remote
     context(ctx: RemoteContext)
     suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
     with(ClientContext) {
@@ -209,11 +206,11 @@ fun main(): Unit = runBlocking {
     }
 }
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext, k: String)
 suspend fun Long.times(rhs: Long) = this * rhs * k
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun fibonacciRecursive(n: Int): Long {
     if (n < 0) {
@@ -238,7 +235,7 @@ serialize class instances as a single long value. This is how it works.
 ```kotlin
 @Serializable(with = Calculator.CalculatorSerializer::class)
 open class Calculator private constructor(private var init: Int) {
-    @Remote(ServerConfig::class)
+    @Remote
     context(_: RemoteContext)
     open suspend fun multiply(x: Int): Int {
         init *= x
@@ -267,7 +264,7 @@ open class Calculator private constructor(private var init: Int) {
     }
 
     companion object {
-        @Remote(ServerConfig::class)
+        @Remote
         context(_: RemoteContext)
         suspend operator fun invoke(init: Int) = Calculator(init)
     }
@@ -297,21 +294,21 @@ Compiler plugin generates serializers and stubs automatically.
 @RemoteSerializable
 @Serializable(with = Calculator.RemoteClassSerializer::class)
 class Calculator private constructor(private var init: Int) {
-    @Remote(ServerConfig::class)
+    @Remote
     context(_: RemoteContext)
     suspend fun multiply(x: Int): Int {
         init *= x
         return init
     }
 
-    @Remote(ServerConfig::class)
+    @Remote
     context(_: RemoteContext)
     suspend fun result(): Int {
         return init
     }
 
     companion object {
-        @Remote(ServerConfig::class)
+        @Remote
         context(_: RemoteContext)
         suspend operator fun invoke(init: Int) = Calculator(init)
     }

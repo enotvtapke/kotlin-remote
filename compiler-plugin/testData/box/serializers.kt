@@ -7,16 +7,12 @@ package box/*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.classes.RemoteSerializable
-import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.network.RemoteClient
-import kotlinx.remote.network.remoteClient
-import kotlinx.remote.codegen.test.ServerConfig
 import kotlinx.remote.codegen.test.ClientContext
 
 @RemoteSerializable
 class Calculator(private var init: Long = 0) {
-    @Remote(ServerConfig::class)
+    @Remote
     context(ctx: RemoteContext)
     suspend fun multiply(x: Long): Long {
         init *= x

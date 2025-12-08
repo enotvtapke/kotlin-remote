@@ -11,7 +11,7 @@ FILE: serializers.kt
             private set(value: R|kotlin/Long|): R|kotlin/Unit|
 
         context(ctx: R|kotlinx/remote/RemoteContext|)
-        @R|kotlinx/remote/Remote|(config = <getClass>(Q|kotlinx/remote/codegen/test/ServerConfig|)) public final suspend fun multiply(x: R|kotlin/Long|): R|kotlin/Long| {
+        @R|kotlinx/remote/Remote|() public final suspend fun multiply(x: R|kotlin/Long|): R|kotlin/Long| {
             this@R|box/Calculator|.R|box/Calculator.init| = this@R|box/Calculator|.R|box/Calculator.init|.R|kotlin/Long.times|(R|<local>/x|)
             ^multiply this@R|box/Calculator|.R|box/Calculator.init|
         }

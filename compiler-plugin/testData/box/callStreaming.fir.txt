@@ -2,7 +2,7 @@ FILE: callStreaming.kt
     package box
 
     context(ctx: R|kotlinx/remote/RemoteContext|)
-    @R|kotlinx/remote/Remote|(config = <getClass>(Q|kotlinx/remote/codegen/test/ServerConfig|)) public final fun multiplyStreaming(lhs: R|kotlin/Long|, rhs: R|kotlin/Long|): R|kotlinx/coroutines/flow/Flow<kotlin/Long>| {
+    @R|kotlinx/remote/Remote|() public final fun multiplyStreaming(lhs: R|kotlin/Long|, rhs: R|kotlin/Long|): R|kotlinx/coroutines/flow/Flow<kotlin/Long>| {
         ^multiplyStreaming R|kotlinx/coroutines/flow/flow|<R|kotlin/Long|>(<L> = flow@fun R|kotlinx/coroutines/flow/FlowCollector<kotlin/Long>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|kotlin/repeat|(Int(50), <L> = repeat@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
                 this@R|special/anonymous|.R|SubstitutionOverride<kotlinx/coroutines/flow/FlowCollector.emit: R|kotlin/Unit|>|(R|<local>/lhs|.R|kotlin/Long.times|(R|<local>/rhs|))

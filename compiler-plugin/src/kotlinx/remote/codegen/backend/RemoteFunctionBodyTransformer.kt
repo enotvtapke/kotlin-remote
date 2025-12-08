@@ -23,13 +23,9 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
         val context = declaration.parameters.singleOrNull {
             it.isRemoteContext(data)
         } ?: error("Remote function `${declaration.name}` should have a single context parameter of type ${data.remoteContext.defaultType.render()}")
-        val remoteConfigSymbol = declaration.remoteConfigObject()
         declaration.body = data.irBuilder(declaration.symbol).irBlockBody {
-            val configClient = irCall(data.remoteConfigClient.owner.getter!!.symbol).apply {
-                arguments[0] = irGetObjectValue(remoteConfigSymbol.defaultType, remoteConfigSymbol)
-            }
-            val configContext = irCall(data.remoteConfigContext.owner.getter!!.symbol).apply {
-                arguments[0] = irGetObjectValue(remoteConfigSymbol.defaultType, remoteConfigSymbol)
+            val contextClient = irCall(data.remoteContextClient.owner.getter!!.symbol).apply {
+                arguments[0] = irGet(context)
             }
             val isStreaming = declaration.returnType.isSubtypeOfClass(data.flow)
             val call =
@@ -55,7 +51,7 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
                 data.irBuiltIns.unitType,
                 listOf(
                     irBranch(
-                        irEquals(irGet(context), configContext),
+                        irEquals(irGet(context), irGetObjectValue(data.localContext.defaultType, data.localContext)),
                         irBlock {
                             declaration.dispatchReceiverParameter?.also {
                                 +irCall(data.functions.checkIsNotStubForRemoteClassMethod).apply { arguments[0] = irGet(it) }
@@ -75,7 +71,7 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
                             typeArguments[0] =
                                 if (isStreaming) (declaration.returnType as IrSimpleType).arguments.single().typeOrFail
                                 else declaration.returnType
-                            arguments[0] = configClient
+                            arguments[0] = contextClient
                             arguments[1] = remoteCall
                         })
                     )

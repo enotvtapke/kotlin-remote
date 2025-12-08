@@ -1,6 +1,6 @@
 package manualFunctionCalling
 
-import ClientContext
+import ServerContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.RemoteContext
 
@@ -11,7 +11,7 @@ private suspend fun expression(a: Long, b: Long): Long {
 
 fun main() = runBlocking {
     manualCallableMap()
-    with(ClientContext) {
+    with(ServerContext) {
         println(expression(6, 1))
         multiplyStreaming(5, 6).collect { println(it) }
     }

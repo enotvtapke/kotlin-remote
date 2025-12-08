@@ -5,7 +5,7 @@ FILE: object.kt
         }
 
         context(<unused var>: R|kotlinx/remote/RemoteContext|)
-        @R|kotlinx/remote/Remote|(config = <getClass>(Q|kotlinx/remote/codegen/test/ServerConfig|)) public final suspend fun id(x: R|kotlin/Int|): R|kotlin/Int| {
+        @R|kotlinx/remote/Remote|() public final suspend fun id(x: R|kotlin/Int|): R|kotlin/Int| {
             ^id R|<local>/x|
         }
 

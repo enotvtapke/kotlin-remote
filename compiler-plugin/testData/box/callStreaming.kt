@@ -6,17 +6,13 @@ package box/*
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
-import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.network.RemoteClient
-import kotlinx.remote.network.remoteClient
-import kotlinx.remote.codegen.test.ServerConfig
 import kotlinx.remote.codegen.test.ClientContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.single
 
-@Remote(ServerConfig::class)
+@Remote
 context(ctx: RemoteContext)
 fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
     return flow {

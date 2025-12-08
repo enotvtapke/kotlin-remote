@@ -1,6 +1,5 @@
 package manualFunctionCalling
 
-import ServerConfig
 import installRemoteServerContentNegotiation
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -33,7 +32,7 @@ fun manualCallableMap(): Map<String, RemoteCallable> {
         name = "multiply",
         returnType = RemoteType(typeOf<RemoteResponse<Long>>()),
         invokator = RemoteInvokator { args ->
-            return@RemoteInvokator with(ServerConfig.context) {
+            return@RemoteInvokator context(LocalContext) {
                 multiply(args[0] as Long, args[1] as Long)
             }
         },
@@ -47,7 +46,7 @@ fun manualCallableMap(): Map<String, RemoteCallable> {
         name = "multiplyStreaming",
         returnType = RemoteType(typeOf<Long>()),
         invokator = RemoteInvokator { args ->
-            return@RemoteInvokator with(ServerConfig.context) {
+            return@RemoteInvokator context(LocalContext) {
                 multiplyStreaming(args[0] as Long, args[1] as Long)
             }
         },

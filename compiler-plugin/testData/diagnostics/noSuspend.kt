@@ -4,14 +4,10 @@ package foo.bar
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
-import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.network.RemoteClient
-import kotlinx.remote.network.remoteClient
-import kotlinx.remote.codegen.test.ServerConfig
 import kotlinx.remote.codegen.test.ClientContext
 
-<!NON_SUSPENDING_REMOTE_FUNCTION!>@Remote(ServerConfig::class)
+<!NON_SUSPENDING_REMOTE_FUNCTION!>@Remote
 context(_: RemoteContext)
 fun multiply(lhs: Long, rhs: Long) = lhs * rhs<!>
 

@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
+import kotlinx.remote.LocalContext
 import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.genRemoteClassList
@@ -46,13 +47,13 @@ class ApplicationTests {
     fun `simple local call`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
+            ServerContext._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(ctx: RemoteContext)
             suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
-            context(ServerContext) {
+            context(LocalContext) {
                 assertEquals(100, multiply(10, 10))
             }
         }
@@ -61,13 +62,12 @@ class ApplicationTests {
     fun `simple non local call`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(ctx: RemoteContext)
             suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
-            context(ClientContext) {
+            context(testServerRemoteContext()) {
                 assertEquals(100, multiply(10, 10))
             }
         }
@@ -77,13 +77,12 @@ class ApplicationTests {
     fun `erroneous call`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(ctx: RemoteContext)
             suspend fun multiply(lhs: Long, rhs: Long): Long = throw IllegalStateException("Exception")
 
-            context(ClientContext) {
+            context(testServerRemoteContext()) {
                 val exception = assertThrows<IllegalStateException> { multiply(10, 10) }
                 val msg = Path("./src/test/kotlin/exceptionMessage.txt").readText()
                 assertEquals(msg, exception.message)
@@ -94,18 +93,17 @@ class ApplicationTests {
     fun `generic function`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(_: RemoteContext)
             suspend fun <T : Int> numberMap(list: List<T>): List<Long> = list.map { it.toLong() }
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(_: RemoteContext)
             suspend fun <K : Long, P : List<Int>, T : Map<K, List<P>>> genericFunction(t: T) =
                 t.entries.first().value.first()
 
-            context(ClientContext) {
+            context(testServerRemoteContext()) {
                 assertEquals(listOf(2), genericFunction(mapOf(1L to listOf(listOf(2)))))
                 assertEquals(listOf(1L, 2L), numberMap(listOf(1, 2)))
             }
@@ -115,16 +113,15 @@ class ApplicationTests {
     fun `direct recursion`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(ctx: RemoteContext)
             suspend fun power(base: Long, p: Long): Long {
                 if (p == 0L) return 1L
                 return base * power(base, p - 1L)
             }
 
-            context(ClientContext) {
+            context(testServerRemoteContext()) {
                 assertEquals(1024L, power(2, 10))
             }
         }
@@ -133,13 +130,12 @@ class ApplicationTests {
     fun `extension function call`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(ctx: RemoteContext)
             suspend fun Long.multiply(rhs: Long) = this * rhs
 
-            context(ClientContext) {
+            context(testServerRemoteContext()) {
                 assertEquals(100, 10L.multiply(10))
             }
         }
@@ -148,13 +144,12 @@ class ApplicationTests {
     fun `function with additional context parameters call`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(_: RemoteContext, x: Int)
             suspend fun Long.multiply(rhs: Long) = this * rhs * x
 
-            context(ClientContext, 10) {
+            context(testServerRemoteContext(), 10) {
                 assertEquals(1000, 10L.multiply(10))
             }
         }
@@ -163,10 +158,9 @@ class ApplicationTests {
     fun `streaming local call`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
-            context(ctx: RemoteContext)
+            @Remote
+            context(_: RemoteContext)
             suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
                 return flow {
                     repeat(50) {
@@ -176,7 +170,7 @@ class ApplicationTests {
                 }
             }
 
-            context(ServerContext) {
+            context(LocalContext) {
                 val res = multiplyStreaming(10, 10).toList()
                 assertEquals(List(50) { 100L }, res)
             }
@@ -186,10 +180,9 @@ class ApplicationTests {
     fun `streaming non local call`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
-            context(ctx: RemoteContext)
+            @Remote
+            context(_: RemoteContext)
             suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
                 return flow {
                     repeat(50) {
@@ -199,7 +192,7 @@ class ApplicationTests {
                 }
             }
 
-            context(ClientContext) {
+            context(testServerRemoteContext()) {
                 val res = multiplyStreaming(10, 10).toList()
                 assertEquals(List(50) { 100L }, res)
             }
@@ -207,7 +200,7 @@ class ApplicationTests {
 
     @RemoteSerializable
     class TestCalculator(private var init: Int) {
-        @Remote(ServerConfig::class)
+        @Remote
         context(_: RemoteContext)
         suspend fun multiply(x: Int): Int {
             init *= x
@@ -219,15 +212,14 @@ class ApplicationTests {
     fun `remote class`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(ctx: RemoteContext)
             suspend fun calculator(init: Int): TestCalculator {
                 return TestCalculator(init)
             }
 
-            context(ClientContext) {
+            context(testServerRemoteContext()) {
                 val x = calculator(5)
                 assertEquals(30, x.multiply(6))
                 assertEquals(210, x.multiply(7))
@@ -235,7 +227,7 @@ class ApplicationTests {
         }
 
     object IdObject {
-        @Remote(ServerConfig::class)
+        @Remote
         context(_: RemoteContext)
         suspend fun id(x: Int): Int {
             return x
@@ -246,16 +238,15 @@ class ApplicationTests {
     fun `static this parameter should not be serialized`() =
         testApplication {
             configureApplication()
-            ServerConfig._client = testRemoteClient()
 
-            context(ClientContext) {
+            context(testServerRemoteContext()) {
                 assertEquals(42, IdObject.id(42))
             }
         }
 
     @Test
     fun `cannot call stub methods in local context`() = runBlocking {
-        context<_, Unit>(ServerContext) {
+        context(LocalContext) {
             val e = assertThrows<IllegalArgumentException> { TestCalculator.RemoteClassStub(1L, "http://localhost:80").multiply(42) }
             assertEquals(
                 "Method of the stub `RemoteClassStub` was called in a local context. This may be caused by lease expiration.",
@@ -268,15 +259,14 @@ class ApplicationTests {
     fun `leased class is expired`() =
         testApplication {
             configureApplication(LeaseConfig(100, 50, 0))
-            ServerConfig._client = testRemoteClient()
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(_: RemoteContext)
             suspend fun testCalculator(init: Int): TestCalculator {
                 return TestCalculator(init)
             }
 
-            context(ClientContext) {
+            context(testServerRemoteContext()) {
                 val x = testCalculator(5)
                 assertEquals(30, x.multiply(6))
                 delay(200)
@@ -289,15 +279,14 @@ class ApplicationTests {
     fun `leased class is not expired when renewal is active`() =
         testApplication {
             configureApplication(LeaseConfig(100, 50, 0))
-            ServerConfig._client = testRemoteClient(LeaseRenewalClientConfig(renewalIntervalMs = 50))
 
-            @Remote(ServerConfig::class)
+            @Remote
             context(_: RemoteContext)
             suspend fun testCalculator(init: Int): TestCalculator {
                 return TestCalculator(init)
             }
 
-            context(ClientContext) {
+            context(testServerRemoteContext(LeaseRenewalClientConfig(renewalIntervalMs = 50))) {
                 val x = testCalculator(5)
                 assertEquals(30, x.multiply(6))
                 delay(200)
@@ -305,17 +294,11 @@ class ApplicationTests {
             }
         }
 
-
-    private data object ServerConfig : RemoteConfig {
-        override val context = ServerContext
-
+    private data object ServerContext : RemoteContext {
         var _client: RemoteClient? = null
         override val client: RemoteClient
             get() = _client ?: throw IllegalStateException("Client not initialized")
     }
-
-    private data object ServerContext : RemoteContext
-    private data object ClientContext : RemoteContext
 
     private fun ApplicationTestBuilder.testLeaseClient(): LeaseClient {
         return createClient {
@@ -331,6 +314,13 @@ class ApplicationTests {
                 level = LogLevel.BODY
             }
         }.leaseClient()
+    }
+
+    private fun ApplicationTestBuilder.testServerRemoteContext(leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()): RemoteContext {
+        return object : RemoteContext {
+            override val client: RemoteClient
+                get() = testRemoteClient(leaseRenewalClientConfig)
+        }
     }
 
     private fun ApplicationTestBuilder.testRemoteClient(leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()): RemoteClient {

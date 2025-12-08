@@ -1,9 +1,9 @@
 package manualFunctionCalling
 
-import ServerConfig
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.remote.LocalContext
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.network.RemoteCall
 import kotlinx.remote.network.call
@@ -11,17 +11,17 @@ import kotlinx.remote.network.callStreaming
 
 context(ctx: RemoteContext)
 suspend fun multiply(lhs: Long, rhs: Long) =
-    if (ctx == ServerConfig.context) {
+    if (ctx == LocalContext) {
         lhs / rhs
     } else {
-        ServerConfig.client.call<Long>(
+        ctx.client.call<Long>(
             RemoteCall("multiply", arrayOf(lhs, rhs))
         )
     }
 
 context(ctx: RemoteContext)
 suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
-    if (ctx == ServerConfig.context) {
+    if (ctx == LocalContext) {
         return flow {
             repeat(50) {
                 delay(50)
@@ -29,6 +29,6 @@ suspend fun multiplyStreaming(lhs: Long, rhs: Long): Flow<Long> {
             }
         }
     } else {
-        return ServerConfig.client.callStreaming<Long>(RemoteCall("multiplyStreaming", arrayOf(lhs, rhs)))
+        return ctx.client.callStreaming<Long>(RemoteCall("multiplyStreaming", arrayOf(lhs, rhs)))
     }
 }

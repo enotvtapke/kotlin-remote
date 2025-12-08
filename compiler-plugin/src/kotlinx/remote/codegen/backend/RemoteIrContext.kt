@@ -70,8 +70,8 @@ class RemoteIrContext(
         getRemoteIrClassSymbol("RemoteContext")
     }
 
-    val remoteSerializer by lazy {
-        getRemoteIrClassSymbol("RemoteSerializer", "classes")
+    val localContext by lazy {
+        getRemoteIrClassSymbol("LocalContext")
     }
 
     val remoteCall by lazy {
@@ -94,20 +94,12 @@ class RemoteIrContext(
         getRemoteIrClassSymbol("RemoteParameter")
     }
 
-    val remoteConfig by lazy {
-        getRemoteIrClassSymbol("RemoteConfig")
-    }
-
     val remoteInvokator by lazy {
         getRemoteIrClassSymbol("RemoteInvokator")
     }
 
-    val remoteConfigClient by lazy {
-        remoteConfig.property("client")
-    }
-
-    val remoteConfigContext by lazy {
-        remoteConfig.property("context")
+    val remoteContextClient by lazy {
+        remoteContext.property("client")
     }
 
     val functions = Functions()

@@ -1,12 +1,11 @@
 package proposalExamples
 
-import ClientContext
-import ServerConfig
+import ServerContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
@@ -19,7 +18,7 @@ private suspend fun power(base: Long, power: Int): Long {
 }
 
 fun main(): Unit = runBlocking {
-    with(ClientContext) {
+    with(ServerContext) {
         // Power is called on the client
         println(power(2, 10))
     }

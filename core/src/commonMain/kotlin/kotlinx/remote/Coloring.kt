@@ -1,14 +1,14 @@
 package kotlinx.remote
 
 import kotlinx.remote.network.RemoteClient
-import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.FUNCTION)
-annotation class Remote(val config: KClass<out RemoteConfig>)
+annotation class Remote
 
-interface RemoteContext
-
-interface RemoteConfig {
-    val context: RemoteContext
+interface RemoteContext {
     val client: RemoteClient
+}
+
+object LocalContext: RemoteContext {
+    override val client: RemoteClient by lazy { error("Local context does not have client.") }
 }

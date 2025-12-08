@@ -8,14 +8,10 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.CallableMap
 import kotlinx.remote.genCallableMap
-import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.network.RemoteClient
-import kotlinx.remote.network.remoteClient
-import kotlinx.remote.codegen.test.ServerConfig
 import kotlinx.remote.codegen.test.ClientContext
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext, _: String)
 suspend fun Long.multiply(rhs: Long) = this * rhs
 

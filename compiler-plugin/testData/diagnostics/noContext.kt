@@ -4,14 +4,10 @@ package foo.bar
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
-import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.network.RemoteClient
-import kotlinx.remote.network.remoteClient
-import kotlinx.remote.codegen.test.ServerConfig
 import kotlinx.remote.codegen.test.ClientContext
 
-<!WRONG_REMOTE_FUNCTION_CONTEXT!>@Remote(ServerConfig::class)
+<!WRONG_REMOTE_FUNCTION_CONTEXT!>@Remote
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs<!>
 
 fun box(): String = runBlocking {

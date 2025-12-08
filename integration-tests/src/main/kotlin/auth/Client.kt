@@ -1,7 +1,5 @@
 package auth
 
-import ClientContext
-import ServerContext
 import createOnStubDeserialization
 import io.ktor.client.*
 import io.ktor.client.plugins.*
@@ -20,8 +18,7 @@ import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.remoteClient
 import kotlinx.serialization.json.Json
 
-data object AuthServerConfig : RemoteConfig {
-    override val context = ServerContext
+data object AuthServerContext : RemoteContext {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")
@@ -55,12 +52,12 @@ data object AuthServerConfig : RemoteConfig {
     }.remoteClient(CallableMapClass(genCallableMap()), "/callAuth")
 }
 
-@Remote(AuthServerConfig::class)
+@Remote
 context(ctx: RemoteContext)
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
 fun main(): Unit = runBlocking {
-    with(ClientContext) {
+    with(AuthServerContext) {
         println(multiply(100, 600))
     }
 }

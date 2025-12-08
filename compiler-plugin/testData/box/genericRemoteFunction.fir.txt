@@ -2,11 +2,11 @@ FILE: genericRemoteFunction.kt
     package foo.bar
 
     context(<unused var>: R|kotlinx/remote/RemoteContext|)
-    @R|kotlinx/remote/Remote|(config = <getClass>(Q|kotlinx/remote/codegen/test/ServerConfig|)) public final suspend fun <T> multiply(lhs: R|T|): R|T| {
+    @R|kotlinx/remote/Remote|() public final suspend fun <T> multiply(lhs: R|T|): R|T| {
         ^multiply R|<local>/lhs|
     }
     context(<unused var>: R|kotlinx/remote/RemoteContext|)
-    @R|kotlinx/remote/Remote|(config = <getClass>(Q|kotlinx/remote/codegen/test/ServerConfig|)) public final suspend fun <K : R|kotlin/Number|, P : R|kotlin/collections/List<kotlin/Int>|, T : R|kotlin/collections/Map<K, kotlin/collections/List<P>>|> genericFunction(t: R|T|): R|P| {
+    @R|kotlinx/remote/Remote|() public final suspend fun <K : R|kotlin/Number|, P : R|kotlin/collections/List<kotlin/Int>|, T : R|kotlin/collections/Map<K, kotlin/collections/List<P>>|> genericFunction(t: R|T|): R|P| {
         ^genericFunction R|<local>/t|.R|SubstitutionOverride<kotlin/collections/Map.entries: R|kotlin/collections/Set<kotlin/collections/Map.Entry<K, kotlin/collections/List<P>>>|>|.R|kotlin/collections/first|<R|kotlin/collections/Map.Entry<K, kotlin/collections/List<P>>|>().R|SubstitutionOverride<kotlin/collections/Map.Entry.value: R|kotlin/collections/List<P>|>|.R|kotlin/collections/first|<R|P|>()
     }
     public final fun box(): R|kotlin/String| {

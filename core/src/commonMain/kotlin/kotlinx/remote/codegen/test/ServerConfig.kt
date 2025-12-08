@@ -4,14 +4,12 @@
 
 package kotlinx.remote.codegen.test
 
-import kotlinx.remote.RemoteConfig
+import kotlinx.remote.LocalContext
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.network.RemoteClient
 
-data object ServerConfig: RemoteConfig {
-    override val context = ServerContext
+val ServerContext = LocalContext
+
+data object ClientContext: RemoteContext {
     override val client: RemoteClient = TestRpcClient
 }
-
-data object ServerContext: RemoteContext
-data object ClientContext: RemoteContext

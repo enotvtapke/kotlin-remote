@@ -13,7 +13,6 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.remote.CallableMapClass
-import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.genRemoteClassList
@@ -60,8 +59,7 @@ fun createOnStubDeserialization(config: LeaseRenewalClientConfig = LeaseRenewalC
     getOrCreateLeaseRenewalClient(stub.url, config).registerStub(stub)
 }
 
-data object ServerConfig : RemoteConfig {
-    override val context = ServerContext
+data object ServerContext : RemoteContext {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")
@@ -83,9 +81,6 @@ data object ServerConfig : RemoteConfig {
         }
     }.remoteClient(CallableMapClass(genCallableMap()), "/call")
 }
-
-data object ServerContext : RemoteContext
-data object ClientContext : RemoteContext
 
 fun remoteEmbeddedServer(leaseConfig: LeaseConfig = LeaseConfig()): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
     return embeddedServer(Netty, port = 8080, watchPaths = listOf()) {

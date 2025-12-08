@@ -1,12 +1,11 @@
 package experiments
 
-import ClientContext
-import ServerConfig
+import ServerContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun fibonacciRecursive(n: Int): Long {
     if (n < 0) {
@@ -18,14 +17,14 @@ suspend fun fibonacciRecursive(n: Int): Long {
     return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2)
 }
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun isEven(n: Int): Boolean {
     if (n == 0) return true
     return isOdd(n - 1)
 }
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun isOdd(n: Int): Boolean {
     if (n == 0) return false
@@ -33,7 +32,7 @@ suspend fun isOdd(n: Int): Boolean {
 }
 
 fun main() = runBlocking {
-    context(ClientContext) {
+    context(ServerContext) {
         val n = 20
         val result = fibonacciRecursive(n)
         println("The $n-th Fibonacci number is: $result")

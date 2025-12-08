@@ -2,7 +2,7 @@ FILE: extensionFunction.kt
     package box
 
     context(ctx: R|kotlinx/remote/RemoteContext|)
-    @R|kotlinx/remote/Remote|(config = <getClass>(Q|kotlinx/remote/codegen/test/ServerConfig|)) public final suspend fun R|kotlin/Long|.multiply(rhs: R|kotlin/Long|): R|kotlin/Long| {
+    @R|kotlinx/remote/Remote|() public final suspend fun R|kotlin/Long|.multiply(rhs: R|kotlin/Long|): R|kotlin/Long| {
         ^multiply this@R|box/multiply|.R|kotlin/Long.times|(R|<local>/rhs|)
     }
     public final fun box(): R|kotlin/String| {

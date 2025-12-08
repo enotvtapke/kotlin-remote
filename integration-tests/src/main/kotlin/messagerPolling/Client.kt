@@ -1,7 +1,6 @@
 package messagerPolling
 
-import ClientContext
-import ServerConfig
+import ServerContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -11,32 +10,32 @@ import kotlinx.remote.RemoteContext
 
 private val loggedUsers = mutableMapOf<String, MutableList<String>>()
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun login(name: String) {
     loggedUsers[name] = mutableListOf()
 }
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun logout(name: String) {
     loggedUsers.remove(name) ?: error("User $name not found")
 }
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun send(from: String, to: String, message: String) {
     loggedUsers[to]?.add("[$from] $message") ?: error("User $to not found")
 }
 
-@Remote(ServerConfig::class)
+@Remote
 context(_: RemoteContext)
 suspend fun receive(user: String): String? {
     return (loggedUsers[user] ?: error("User $user not found")).removeFirstOrNull()
 }
 
 fun main(): Unit = runBlocking {
-    context(ClientContext) {
+    context(ServerContext) {
         println("Enter your name:")
         val name = readln()
         println("Type 'logout' to exit, or 'userName message' to send message to another user:")
