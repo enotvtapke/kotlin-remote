@@ -26,7 +26,7 @@ import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.KRemoteServerPluginAttributesKey
 import kotlinx.remote.network.ktor.leaseRoutes
 import kotlinx.remote.network.ktor.remote
-import kotlinx.remote.network.leaseClient
+import kotlinx.remote.classes.network.leaseClient
 import kotlinx.remote.network.remoteClient
 import kotlinx.serialization.json.Json
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation

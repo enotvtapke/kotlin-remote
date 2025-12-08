@@ -21,20 +21,17 @@ import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.remote.classes.remoteSerializersModule
-import kotlinx.remote.network.LeaseClient
+import kotlinx.remote.classes.network.LeaseClient
 import kotlinx.remote.network.RemoteClient
 import kotlinx.remote.network.ktor.KRemote
 import kotlinx.remote.network.ktor.KRemoteServerPluginAttributesKey
 import kotlinx.remote.network.ktor.leaseRoutes
 import kotlinx.remote.network.ktor.remote
-import kotlinx.remote.network.leaseClient
+import kotlinx.remote.classes.network.leaseClient
 import kotlinx.remote.network.remoteClient
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.io.path.Path
-import kotlin.io.path.readText
-import kotlin.test.Ignore
 import kotlin.test.assertEquals
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation

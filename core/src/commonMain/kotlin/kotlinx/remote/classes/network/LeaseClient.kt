@@ -1,4 +1,4 @@
-package kotlinx.remote.network
+package kotlinx.remote.classes.network
 
 import io.ktor.client.*
 import io.ktor.client.call.*

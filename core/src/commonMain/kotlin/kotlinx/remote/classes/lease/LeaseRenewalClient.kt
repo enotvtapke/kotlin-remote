@@ -8,7 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.remote.classes.InternalConcurrentHashMap
 import kotlinx.remote.classes.Stub
-import kotlinx.remote.network.LeaseClient
+import kotlinx.remote.classes.network.LeaseClient
 
 class LeaseRenewalClient(private val config: LeaseRenewalClientConfig, private val leaseClient: LeaseClient, val onLeaseExpired: ((Long) -> Unit) = {}) : SynchronizedObject() {
     private val trackedStubs = InternalConcurrentHashMap<Long, StubEntry>()
