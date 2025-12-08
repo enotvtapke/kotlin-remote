@@ -25,4 +25,3 @@ class RemoteClassListInjector(
         return super.visitExpression(expression)
     }
 }
-

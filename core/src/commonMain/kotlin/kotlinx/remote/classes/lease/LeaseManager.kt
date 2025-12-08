@@ -12,8 +12,7 @@ import kotlinx.remote.classes.RemoteInstancesPool
 class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInstancesPool) : SynchronizedObject() {
     private val leases = InternalConcurrentHashMap<Long, LeaseEntry>()
     private var cleanupJob: Job? = null
-    var timeProvider: TimeProvider = SystemTimeProvider
-    
+
     private data class LeaseEntry(
         val instanceId: Long,
         var expirationTimeMs: Long,
@@ -32,7 +31,7 @@ class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInst
     
     private fun createLease(instanceId: Long, clientId: String? = null): LeaseInfo = synchronized(this) {
         val currentConfig = config
-        val expirationTime = timeProvider.currentTimeMillis() + currentConfig.leaseDurationMs
+        val expirationTime = currentTimeMillis() + currentConfig.leaseDurationMs
         
         val entry = leases.computeIfAbsent(instanceId) {
             LeaseEntry(instanceId, expirationTime)
@@ -49,7 +48,7 @@ class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInst
     
     fun renewLeases(request: LeaseRenewalRequest): LeaseRenewalResponse = synchronized(this) {
         val currentConfig = config
-        val currentTime = timeProvider.currentTimeMillis()
+        val currentTime = currentTimeMillis()
         val renewedLeases = mutableListOf<LeaseInfo>()
         val failedIds = mutableListOf<Long>()
         
@@ -86,7 +85,7 @@ class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInst
     fun hasActiveLease(instanceId: Long): Boolean = synchronized(this) {
         val currentConfig = config
         val entry = leases[instanceId] ?: return false
-        return entry.expirationTimeMs + currentConfig.gracePeriodMs > timeProvider.currentTimeMillis()
+        return entry.expirationTimeMs + currentConfig.gracePeriodMs > currentTimeMillis()
     }
     
     fun getLeaseInfo(instanceId: Long): LeaseInfo? = synchronized(this) {
@@ -97,7 +96,7 @@ class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInst
 
     fun cleanupExpiredInstances(): Int = synchronized(this) {
         val currentConfig = config
-        val currentTime = timeProvider.currentTimeMillis()
+        val currentTime = currentTimeMillis()
         val expiredIds = mutableListOf<Long>()
         
         for (entry in leases.entries) {

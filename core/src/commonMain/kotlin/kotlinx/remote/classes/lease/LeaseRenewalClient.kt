@@ -89,7 +89,7 @@ class LeaseRenewalClient(private val config: LeaseRenewalClientConfig, private v
                 trackedStubs.remove(failedId)
             }
             
-            val currentTime = SystemTimeProvider.currentTimeMillis()
+            val currentTime = currentTimeMillis()
             for (lease in response.renewedLeases) {
                 trackedStubs[lease.instanceId]?.lastRenewedMs = currentTime
             }

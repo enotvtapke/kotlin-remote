@@ -24,4 +24,4 @@ suspend fun <T> RemoteClient.call(call: RemoteCall): T {
     }
 }
 
-fun HttpClient.remoteClient(callableMap: CallableMapClass, path: String): RemoteClient = RemoteClientImpl(this, path, callableMap)
+fun HttpClient.remoteClient(callableMap: CallableMapClass, path: String = "call"): RemoteClient = RemoteClientImpl(this, path, callableMap)
