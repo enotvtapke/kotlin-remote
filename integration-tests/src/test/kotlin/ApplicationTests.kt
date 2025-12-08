@@ -40,10 +40,9 @@ class ApplicationTests {
     fun `simple local call`() =
         testApplication {
             configureApplication()
-            ServerContext._client = testRemoteClient()
 
             @Remote
-            context(ctx: RemoteContext)
+            context(_: RemoteContext)
             suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
             context(LocalContext) {
@@ -57,7 +56,7 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(ctx: RemoteContext)
+            context(_: RemoteContext)
             suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
             context(testServerRemoteContext()) {
@@ -109,7 +108,7 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(ctx: RemoteContext)
+            context(_: RemoteContext)
             suspend fun power(base: Long, p: Long): Long {
                 if (p == 0L) return 1L
                 return base * power(base, p - 1L)
@@ -126,7 +125,7 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(ctx: RemoteContext)
+            context(_: RemoteContext)
             suspend fun Long.multiply(rhs: Long) = this * rhs
 
             context(testServerRemoteContext()) {
@@ -164,7 +163,7 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(ctx: RemoteContext)
+            context(_: RemoteContext)
             suspend fun calculator(init: Int): TestCalculator {
                 return TestCalculator(init)
             }
@@ -243,12 +242,6 @@ class ApplicationTests {
                 assertEquals(210, x.multiply(7))
             }
         }
-
-    private data object ServerContext : RemoteContext {
-        var _client: RemoteClient? = null
-        override val client: RemoteClient
-            get() = _client ?: throw IllegalStateException("Client not initialized")
-    }
 
     private fun ApplicationTestBuilder.testLeaseClient(): LeaseClient {
         return createClient {
