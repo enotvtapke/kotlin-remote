@@ -78,7 +78,7 @@ class RemoteSerializer<T : Any>(
 fun remoteSerializersModule(
     remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>,
     callableMap: CallableMapClass,
-    leaseManager: LeaseManager?,
+    leaseManager: LeaseManager? = null,
     nodeUrl: String? = null,
     onStubDeserialization: ((Stub) -> Unit) = {  },
     serializersModule: SerializersModule = SerializersModule { }

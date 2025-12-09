@@ -1,6 +1,6 @@
 package auth
 
-import createOnStubDeserialization
+import startLeaseOnStubDeserialization
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
@@ -30,7 +30,7 @@ data object AuthServerContext : RemoteContext {
                     remoteClasses = genRemoteClassList(),
                     callableMap = CallableMapClass(genCallableMap()),
                     leaseManager = null,
-                    onStubDeserialization = createOnStubDeserialization(),
+                    onStubDeserialization = startLeaseOnStubDeserialization(),
                 )
             })
         }

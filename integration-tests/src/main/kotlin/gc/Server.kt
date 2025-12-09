@@ -11,5 +11,5 @@ fun manualGenRemoteClassList(): List<Pair<KClass<Any>, (Long, String) -> Any>> {
 }
 
 fun main() {
-    remoteEmbeddedServer(LeaseConfig(1000, 200, 0)).start(wait = true)
+    remoteEmbeddedServer(leaseConfig = LeaseConfig(1000, 200, 0)).start(wait = true)
 }

@@ -51,7 +51,7 @@ fun getOrCreateLeaseRenewalClient(url: String, config: LeaseRenewalClientConfig 
     }
 }
 
-fun createOnStubDeserialization(config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(500)): (Stub) -> Unit = { stub ->
+fun startLeaseOnStubDeserialization(config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(5000)): (Stub) -> Unit = { stub ->
     getOrCreateLeaseRenewalClient(stub.url, config).registerStub(stub)
 }
 
@@ -68,7 +68,7 @@ data object ServerContext : RemoteContext {
                     remoteClasses = genRemoteClassList(),
                     callableMap = CallableMapClass(genCallableMap()),
                     leaseManager = null,
-                    onStubDeserialization = createOnStubDeserialization(),
+                    onStubDeserialization = startLeaseOnStubDeserialization(),
                 )
             })
         }
@@ -78,14 +78,14 @@ data object ServerContext : RemoteContext {
     }.remoteClient(CallableMapClass(genCallableMap()), "/call")
 }
 
-fun remoteEmbeddedServer(leaseConfig: LeaseConfig = LeaseConfig()): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
-    return embeddedServer(Netty, port = 8080, watchPaths = listOf()) {
+fun remoteEmbeddedServer(nodeUrl: String = "http://localhost:8080", leaseConfig: LeaseConfig = LeaseConfig()): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
+    return embeddedServer(Netty, port = nodeUrl.split(":").last().toInt(), watchPaths = listOf()) {
         install(CallLogging)
         install(KRemote) {
             this.callableMap = CallableMapClass(genCallableMap())
             this.leaseConfig = leaseConfig
         }
-        installRemoteServerContentNegotiation()
+        installRemoteServerContentNegotiation(nodeUrl)
         routing {
             remote("/call")
             leaseRoutes()
@@ -95,7 +95,7 @@ fun remoteEmbeddedServer(leaseConfig: LeaseConfig = LeaseConfig()): EmbeddedServ
 
 fun Application.installRemoteServerContentNegotiation(
     nodeUrl: String = "http://localhost:8080",
-    onStubDeserialization: ((Stub) -> Unit) = createOnStubDeserialization()
+    onStubDeserialization: ((Stub) -> Unit) = startLeaseOnStubDeserialization()
 ) {
     install(ServerContentNegotiation) {
         json(Json {
