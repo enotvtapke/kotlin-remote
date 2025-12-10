@@ -3,10 +3,7 @@ package kotlinx.remote.ktor
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import io.ktor.utils.io.*
-import kotlinx.remote.RemoteCallable
-import kotlinx.remote.RemoteCall
-import kotlinx.remote.RemoteResponse
-import kotlinx.remote.returnTypeInfo
+import kotlinx.remote.*
 
 @KtorDsl
 fun Route.remote(path: String) {
@@ -28,7 +25,9 @@ suspend fun RoutingContext.handleRemoteCall() {
 
 private suspend fun invokeCallable(callable: RemoteCallable, remoteCall: RemoteCall): RemoteResponse<*> {
     return try {
-        RemoteResponse.Success(callable.invokator.call(remoteCall.parameters))
+        context(DefaultLocalContext) {
+            RemoteResponse.Success(callable.invokator.call(remoteCall.parameters))
+        }
     } catch (e: Exception) {
         RemoteResponse.Failure(e)
     }

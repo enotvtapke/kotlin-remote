@@ -45,7 +45,7 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
                 data.irBuiltIns.unitType,
                 listOf(
                     irBranch(
-                        irEquals(irGet(context), irGetObjectValue(data.localContext.defaultType, data.localContext)),
+                        irIs(irGet(context), data.localContext.defaultType),
                         irBlock {
                             declaration.dispatchReceiverParameter?.also {
                                 +irCall(data.functions.checkIsNotStubForRemoteClassMethod).apply { arguments[0] = irGet(it) }

@@ -32,7 +32,7 @@ fun manualCallableMap(): Map<String, RemoteCallable> {
         name = "multiply",
         returnType = RemoteType(typeOf<RemoteResponse<Long>>()),
         invokator = RemoteInvokator { args ->
-            return@RemoteInvokator context(LocalContext) {
+            return@RemoteInvokator context(DefaultLocalContext) {
                 multiply(args[0] as Long, args[1] as Long)
             }
         },
