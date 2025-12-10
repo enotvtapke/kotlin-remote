@@ -1,16 +1,15 @@
 package kotlinx.remote.classes
 
 import kotlinx.remote.CallableMapClass
+import kotlinx.remote.RemoteCall
 import kotlinx.remote.RemoteIntrinsic
 import kotlinx.remote.classes.lease.LeaseManager
-import kotlinx.remote.RemoteCall
 import kotlinx.remote.serialization.RpcCallSerializer
 import kotlinx.remote.serialization.setupExceptionSerializers
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.encoding.CompositeDecoder
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
@@ -23,56 +22,41 @@ class RemoteSerializer<T : Any>(
     private val onStubDeserialization: ((Stub) -> Unit) = { },
     private val stubFabric: ((Long, String) -> T)? = null
 ) : KSerializer<T> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor("RemoteRef") {
-        element("id", Long.serializer().descriptor)
-        element("url", String.serializer().descriptor)
-    }
+    override val descriptor: SerialDescriptor = SerialDescriptor(
+        "kotlinx.remote.classes.RemoteSerializable",
+        StubSurrogate.serializer().descriptor
+    )
 
     override fun serialize(encoder: Encoder, value: T) {
-        val composite = encoder.beginStructure(descriptor)
-        if (value is Stub) {
-            composite.encodeLongElement(descriptor, 0, value.id)
-            composite.encodeStringElement(descriptor, 1, value.url)
+        val surrogate = if (value is Stub) {
+            StubSurrogate(value.id, value.url)
         } else {
             val id = leaseManager?.addInstanceWithLease(value) 
                 ?: error("Cannot serialize `$value`. No lease manager provided.")
-            val url = nodeUrl 
+            val url = nodeUrl
                 ?: error("Cannot serialize `$value`. No node URL provided.")
-            composite.encodeLongElement(descriptor, 0, id)
-            composite.encodeStringElement(descriptor, 1, url)
+            StubSurrogate(id, url)
         }
-        composite.endStructure(descriptor)
+        encoder.encodeSerializableValue(StubSurrogate.serializer(), surrogate)
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(decoder: Decoder): T {
-        val composite = decoder.beginStructure(descriptor)
-        var id: Long? = null
-        var url: String? = null
-        
-        while (true) {
-            when (val index = composite.decodeElementIndex(descriptor)) {
-                0 -> id = composite.decodeLongElement(descriptor, 0)
-                1 -> url = composite.decodeStringElement(descriptor, 1)
-                CompositeDecoder.DECODE_DONE -> break
-                else -> error("Unexpected index: $index")
-            }
-        }
-        composite.endStructure(descriptor)
-        
-        requireNotNull(id) { "Missing 'id' field in remote reference" }
-        requireNotNull(url) { "Missing 'url' field in remote reference" }
-        
-        val instance = leaseManager?.getInstance(id)
+        val surrogate = decoder.decodeSerializableValue(StubSurrogate.serializer())
+        val instance = leaseManager?.getInstance(surrogate.id)
         if (instance != null) {
             return instance as T
         } else {
-            val stub = stubFabric?.invoke(id, url) 
-                ?: error("Cannot deserialize stub with id `$id`. No stub fabric provided.")
+            val stub = stubFabric?.invoke(surrogate.id, surrogate.url)
+                ?: error("Cannot deserialize stub with id `${surrogate.id}`. No stub fabric provided.")
             onStubDeserialization.invoke(stub as Stub)
             return stub
         }
     }
+
+    @Serializable
+    @SerialName("Stub")
+    private class StubSurrogate(val id: Long, val url: String)
 }
 
 fun remoteSerializersModule(

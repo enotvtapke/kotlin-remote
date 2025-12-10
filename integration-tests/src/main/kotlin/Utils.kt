@@ -55,7 +55,7 @@ fun startLeaseOnStubDeserialization(config: LeaseRenewalClientConfig = LeaseRene
     getOrCreateLeaseRenewalClient(stub.url, config).registerStub(stub)
 }
 
-data object ServerContext : RemoteContext {
+data object ServerContext : NonlocalContext() {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")

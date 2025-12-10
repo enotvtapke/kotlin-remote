@@ -1,34 +1,29 @@
 package kotlinx.remote.codegen.backend
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeArgument
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -133,6 +128,15 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
         }.apply {
             this.parent = parent
 
+            val contextParameter = IrValueParameterBuilder().run {
+                kind = IrParameterKind.Context
+                type = ctx.remoteContext.defaultType
+                name = Name.identifier("ctx")
+                factory.buildValueParameter(this, this@apply).also { valueParameter ->
+                    parameters += valueParameter
+                }
+            }
+
             val parametersParameter = addValueParameter {
                 name = Name.identifier("parameters")
                 type = ctx.arrayOfAnyNullable
@@ -148,7 +152,7 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
                         }
                     }
                     callable.parameters.filter { it.isRemoteContext(ctx) }.forEach {
-                        arguments[it.indexInParameters] = irGetObjectValue(ctx.localContext.defaultType, ctx.localContext)
+                        arguments[it.indexInParameters] = irGet(contextParameter)
                     }
                     callable.nonStaticParameters(ctx).forEachIndexed { index, param ->
                         val argValue = irCall(

@@ -92,7 +92,7 @@ suspend fun logout(userName: String) {
 
 val callableMap = CallableMapClass(genCallableMap())
 
-class ClientContext(private val url: String) : RemoteContext {
+class ClientContext(private val url: String) : NonlocalContext() {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url(this@ClientContext.url)
@@ -114,7 +114,7 @@ class ClientContext(private val url: String) : RemoteContext {
     }.remoteClient(callableMap)
 }
 
-data object HostContext : RemoteContext {
+data object HostContext : NonlocalContext() {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")

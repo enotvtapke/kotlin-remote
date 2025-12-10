@@ -17,7 +17,7 @@ import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.RemoteClient
 import kotlinx.serialization.json.Json
 
-data object AuthServerContext : RemoteContext {
+data object AuthServerContext : NonlocalContext() {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")

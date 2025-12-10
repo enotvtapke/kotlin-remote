@@ -116,9 +116,8 @@ FILE fqName:box fileName:/serializers.kt
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              ARG arg0: GET_VAR 'ctx: kotlinx.remote.RemoteContext declared in box.Calculator.multiply' type=kotlinx.remote.RemoteContext origin=null
-              ARG arg1: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:LocalContext modality:FINAL visibility:public superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.LocalContext
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlinx.remote.LocalContext
+              GET_VAR 'ctx: kotlinx.remote.RemoteContext declared in box.Calculator.multiply' type=kotlinx.remote.RemoteContext origin=null
             then: BLOCK type=kotlin.Nothing origin=null
               CALL 'public final fun checkIsNotStubForRemoteClassMethod (value: kotlin.Any): kotlin.Unit declared in kotlinx.remote.classes' type=kotlin.Unit origin=null
                 ARG value: GET_VAR '<this>: box.Calculator declared in box.Calculator.multiply' type=box.Calculator origin=null
@@ -158,7 +157,7 @@ FILE fqName:box fileName:/serializers.kt
                   CALL 'public final fun context <T, R> (with: T of kotlin.context, block: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<T of kotlin.context, R of kotlin.context>): R of kotlin.context declared in kotlin' type=kotlin.String origin=null
                     TYPE_ARG T: kotlinx.remote.codegen.test.ServerContext
                     TYPE_ARG R: kotlin.String
-                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerContext modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.codegen.test.ServerContext
+                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerContext modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.NonlocalContext]' type=kotlinx.remote.codegen.test.ServerContext
                     ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.codegen.test.ServerContext, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
                         VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.codegen.test.ServerContext

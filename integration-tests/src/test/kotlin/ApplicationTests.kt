@@ -13,21 +13,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
-import kotlinx.remote.LocalContext
 import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
-import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.classes.network.LeaseClient
-import kotlinx.remote.RemoteClient
+import kotlinx.remote.classes.network.leaseClient
+import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.KRemoteServerPluginAttributesKey
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
-import kotlinx.remote.classes.network.leaseClient
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -45,7 +43,7 @@ class ApplicationTests {
             context(_: RemoteContext)
             suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
-            context(LocalContext) {
+            context(DefaultLocalContext) {
                 assertEquals(100, multiply(10, 10))
             }
         }
@@ -195,7 +193,7 @@ class ApplicationTests {
 
     @Test
     fun `cannot call stub methods in local context`() = runBlocking {
-        context(LocalContext) {
+        context(DefaultLocalContext) {
             val e = assertThrows<IllegalArgumentException> { TestCalculator.RemoteClassStub(1L, "http://localhost:80").multiply(42) }
             assertEquals(
                 "Method of the stub `RemoteClassStub` was called in a local context. This may be caused by lease expiration.",
@@ -260,7 +258,7 @@ class ApplicationTests {
     }
 
     private fun ApplicationTestBuilder.testServerRemoteContext(leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()): RemoteContext {
-        return object : RemoteContext {
+        return object : NonlocalContext() {
             override val client: RemoteClient
                 get() = testRemoteClient(leaseRenewalClientConfig)
         }
