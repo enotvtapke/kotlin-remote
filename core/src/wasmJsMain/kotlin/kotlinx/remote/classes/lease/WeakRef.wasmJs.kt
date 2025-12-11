@@ -5,4 +5,3 @@ actual class WeakRef<T : Any> actual constructor(referent: T) {
     private var strongRef: T? = referent
     actual fun get(): T? = strongRef
 }
-

@@ -11,7 +11,6 @@ FILE: genericRemoteFunction.kt
     }
     public final fun box(): R|kotlin/String| {
         ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {
-            Q|kotlinx/remote/CallableMap|.R|kotlinx/remote/CallableMap.putAll|(R|kotlinx/remote/genCallableMap|())
             ^ R|kotlin/context|<R|kotlinx/remote/codegen/test/ServerContext|, R|kotlin/String|>(Q|kotlinx/remote/codegen/test/ServerContext|, <L> = context(<unused var>: R|kotlinx/remote/codegen/test/ServerContext|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                 lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) R|foo/bar/multiply|<R|kotlin/Long|>(Long(5))
                 lval test2: R|kotlin/Long| = (context(R|<local>/<unused var>|) R|foo/bar/genericFunction|<R|kotlin/Int|, R|kotlin/collections/List<kotlin/Int>|, R|kotlin/collections/Map<kotlin/Int, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>|>(R|kotlin/collections/mapOf|<R|kotlin/Int|, R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|>(Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|>(R|kotlin/collections/listOf|<R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(2)))))) as R|kotlin/Long|)

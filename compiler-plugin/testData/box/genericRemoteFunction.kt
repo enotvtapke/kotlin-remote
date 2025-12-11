@@ -18,7 +18,6 @@ context(_: RemoteContext)
 suspend fun <K: Number, P: List<Int>, T: Map<K, List<P>>> genericFunction(t: T) = t.entries.first().value.first()
 
 fun box(): String = runBlocking {
-    CallableMap.putAll(genCallableMap())
     context(ServerContext) {
         val test1 = multiply(5L)
         val test2 = genericFunction(mapOf(1 to listOf(listOf(2)))) as Long
