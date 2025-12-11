@@ -9,51 +9,52 @@ FILE fqName:box fileName:/initCallableMap.kt
               VALUE_PARAMETER kind:ExtensionReceiver name:$this$runBlocking index:0 type:kotlinx.coroutines.CoroutineScope
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun mapOf <K, V> (vararg pairs: kotlin.Pair<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf>): kotlin.collections.Map<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf> declared in kotlin.collections' type=kotlin.collections.Map<kotlin.String, kotlinx.remote.RemoteCallable> origin=INITIALIZE_FIELD
-                    TYPE_ARG K: kotlin.String
-                    TYPE_ARG V: kotlinx.remote.RemoteCallable
-                    ARG pairs: VARARG type=kotlin.Array<out kotlin.Pair<kotlin.String, kotlinx.remote.RemoteCallable>> varargElementType=kotlin.Pair<kotlin.String, kotlinx.remote.RemoteCallable>
-                      CALL 'public final fun to <A, B> (<this>: A of kotlin.to, that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> declared in kotlin' type=kotlin.Pair<kotlin.String, kotlinx.remote.RemoteCallable> origin=null
-                        TYPE_ARG A: kotlin.String
-                        TYPE_ARG B: kotlinx.remote.RemoteCallable
-                        ARG <this>: CONST String type=kotlin.String value="box.multiply"
-                        ARG that: CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, returnType: kotlinx.remote.RemoteType, invokator: kotlinx.remote.RemoteInvokator, parameters: kotlin.Array<out kotlinx.remote.RemoteParameter>) declared in kotlinx.remote.RemoteCallable' type=kotlinx.remote.RemoteCallable origin=null
-                          ARG name: CONST String type=kotlin.String value="multiply"
-                          ARG returnType: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
-                            ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
-                              TYPE_ARG T: kotlinx.remote.RemoteResponse<kotlin.Long>
-                          ARG invokator: TYPE_OP type=kotlinx.remote.RemoteInvokator origin=SAM_CONVERSION typeOperand=kotlinx.remote.RemoteInvokator
-                            FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Any?> origin=LAMBDA
-                              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any? [suspend]
-                                VALUE_PARAMETER kind:Context name:ctx index:0 type:kotlinx.remote.RemoteContext
-                                VALUE_PARAMETER kind:Regular name:parameters index:1 type:kotlin.Array<out kotlin.Any?>
-                                BLOCK_BODY
-                                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (ctx: kotlinx.remote.RemoteContext, parameters: kotlin.Array<out kotlin.Any?>): kotlin.Any? declared in box.box.<anonymous>'
-                                    CALL 'public final fun multiply (ctx: kotlinx.remote.RemoteContext, lhs: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box' type=kotlin.Long origin=null
-                                      ARG ctx: GET_VAR 'ctx: kotlinx.remote.RemoteContext declared in box.box.<anonymous>.<anonymous>' type=kotlinx.remote.RemoteContext origin=null
-                                      ARG lhs: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
-                                        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=GET_ARRAY_ELEMENT
-                                          ARG <this>: GET_VAR 'parameters: kotlin.Array<out kotlin.Any?> declared in box.box.<anonymous>.<anonymous>' type=kotlin.Array<out kotlin.Any?> origin=null
-                                          ARG index: CONST Int type=kotlin.Int value=0
-                                      ARG rhs: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
-                                        CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=GET_ARRAY_ELEMENT
-                                          ARG <this>: GET_VAR 'parameters: kotlin.Array<out kotlin.Any?> declared in box.box.<anonymous>.<anonymous>' type=kotlin.Array<out kotlin.Any?> origin=null
-                                          ARG index: CONST Int type=kotlin.Int value=1
-                          ARG parameters: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<out kotlinx.remote.RemoteParameter> origin=null
-                            TYPE_ARG T: kotlinx.remote.RemoteParameter
-                            ARG elements: VARARG type=kotlin.Array<out kotlinx.remote.RemoteParameter> varargElementType=kotlinx.remote.RemoteParameter
-                              CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, type: kotlinx.remote.RemoteType, isOptional: kotlin.Boolean) declared in kotlinx.remote.RemoteParameter' type=kotlinx.remote.RemoteParameter origin=null
-                                ARG name: CONST String type=kotlin.String value="lhs"
-                                ARG type: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
-                                  ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
-                                    TYPE_ARG T: kotlin.Long
-                                ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
-                              CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, type: kotlinx.remote.RemoteType, isOptional: kotlin.Boolean) declared in kotlinx.remote.RemoteParameter' type=kotlinx.remote.RemoteParameter origin=null
-                                ARG name: CONST String type=kotlin.String value="rhs"
-                                ARG type: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
-                                  ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
-                                    TYPE_ARG T: kotlin.Long
-                                ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
+                  CONSTRUCTOR_CALL 'public constructor <init> (callableMap: kotlin.collections.Map<kotlin.String, kotlinx.remote.RemoteCallable>) declared in kotlinx.remote.CallableMap' type=kotlinx.remote.CallableMap origin=null
+                    ARG callableMap: CALL 'public final fun mapOf <K, V> (vararg pairs: kotlin.Pair<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf>): kotlin.collections.Map<K of kotlin.collections.mapOf, V of kotlin.collections.mapOf> declared in kotlin.collections' type=kotlin.collections.Map<kotlin.String, kotlinx.remote.RemoteCallable> origin=INITIALIZE_FIELD
+                      TYPE_ARG K: kotlin.String
+                      TYPE_ARG V: kotlinx.remote.RemoteCallable
+                      ARG pairs: VARARG type=kotlin.Array<out kotlin.Pair<kotlin.String, kotlinx.remote.RemoteCallable>> varargElementType=kotlin.Pair<kotlin.String, kotlinx.remote.RemoteCallable>
+                        CALL 'public final fun to <A, B> (<this>: A of kotlin.to, that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> declared in kotlin' type=kotlin.Pair<kotlin.String, kotlinx.remote.RemoteCallable> origin=null
+                          TYPE_ARG A: kotlin.String
+                          TYPE_ARG B: kotlinx.remote.RemoteCallable
+                          ARG <this>: CONST String type=kotlin.String value="box.multiply"
+                          ARG that: CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, returnType: kotlinx.remote.RemoteType, invokator: kotlinx.remote.RemoteInvokator, parameters: kotlin.Array<out kotlinx.remote.RemoteParameter>) declared in kotlinx.remote.RemoteCallable' type=kotlinx.remote.RemoteCallable origin=null
+                            ARG name: CONST String type=kotlin.String value="multiply"
+                            ARG returnType: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
+                              ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+                                TYPE_ARG T: kotlinx.remote.RemoteResponse<kotlin.Long>
+                            ARG invokator: TYPE_OP type=kotlinx.remote.RemoteInvokator origin=SAM_CONVERSION typeOperand=kotlinx.remote.RemoteInvokator
+                              FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Any?> origin=LAMBDA
+                                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any? [suspend]
+                                  VALUE_PARAMETER kind:Context name:ctx index:0 type:kotlinx.remote.RemoteContext
+                                  VALUE_PARAMETER kind:Regular name:parameters index:1 type:kotlin.Array<out kotlin.Any?>
+                                  BLOCK_BODY
+                                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (ctx: kotlinx.remote.RemoteContext, parameters: kotlin.Array<out kotlin.Any?>): kotlin.Any? declared in box.box.<anonymous>'
+                                      CALL 'public final fun multiply (ctx: kotlinx.remote.RemoteContext, lhs: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box' type=kotlin.Long origin=null
+                                        ARG ctx: GET_VAR 'ctx: kotlinx.remote.RemoteContext declared in box.box.<anonymous>.<anonymous>' type=kotlinx.remote.RemoteContext origin=null
+                                        ARG lhs: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+                                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=GET_ARRAY_ELEMENT
+                                            ARG <this>: GET_VAR 'parameters: kotlin.Array<out kotlin.Any?> declared in box.box.<anonymous>.<anonymous>' type=kotlin.Array<out kotlin.Any?> origin=null
+                                            ARG index: CONST Int type=kotlin.Int value=0
+                                        ARG rhs: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+                                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=GET_ARRAY_ELEMENT
+                                            ARG <this>: GET_VAR 'parameters: kotlin.Array<out kotlin.Any?> declared in box.box.<anonymous>.<anonymous>' type=kotlin.Array<out kotlin.Any?> origin=null
+                                            ARG index: CONST Int type=kotlin.Int value=1
+                            ARG parameters: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<out kotlinx.remote.RemoteParameter> origin=null
+                              TYPE_ARG T: kotlinx.remote.RemoteParameter
+                              ARG elements: VARARG type=kotlin.Array<out kotlinx.remote.RemoteParameter> varargElementType=kotlinx.remote.RemoteParameter
+                                CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, type: kotlinx.remote.RemoteType, isOptional: kotlin.Boolean) declared in kotlinx.remote.RemoteParameter' type=kotlinx.remote.RemoteParameter origin=null
+                                  ARG name: CONST String type=kotlin.String value="lhs"
+                                  ARG type: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
+                                    ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+                                      TYPE_ARG T: kotlin.Long
+                                  ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
+                                CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, type: kotlinx.remote.RemoteType, isOptional: kotlin.Boolean) declared in kotlinx.remote.RemoteParameter' type=kotlinx.remote.RemoteParameter origin=null
+                                  ARG name: CONST String type=kotlin.String value="rhs"
+                                  ARG type: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
+                                    ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
+                                      TYPE_ARG T: kotlin.Long
+                                  ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$runBlocking: kotlinx.coroutines.CoroutineScope): kotlin.String declared in box.box'
                   CALL 'public final fun context <T, R> (with: T of kotlin.context, block: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<T of kotlin.context, R of kotlin.context>): R of kotlin.context declared in kotlin' type=kotlin.String origin=null
                     TYPE_ARG T: kotlinx.remote.codegen.test.ServerContext

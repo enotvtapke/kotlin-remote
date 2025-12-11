@@ -90,7 +90,7 @@ suspend fun logout(userName: String) {
     users.remove(userName) ?: error("User '$userName' not found")
 }
 
-val callableMap = CallableMap(genCallableMap())
+val callableMap = genCallableMap()
 
 class ClientContext(private val url: String) : RemoteContext {
     override val client: RemoteClient = HttpClient {
@@ -124,7 +124,7 @@ data object HostContext : RemoteContext {
         install(ContentNegotiation) {
             json(Json {
                 serializersModule = remoteSerializersModule {
-                    callableMap = CallableMap(genCallableMap())
+                    callableMap = genCallableMap()
                     classes {
                         remoteClasses = genRemoteClassList()
                         client { }

@@ -13,4 +13,4 @@ internal val RemoteIntrinsic: Nothing
 /**
  * The compiler plugin will replace every call to this function with generated CallableMap
  */
-fun genCallableMap(): MutableMap<String, RemoteCallable> = RemoteIntrinsic
+fun genCallableMap(): CallableMap = RemoteIntrinsic

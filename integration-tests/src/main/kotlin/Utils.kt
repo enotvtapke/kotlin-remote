@@ -67,7 +67,7 @@ data object ServerContext : RemoteContext {
         install(ContentNegotiation) {
             json(Json {
                 serializersModule = remoteSerializersModule {
-                    callableMap = CallableMap(genCallableMap())
+                    callableMap = genCallableMap()
                     classes {
                         remoteClasses = genRemoteClassList()
                         client { }
@@ -78,7 +78,7 @@ data object ServerContext : RemoteContext {
         install(Logging) {
             level = LogLevel.BODY
         }
-    }.remoteClient(CallableMap(genCallableMap()), "/call")
+    }.remoteClient(genCallableMap(), "/call")
 }
 
 fun remoteEmbeddedServer(
@@ -88,7 +88,7 @@ fun remoteEmbeddedServer(
     return embeddedServer(Netty, port = nodeUrl.split(":").last().toInt(), watchPaths = listOf()) {
         install(CallLogging)
         install(KRemote) {
-            callableMap = CallableMap(genCallableMap())
+            callableMap = genCallableMap()
             classes {
                 remoteClasses = genRemoteClassList()
                 server {

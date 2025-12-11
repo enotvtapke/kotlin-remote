@@ -5,7 +5,6 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.routing.routing
-import kotlinx.remote.CallableMap
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
@@ -17,7 +16,7 @@ fun main() {
     embeddedServer(Netty, port, watchPaths = listOf()) {
         install(CallLogging)
         install(KRemote) {
-            callableMap = CallableMap(genCallableMap())
+            callableMap = genCallableMap()
             classes {
                 remoteClasses = genRemoteClassList()
                 server {

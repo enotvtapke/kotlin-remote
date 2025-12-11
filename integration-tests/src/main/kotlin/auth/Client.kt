@@ -28,7 +28,7 @@ data object AuthServerContext : RemoteContext {
             json(Json {
                 serializersModule = remoteSerializersModule(
                     remoteClasses = genRemoteClassList(),
-                    callableMap = CallableMap(genCallableMap()),
+                    callableMap = genCallableMap(),
                     leaseManager = null,
                     onStubDeserialization = startLeaseOnStubDeserialization(),
                 )
@@ -48,7 +48,7 @@ data object AuthServerContext : RemoteContext {
                 }
             }
         }
-    }.remoteClient(CallableMap(genCallableMap()), "/callAuth")
+    }.remoteClient(genCallableMap(), "/callAuth")
 }
 
 @Remote

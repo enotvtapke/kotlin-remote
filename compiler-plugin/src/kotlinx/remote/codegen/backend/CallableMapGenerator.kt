@@ -32,18 +32,27 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteFunctions: MutableList<IrFunction>) {
 
     fun generate(parent: IrDeclarationParent): IrExpression {
-        return irMapOf(
-            ctx.irBuiltIns.stringType,
-            ctx.remoteCallable.defaultType,
-            remoteFunctions.map {
-                IrConstImpl.string(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    ctx.irBuiltIns.stringType,
-                    it.remoteFunctionName()
-                ) to irRpcCallable(parent, it)
-            }
-        )
+        return IrConstructorCallImpl(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            type = ctx.callableMap.defaultType,
+            symbol = ctx.callableMap.constructors.single(),
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+        ).apply {
+            arguments[0] = irMapOf(
+                ctx.irBuiltIns.stringType,
+                ctx.remoteCallable.defaultType,
+                remoteFunctions.map {
+                    IrConstImpl.string(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        ctx.irBuiltIns.stringType,
+                        it.remoteFunctionName()
+                    ) to irRpcCallable(parent, it)
+                }
+            )
+        }
     }
 
     private fun irRpcCallable(parent: IrDeclarationParent, callable: IrFunction): IrExpression {

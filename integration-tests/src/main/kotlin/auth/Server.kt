@@ -6,7 +6,6 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
-import kotlinx.remote.CallableMap
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.handleRemoteCall
@@ -17,7 +16,7 @@ fun main() {
 }
 
 fun authRemoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
-    val callableMap = CallableMap(genCallableMap())
+    val callableMap = genCallableMap()
     return embeddedServer(Netty, port = 8080) {
         install(Authentication) {
             basic("auth-basic") {

@@ -94,6 +94,10 @@ class RemoteIrContext(
         getRemoteIrClassSymbol("RemoteInvokator")
     }
 
+    val callableMap by lazy {
+        getRemoteIrClassSymbol("CallableMap")
+    }
+
     val remoteContextClient by lazy {
         remoteContext.property("client")
     }

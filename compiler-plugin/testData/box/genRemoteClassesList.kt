@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.codegen.test.ServerContext
-import kotlinx.remote.CallableMap
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.RemoteSerializable

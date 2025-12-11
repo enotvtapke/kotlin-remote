@@ -285,7 +285,7 @@ class ApplicationTests {
             install(ClientContentNegotiation) {
                 json(Json {
                     serializersModule = remoteSerializersModule {
-                        callableMap = CallableMap(genCallableMap())
+                        callableMap = genCallableMap()
                         classes {
                             remoteClasses = genRemoteClassList()
                             client {
@@ -295,7 +295,7 @@ class ApplicationTests {
                     }
                 })
             }
-        }.remoteClient(CallableMap(genCallableMap()), "/call")
+        }.remoteClient(genCallableMap(), "/call")
     }
 
     private fun ApplicationTestBuilder.configureApplication(leaseConfig: LeaseConfig = LeaseConfig(), leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()) {
@@ -315,7 +315,7 @@ class ApplicationTests {
         application {
             install(CallLogging)
             install(KRemote) {
-                callableMap = CallableMap(genCallableMap())
+                callableMap = genCallableMap()
                 classes {
                     remoteClasses = genRemoteClassList()
                     server {
