@@ -1,9 +1,10 @@
 package kotlinx.remote.classes
 
-import kotlinx.remote.CallableMapClass
+import kotlinx.remote.CallableMap
 import kotlinx.remote.RemoteCall
 import kotlinx.remote.RemoteIntrinsic
 import kotlinx.remote.classes.lease.LeaseManager
+import kotlinx.remote.ktor.KRemoteConfigBuilder
 import kotlinx.remote.serialization.RpcCallSerializer
 import kotlinx.remote.serialization.setupExceptionSerializers
 import kotlinx.serialization.KSerializer
@@ -19,7 +20,7 @@ import kotlin.reflect.KClass
 class RemoteSerializer<T : Any>(
     private val leaseManager: LeaseManager? = null,
     private val nodeUrl: String? = null,
-    private val onStubDeserialization: ((Stub) -> Unit) = { },
+    private val onStubDeserialization: ((Stub) -> Unit)? = null,
     private val stubFabric: ((Long, String) -> T)? = null
 ) : KSerializer<T> {
     override val descriptor: SerialDescriptor = SerialDescriptor(
@@ -49,7 +50,7 @@ class RemoteSerializer<T : Any>(
         } else {
             val stub = stubFabric?.invoke(surrogate.id, surrogate.url)
                 ?: error("Cannot deserialize stub with id `${surrogate.id}`. No stub fabric provided.")
-            onStubDeserialization.invoke(stub as Stub)
+            onStubDeserialization?.invoke(stub as Stub)
             return stub
         }
     }
@@ -59,15 +60,27 @@ class RemoteSerializer<T : Any>(
     private class StubSurrogate(val id: Long, val url: String)
 }
 
+fun remoteSerializersModule(block: KRemoteConfigBuilder.() -> Unit): SerializersModule {
+    val config = KRemoteConfigBuilder().apply(block).build()
+    return remoteSerializersModule(
+        callableMap = config.callableMap,
+        remoteClasses = config.classes?.remoteClasses,
+        leaseManager = config.classes?.server?.leaseManager,
+        nodeUrl = config.classes?.server?.nodeUrl,
+        onStubDeserialization = config.classes?.client?.onStubDeserialization,
+        serializersModule = config.serializersModule ?: SerializersModule { }
+    )
+}
+
 fun remoteSerializersModule(
-    remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>,
-    callableMap: CallableMapClass,
+    callableMap: CallableMap,
+    remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>? = null,
     leaseManager: LeaseManager? = null,
     nodeUrl: String? = null,
-    onStubDeserialization: ((Stub) -> Unit) = {  },
+    onStubDeserialization: ((Stub) -> Unit)? = null,
     serializersModule: SerializersModule = SerializersModule { }
 ): SerializersModule {
-    val classSerializersModule = remoteClassSerializersModule(remoteClasses, leaseManager, nodeUrl, onStubDeserialization)
+    val classSerializersModule = remoteClassSerializersModule(remoteClasses ?: listOf(), leaseManager, nodeUrl, onStubDeserialization)
     return serializersModule + classSerializersModule + SerializersModule {
         contextual(
             RemoteCall::class,
@@ -79,9 +92,9 @@ fun remoteSerializersModule(
 
 fun remoteClassSerializersModule(
     remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>,
-    leaseManager: LeaseManager?,
+    leaseManager: LeaseManager? = null,
     nodeUrl: String? = null,
-    onStubDeserialization: ((Stub) -> Unit) = { }
+    onStubDeserialization: ((Stub) -> Unit)? = null
 ): SerializersModule = SerializersModule {
     remoteClasses.forEach { (clazz, stubFabric) ->
         contextual(clazz, RemoteSerializer(

@@ -8,7 +8,7 @@ interface RemoteClient {
     suspend fun call(call: RemoteCall): Any?
 }
 
-class RemoteClientImpl(private val httpClient: HttpClient, private val path: String, private val callableMap: CallableMapClass) : RemoteClient {
+class RemoteClientImpl(private val httpClient: HttpClient, private val path: String, private val callableMap: CallableMap) : RemoteClient {
     override suspend fun call(call: RemoteCall): Any? {
         val post = httpClient.post(path) {
             setBody(call)
@@ -24,4 +24,4 @@ suspend fun <T> RemoteClient.call(call: RemoteCall): T {
     }
 }
 
-fun HttpClient.remoteClient(callableMap: CallableMapClass, path: String = "call"): RemoteClient = RemoteClientImpl(this, path, callableMap)
+fun HttpClient.remoteClient(callableMap: CallableMap, path: String = "call"): RemoteClient = RemoteClientImpl(this, path, callableMap)

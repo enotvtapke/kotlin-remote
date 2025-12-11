@@ -9,8 +9,8 @@ import kotlinx.remote.classes.lease.LeaseRenewalRequest
 
 @KtorDsl
 fun Route.leaseRoutes(path: String = "/lease") {
-    val leaseManager = application.attributes.getOrNull(KRemoteServerPluginAttributesKey)?.leaseManager
-        ?: error("KRemote Ktor plugin not installed")
+    val leaseManager = application.attributes.getOrNull(KRemoteServerPluginAttributesKey)?.classes?.server?.leaseManager
+        ?: error("Install KRemote plugin and specify classes server configuration to use lease routes")
     route(path) {
         post("/renew") {
             val request = call.receive<LeaseRenewalRequest>()

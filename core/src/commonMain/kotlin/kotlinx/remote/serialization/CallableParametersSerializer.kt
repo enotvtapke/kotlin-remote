@@ -1,6 +1,6 @@
 package kotlinx.remote.serialization
 
-import kotlinx.remote.CallableMapClass
+import kotlinx.remote.CallableMap
 import kotlinx.remote.RemoteCallable
 import kotlinx.remote.RemoteType
 import kotlinx.remote.RemoteCall
@@ -96,7 +96,7 @@ private class CallableParametersSerializer(
 }
 
 
-class RpcCallSerializer(private val callableMap: CallableMapClass, private val module: SerializersModule) : KSerializer<RemoteCall> {
+class RpcCallSerializer(private val callableMap: CallableMap, private val module: SerializersModule) : KSerializer<RemoteCall> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("RpcCall") {
         element<String>("callableName")
         element("parameters", buildClassSerialDescriptor("Parameters"))

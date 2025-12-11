@@ -21,15 +21,16 @@ import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.remote.classes.network.leaseClient
 import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.ktor.KRemote
-import kotlinx.remote.ktor.KRemoteServerPluginAttributesKey
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
 import kotlinx.serialization.json.Json
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
 
 private val leaseRenewalClients = mutableMapOf<String, LeaseRenewalClient>()
 
-fun getOrCreateLeaseRenewalClient(url: String, config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(500)): LeaseRenewalClient {
+fun getOrCreateLeaseRenewalClient(
+    url: String,
+    config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(500)
+): LeaseRenewalClient {
     return leaseRenewalClients.getOrPut(url) {
         LeaseRenewalClient(
             config, HttpClient {
@@ -51,9 +52,10 @@ fun getOrCreateLeaseRenewalClient(url: String, config: LeaseRenewalClientConfig 
     }
 }
 
-fun startLeaseOnStubDeserialization(config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(5000)): (Stub) -> Unit = { stub ->
-    getOrCreateLeaseRenewalClient(stub.url, config).registerStub(stub)
-}
+fun startLeaseOnStubDeserialization(config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(5000)): (Stub) -> Unit =
+    { stub ->
+        getOrCreateLeaseRenewalClient(stub.url, config).registerStub(stub)
+    }
 
 data object ServerContext : RemoteContext {
     override val client: RemoteClient = HttpClient {
@@ -64,50 +66,40 @@ data object ServerContext : RemoteContext {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModule(
-                    remoteClasses = genRemoteClassList(),
-                    callableMap = CallableMapClass(genCallableMap()),
-                    leaseManager = null,
-                    onStubDeserialization = startLeaseOnStubDeserialization(),
-                )
+                serializersModule = remoteSerializersModule {
+                    callableMap = CallableMap(genCallableMap())
+                    classes {
+                        remoteClasses = genRemoteClassList()
+                        client { }
+                    }
+                }
             })
         }
         install(Logging) {
             level = LogLevel.BODY
         }
-    }.remoteClient(CallableMapClass(genCallableMap()), "/call")
+    }.remoteClient(CallableMap(genCallableMap()), "/call")
 }
 
-fun remoteEmbeddedServer(nodeUrl: String = "http://localhost:8080", leaseConfig: LeaseConfig = LeaseConfig()): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
+fun remoteEmbeddedServer(
+    nodeUrl: String = "http://localhost:8080",
+    leaseConfig: LeaseConfig = LeaseConfig()
+): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
     return embeddedServer(Netty, port = nodeUrl.split(":").last().toInt(), watchPaths = listOf()) {
         install(CallLogging)
         install(KRemote) {
-            this.callableMap = CallableMapClass(genCallableMap())
-            this.leaseConfig = leaseConfig
+            callableMap = CallableMap(genCallableMap())
+            classes {
+                remoteClasses = genRemoteClassList()
+                server {
+                    this.leaseConfig = leaseConfig
+                    this.nodeUrl = nodeUrl
+                }
+            }
         }
-        installRemoteServerContentNegotiation(nodeUrl)
         routing {
             remote("/call")
             leaseRoutes()
         }
-    }
-}
-
-fun Application.installRemoteServerContentNegotiation(
-    nodeUrl: String = "http://localhost:8080",
-    onStubDeserialization: ((Stub) -> Unit) = startLeaseOnStubDeserialization()
-) {
-    install(ServerContentNegotiation) {
-        json(Json {
-            val leaseManager = this@installRemoteServerContentNegotiation.attributes[KRemoteServerPluginAttributesKey].leaseManager
-            val callableMap = this@installRemoteServerContentNegotiation.attributes[KRemoteServerPluginAttributesKey].callableMap
-            serializersModule = remoteSerializersModule(
-                remoteClasses = genRemoteClassList(),
-                callableMap = callableMap,
-                leaseManager = leaseManager,
-                nodeUrl = nodeUrl,
-                onStubDeserialization = onStubDeserialization
-            )
-        })
     }
 }

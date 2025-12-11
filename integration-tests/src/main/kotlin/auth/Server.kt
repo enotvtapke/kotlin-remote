@@ -1,13 +1,12 @@
 package auth
 
-import installRemoteServerContentNegotiation
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
-import kotlinx.remote.CallableMapClass
+import kotlinx.remote.CallableMap
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.handleRemoteCall
@@ -18,7 +17,7 @@ fun main() {
 }
 
 fun authRemoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
-    val callableMapClass = CallableMapClass(genCallableMap())
+    val callableMap = CallableMap(genCallableMap())
     return embeddedServer(Netty, port = 8080) {
         install(Authentication) {
             basic("auth-basic") {
@@ -34,9 +33,9 @@ fun authRemoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyAppl
         }
         install(CallLogging)
         install(KRemote) {
-            callableMap = callableMapClass
+            this.callableMap = callableMap
         }
-        installRemoteServerContentNegotiation()
+//        installRemoteServerContentNegotiation()
         routing {
             authenticate("auth-basic") {
                 post("/callAuth") {

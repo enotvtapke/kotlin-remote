@@ -1,25 +1,23 @@
 package manualFunctionCalling
 
-import installRemoteServerContentNegotiation
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.routing.*
 import kotlinx.remote.*
-import kotlinx.remote.RemoteResponse
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.remote
 import kotlin.reflect.typeOf
 
 fun main() {
-    val callableMap = CallableMapClass(manualCallableMap())
+    val callableMap = CallableMap(manualCallableMap())
     embeddedServer(Netty, port = 8080) {
         install(CallLogging)
         install(KRemote) {
             this.callableMap = callableMap
         }
-        installRemoteServerContentNegotiation()
+//        installRemoteServerContentNegotiation()
         routing {
             remote("/call")
         }

@@ -23,7 +23,6 @@ import kotlinx.remote.classes.network.LeaseClient
 import kotlinx.remote.classes.network.leaseClient
 import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.ktor.KRemote
-import kotlinx.remote.ktor.KRemoteServerPluginAttributesKey
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
 import kotlinx.serialization.json.Json
@@ -31,7 +30,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation as ServerContentNegotiation
 
 class ApplicationTests {
     @Test
@@ -286,15 +284,18 @@ class ApplicationTests {
             }
             install(ClientContentNegotiation) {
                 json(Json {
-                    serializersModule = remoteSerializersModule(
-                        remoteClasses = genRemoteClassList(),
-                        callableMap = CallableMapClass(genCallableMap()),
-                        leaseManager = null,
-                        onStubDeserialization = onStubDeserialization
-                    )
+                    serializersModule = remoteSerializersModule {
+                        callableMap = CallableMap(genCallableMap())
+                        classes {
+                            remoteClasses = genRemoteClassList()
+                            client {
+                                this.onStubDeserialization = onStubDeserialization
+                            }
+                        }
+                    }
                 })
             }
-        }.remoteClient(CallableMapClass(genCallableMap()), "/call")
+        }.remoteClient(CallableMap(genCallableMap()), "/call")
     }
 
     private fun ApplicationTestBuilder.configureApplication(leaseConfig: LeaseConfig = LeaseConfig(), leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()) {
@@ -314,21 +315,17 @@ class ApplicationTests {
         application {
             install(CallLogging)
             install(KRemote) {
-                this.callableMap = CallableMapClass(genCallableMap())
-                this.leaseConfig = leaseConfig
-            }
-            install(ServerContentNegotiation) {
-                json(Json {
-                    val leaseManager = this@application.attributes[KRemoteServerPluginAttributesKey].leaseManager
-                    val callableMap = this@application.attributes[KRemoteServerPluginAttributesKey].callableMap
-                    serializersModule = remoteSerializersModule(
-                        remoteClasses = genRemoteClassList(),
-                        callableMap = callableMap,
-                        leaseManager = leaseManager,
-                        nodeUrl = "http://localhost:80",
-                        onStubDeserialization = onStubDeserialization
-                    )
-                })
+                callableMap = CallableMap(genCallableMap())
+                classes {
+                    remoteClasses = genRemoteClassList()
+                    server {
+                        this.leaseConfig = leaseConfig
+                        nodeUrl = "http://localhost:80"
+                    }
+                    client {
+                        this.onStubDeserialization = onStubDeserialization
+                    }
+                }
             }
 
             routing {

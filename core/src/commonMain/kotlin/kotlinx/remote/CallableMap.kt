@@ -1,6 +1,6 @@
 package kotlinx.remote
 
-class CallableMapClass(private val callableMap: Map<String, RemoteCallable> = mapOf()) {
+class CallableMap(private val callableMap: Map<String, RemoteCallable> = mapOf()) {
     operator fun get(name: String): RemoteCallable = callableMap[name]
         ?: error(
             "Function $name is not registered in CallableMap. Registered functions: ${callableMap.keys.joinToString()}."

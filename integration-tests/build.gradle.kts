@@ -15,7 +15,7 @@ repositories {
 dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.logging)
-    implementation(libs.ktor.client.content.negotiations)
+    implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.auth)
 
     implementation(libs.logback.classic)

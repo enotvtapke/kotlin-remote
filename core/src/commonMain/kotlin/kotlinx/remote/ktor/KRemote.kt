@@ -1,35 +1,39 @@
 package kotlinx.remote.ktor
 
-import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.response.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.remote.classes.RemoteInstancesPool
-import kotlinx.remote.classes.lease.LeaseManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
 
-val KRemoteServerPluginAttributesKey = AttributeKey<KRemoteConfigBuilder>("KRemoteServerPluginAttributesKey")
+val KRemoteServerPluginAttributesKey = AttributeKey<KRemoteConfig>("KRemoteServerPluginAttributesKey")
 
 val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
     name = "KRemote",
     createConfiguration = { KRemoteConfigBuilder() },
 ) {
-    pluginConfig.callableMap // Checking that CallableMap is initialized
-    val logger = application.log
-    application.install(StatusPages) {
-        exception<Throwable> { call, cause ->
-            logger.error(cause.stackTraceToString())
-            call.respondText(text = "500: $cause", status = HttpStatusCode.InternalServerError)
+    val config = pluginConfig.build()
+    application.attributes.put(KRemoteServerPluginAttributesKey, config)
+    application.pluginOrNull(ContentNegotiation) ?: run {
+        application.install(ContentNegotiation) {
+            json(Json {
+                serializersModule = remoteSerializersModule(
+                    callableMap = config.callableMap,
+                    remoteClasses = config.classes?.remoteClasses,
+                    leaseManager = config.classes?.server?.leaseManager,
+                    nodeUrl = config.classes?.server?.nodeUrl,
+                    onStubDeserialization = config.classes?.client?.onStubDeserialization,
+                    serializersModule = config.serializersModule ?: SerializersModule { }
+                )
+            })
         }
     }
-
-    pluginConfig.leaseManager = LeaseManager(pluginConfig.leaseConfig, RemoteInstancesPool())
-    application.attributes.put(KRemoteServerPluginAttributesKey, pluginConfig)
-    val cleanupScope = CoroutineScope(SupervisorJob())
-    pluginConfig.leaseManager.startCleanupJob(cleanupScope)
+    config.classes?.server?.leaseManager?.startCleanupJob(CoroutineScope(Dispatchers.Default))
     application.monitor.subscribe(ApplicationStopped) {
-        pluginConfig.leaseManager.stopCleanupJob()
+        config.classes?.server?.leaseManager?.stopCleanupJob()
     }
 }
