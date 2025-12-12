@@ -12,6 +12,6 @@ object TestRpcClient : RemoteClient {
     override suspend fun call(
         call: RemoteCall,
     ): Any? {
-        return RemoteResponse.Success(42L)
+        return 42L
     }
 }
