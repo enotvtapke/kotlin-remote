@@ -5,6 +5,11 @@ class CallableMap(private val callableMap: Map<String, RemoteCallable> = mapOf()
         ?: error(
             "Function $name is not registered in CallableMap. Registered functions: ${callableMap.keys.joinToString()}."
         )
+
+    operator fun plus(other: CallableMap): CallableMap = CallableMap(callableMap + other.callableMap)
+    override fun toString(): String {
+        return callableMap.entries.joinToString("\n")
+    }
 }
 
 internal val RemoteIntrinsic: Nothing

@@ -1,85 +1,48 @@
 package kotlinx.remote.serialization
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.element
-import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import kotlinx.serialization.serializer
 
 inline fun <reified T: Exception> exceptionSerializer(noinline exceptionFactory: (String?) -> T): KSerializer<T> {
     return ExceptionSerializer(T::class.simpleName!!, exceptionFactory)
 }
 
+@Serializable
+data class StackFrame(val className: String, val methodName: String, val fileName: String?, val lineNumber: Int)
+
 class ExceptionSerializer<T : Exception>(
     name: String,
     private val exceptionFactory: (String?) -> T
 ) : KSerializer<T> {
+    override val descriptor: SerialDescriptor = SerialDescriptor(
+        name,
+        ExceptionSurrogate.serializer().descriptor
+    )
 
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor(name) {
-        element<String?>("message")
-        element<String?>("stackTrace")
-    }
-
-    @OptIn(ExperimentalSerializationApi::class)
     override fun serialize(encoder: Encoder, value: T) {
-        encoder.encodeStructure(descriptor) {
-            encodeNullableSerializableElement(
-                descriptor,
-                0,
-                serializer<String?>(),
-                value.message
-            )
-            encodeNullableSerializableElement(
-                descriptor,
-                1,
-                serializer<String?>(),
-                value.stackTraceToString()
-            )
-        }
+        val stackTrace = value.stackTrace()
+        val surrogate = ExceptionSurrogate(
+            if (stackTrace.isEmpty()) "${value.message}\nRemote trace\n---\n${value.stackTraceToString()}---" else value.message,
+            stackTrace
+        )
+        encoder.encodeSerializableValue(ExceptionSurrogate.serializer(), surrogate)
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
     override fun deserialize(decoder: Decoder): T {
-        var message: String? = null
-        var stackTrace: String? = null
-
-        decoder.decodeStructure(descriptor) {
-            while (true) {
-                when (val index = decodeElementIndex(descriptor)) {
-                    0 -> message = decodeNullableSerializableElement(
-                        descriptor,
-                        0,
-                        serializer<String?>(),
-                        null
-                    )
-                    1 -> stackTrace = decodeNullableSerializableElement(
-                        descriptor,
-                        1,
-                        serializer<String?>(),
-                        null
-                    )
-                    DECODE_DONE -> break
-                    else -> error("Unexpected index: $index")
-                }
-            }
-        }
-
-        val finalMessage = if (stackTrace != null) {
-            val base = message ?: "Remote exception"
-            "$base\n--- Remote stack trace ---\n$stackTrace--- End of remote stack trace ---"
-        } else message
-
-        return exceptionFactory(finalMessage)
+        val surrogate = decoder.decodeSerializableValue(ExceptionSurrogate.serializer())
+        return exceptionFactory(surrogate.message).setStackTrace(surrogate.stackTrace)
     }
+
+    @Serializable
+    @SerialName("Exception")
+    private data class ExceptionSurrogate(val message: String?, val stackTrace: List<StackFrame>)
 }
 
 fun SerializersModuleBuilder.setupExceptionSerializers() {

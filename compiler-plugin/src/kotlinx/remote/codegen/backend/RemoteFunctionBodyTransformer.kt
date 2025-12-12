@@ -52,8 +52,6 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
                             }
                             when (originalBody) {
                                 is IrBlockBody -> originalBody.statements.forEach { +it }
-
-
                                 is IrExpressionBody -> +irReturn(originalBody.expression)
                                 is IrSyntheticBody -> error("Remote function can't have synthetic body")
                             }

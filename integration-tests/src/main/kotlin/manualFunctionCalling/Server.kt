@@ -11,13 +11,11 @@ import kotlinx.remote.ktor.remote
 import kotlin.reflect.typeOf
 
 fun main() {
-    val callableMap = CallableMap(manualCallableMap())
     embeddedServer(Netty, port = 8080) {
         install(CallLogging)
         install(KRemote) {
-            this.callableMap = callableMap
+            callableMap = CallableMap(manualCallableMap())
         }
-//        installRemoteServerContentNegotiation()
         routing {
             remote("/call")
         }

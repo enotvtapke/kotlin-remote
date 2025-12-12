@@ -29,7 +29,6 @@ import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation as ClientContentNegotiation
 
 class ApplicationTests {
     @Test
@@ -71,10 +70,7 @@ class ApplicationTests {
 
             context(testServerRemoteContext()) {
                 val exception = assertThrows<IllegalStateException> { multiply(10, 10) }
-                assertEquals(
-                    "My exception --- Remote stack trace ---",
-                    exception.message?.lines()?.take(2)?.joinToString(" ")
-                )
+                assertEquals("My exception", exception.message)
             }
         }
 
@@ -282,7 +278,7 @@ class ApplicationTests {
                 accept(ContentType.Application.Json)
                 contentType(ContentType.Application.Json)
             }
-            install(ClientContentNegotiation) {
+            install(ContentNegotiation) {
                 json(Json {
                     serializersModule = remoteSerializersModule {
                         callableMap = genCallableMap()
