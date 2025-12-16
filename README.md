@@ -324,25 +324,22 @@ The project is completely kotlin multiplatform and supports all the KMP compilat
 
 All the features described above are implemented and to some extent tested.
 
-* The first thesis objective is reached.
-* The second objective is almost reached. Manual or automatic memory management of remote class instances is still
-  under development.
+* Both objectives are reached.
 
 ### Problems and open questions
 
-* At the moment there is no way to remove instances from `instances` storage. This should be fixed by introducing some
-  kind of garbage collector or at least manual removal.
 * The support for generic functions could be improved. Now the upper bounds of all the generic function type parameters
   should be serializable, and it is the responsibility of the user to write serializers. It is possible, though, to
   pass type information for individual generic function call. Such a change can be applied to all the function, but it  
   will increase the network load.
-* Remote functions that throw exceptions pass stack trace as a string. Because of that original stack trace on the
-  client cannot be restored. To fix it, changes inside the Kotlin compiler should be made, which is complicated.
+* Remote functions that throw exceptions pass stack trace as a string on every backend except JVM. Because of that 
+  original stack trace on the client cannot be restored. To fix it, changes inside the Kotlin compiler should be made, which is complicated.
 * Parameters with default values are passed on the network even if they have default values. Because we know the
   function signature statically, it can be fixed.
 * Remote functions does not preserve coroutine context. All the suspend calls inside remote functions are executed
   in Ktor coroutine context. It basically means that user should provide correct coroutine context inside remote
   function bodies with suspend calls.
+* Remote lambdas could be added to make lambdas serializable.
 
 ### Used technologies
 
@@ -351,5 +348,5 @@ All the features described above are implemented and to some extent tested.
 * Kotlinx serialization
 * Kotlin Ktor
 
-[Not updated proposal](https://docs.google.com/document/d/128EKwvuhGH6ZR8HTmQvixLaYfMQq2nwm7kQZ1i4RQSc/edit?usp=sharing)  
+[Proposal](https://docs.google.com/document/d/128EKwvuhGH6ZR8HTmQvixLaYfMQq2nwm7kQZ1i4RQSc/edit?usp=sharing)  
 [Not updated presentation](https://docs.google.com/presentation/d/1IZ0D4VAie_OU0kUIY3lDtlDDSp9s02DN/edit?slide=id.g2cf53e53948_0_31#slide=id.g2cf53e53948_0_31)
