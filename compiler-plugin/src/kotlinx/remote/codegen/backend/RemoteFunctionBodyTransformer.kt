@@ -19,11 +19,15 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
         if (!declaration.remote() || declaration.isFakeOverride) return super.visitFunction(declaration, data)
         val originalBody = declaration.body ?: error("Remote function `${declaration.name}` should have a body")
         val context = declaration.parameters.singleOrNull {
-            it.isRemoteContext(data)
-        } ?: error("Remote function `${declaration.name}` should have a single context parameter of type ${data.remoteContext.defaultType.render()}")
+            it.isRemoteWrapper(data)
+        } ?: error("Remote function `${declaration.name}` should have a single context parameter of type RemoteWrapper<${data.remoteContext.defaultType.render()}>")
         declaration.body = data.irBuilder(declaration.symbol).irBlockBody {
+            val wrappedRemoteContext = irAs(irGet(context), data.wrappedRemote.defaultType)
+            val innerContext = irCall(data.wrappedRemoteContext.owner.getter!!.symbol).apply {
+                arguments[0] = wrappedRemoteContext
+            }
             val contextClient = irCall(data.remoteContextClient.owner.getter!!.symbol).apply {
-                arguments[0] = irGet(context)
+                arguments[0] = innerContext
             }
             val remoteCall = irCallConstructor(data.remoteCall.constructors.single(), listOf()).apply {
                 arguments[0] = irString(declaration.remoteFunctionName())
@@ -45,7 +49,7 @@ internal class RemoteFunctionBodyTransformer : IrTransformer<RemoteIrContext>() 
                 data.irBuiltIns.unitType,
                 listOf(
                     irBranch(
-                        irIs(irGet(context), data.localContext.defaultType),
+                        irIs(irGet(context), data.local.defaultType),
                         irBlock {
                             declaration.dispatchReceiverParameter?.also {
                                 +irCall(data.functions.checkIsNotStubForRemoteClassMethod).apply { arguments[0] = irGet(it) }

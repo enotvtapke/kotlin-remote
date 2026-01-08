@@ -8,3 +8,4 @@ actual class WeakRef<T : Any> actual constructor(referent: T) {
     private val ref = WeakReference(referent)
     actual fun get(): T? = ref.get()
 }
+

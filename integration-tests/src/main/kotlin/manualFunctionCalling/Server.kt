@@ -28,7 +28,7 @@ fun manualCallableMap(): Map<String, RemoteCallable> {
         name = "multiply",
         returnType = RemoteType(typeOf<RemoteResponse<Long>>()),
         invokator = RemoteInvokator { args ->
-            return@RemoteInvokator context(DefaultLocalContext) {
+            return@RemoteInvokator context(Local) {
                 multiply(args[0] as Long, args[1] as Long)
             }
         },

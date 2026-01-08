@@ -6,7 +6,11 @@ package kotlinx.remote.codegen.test
 
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.RemoteClient
+import kotlinx.remote.RemoteWrapper
+import kotlinx.remote.WrappedRemote
 
-data object ServerContext: RemoteContext {
+data object ServerRemoteContext: RemoteContext {
     override val client: RemoteClient = TestRpcClient
 }
+
+val ServerContext = WrappedRemote(ServerRemoteContext)

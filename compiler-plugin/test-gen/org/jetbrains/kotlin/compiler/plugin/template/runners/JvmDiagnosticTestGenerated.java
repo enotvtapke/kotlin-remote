@@ -32,4 +32,10 @@ public class JvmDiagnosticTestGenerated extends AbstractJvmDiagnosticTest {
   public void testNoSuspend() {
     runTest("compiler-plugin/testData/diagnostics/noSuspend.kt");
   }
+
+  @Test
+  @TestMetadata("wrongContext.kt")
+  public void testWrongContext() {
+    runTest("compiler-plugin/testData/diagnostics/wrongContext.kt");
+  }
 }

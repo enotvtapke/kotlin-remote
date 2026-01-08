@@ -8,8 +8,11 @@ interface RemoteContext {
     val client: RemoteClient
 }
 
-abstract class LocalContext: RemoteContext {
-    final override val client: RemoteClient by lazy { error("Local context does not have client.") }
-}
+sealed interface RemoteWrapper <out T: RemoteContext>
+object Local: RemoteWrapper<Nothing>
+class WrappedRemote<T: RemoteContext>(val context: T): RemoteWrapper<T>
 
-object DefaultLocalContext: LocalContext()
+fun <T: RemoteContext> T.wrap() = WrappedRemote(this)
+
+val <T: RemoteContext> T.wrapped
+    get() = wrap()

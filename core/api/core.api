@@ -7,45 +7,21 @@ public final class kotlinx/remote/CallableMap {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlinx/remote/CallableMapClass {
-	public fun <init> ()V
-	public fun <init> (Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun get (Ljava/lang/String;)Lkotlinx/remote/RemoteCallable;
-}
-
 public final class kotlinx/remote/CallableMapKt {
 	public static final fun genCallableMap ()Lkotlinx/remote/CallableMap;
-}
-
-public final class kotlinx/remote/CallerInfo {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lkotlinx/remote/CallerInfo;
-	public static synthetic fun copy$default (Lkotlinx/remote/CallerInfo;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/CallerInfo;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getUrl ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class kotlinx/remote/DefaultLocalContext : kotlinx/remote/LocalContext {
 	public static final field INSTANCE Lkotlinx/remote/DefaultLocalContext;
 }
 
-public final class kotlinx/remote/InjectedContext : kotlinx/remote/LocalContext {
-	public fun <init> (Lkotlinx/remote/CallerInfo;)V
-	public fun getCallerInfo ()Lkotlinx/remote/CallerInfo;
+public final class kotlinx/remote/Local : kotlinx/remote/RemoteWrapper {
+	public static final field INSTANCE Lkotlinx/remote/Local;
 }
 
 public abstract class kotlinx/remote/LocalContext : kotlinx/remote/RemoteContext {
 	public fun <init> ()V
 	public final fun getClient ()Lkotlinx/remote/RemoteClient;
-}
-
-public abstract class kotlinx/remote/NonlocalContext : kotlinx/remote/RemoteContext {
-	public fun <init> ()V
-	public final fun getCallerInfo ()Lkotlinx/remote/CallerInfo;
 }
 
 public abstract interface annotation class kotlinx/remote/Remote : java/lang/annotation/Annotation {
@@ -93,17 +69,16 @@ public final class kotlinx/remote/RemoteClientKt {
 	public static synthetic fun remoteClient$default (Lio/ktor/client/HttpClient;Lkotlinx/remote/CallableMap;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/RemoteClient;
 }
 
-public abstract interface class kotlinx/remote/RemoteConfig {
-	public abstract fun getClient ()Lkotlinx/remote/network/RemoteClient;
-	public abstract fun getContext ()Lkotlinx/remote/RemoteContext;
-}
-
 public abstract interface class kotlinx/remote/RemoteContext {
 	public abstract fun getClient ()Lkotlinx/remote/RemoteClient;
 }
 
+public final class kotlinx/remote/RemoteContextKt {
+	public static final fun getWrapped (Lkotlinx/remote/RemoteContext;)Lkotlinx/remote/WrappedRemote;
+}
+
 public abstract interface class kotlinx/remote/RemoteInvokator {
-	public abstract fun call (Lkotlinx/remote/LocalContext;[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun call (Lkotlinx/remote/Local;[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class kotlinx/remote/RemoteParameter {
@@ -194,6 +169,14 @@ public final class kotlinx/remote/RemoteType {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class kotlinx/remote/RemoteWrapper {
+}
+
+public final class kotlinx/remote/WrappedRemote : kotlinx/remote/RemoteWrapper {
+	public fun <init> (Lkotlinx/remote/RemoteContext;)V
+	public final fun getContext ()Lkotlinx/remote/RemoteContext;
+}
+
 public abstract interface class kotlinx/remote/classes/InternalConcurrentHashMap {
 	public abstract fun clear ()V
 	public abstract fun computeIfAbsent (Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
@@ -239,33 +222,6 @@ public final class kotlinx/remote/classes/RemoteInstancesPool {
 	public final fun remove (J)Ljava/lang/Object;
 }
 
-public final class kotlinx/remote/classes/RemoteInstancesPool$Companion {
-	public final fun getDefault ()Lkotlinx/remote/classes/RemoteInstancesPool;
-}
-
-public final class kotlinx/remote/classes/RemoteInstancesPoolKt {
-	public static final fun addInstance (Ljava/lang/Object;Ljava/lang/String;)J
-	public static synthetic fun addInstance$default (Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)J
-	public static final fun addInstanceWithoutLease (Ljava/lang/Object;)J
-}
-
-public final class kotlinx/remote/classes/RemoteRuntime {
-	public static final field Companion Lkotlinx/remote/classes/RemoteRuntime$Companion;
-	public fun <init> ()V
-	public fun <init> (Lkotlinx/remote/classes/RemoteInstancesPool;Lkotlinx/remote/classes/lease/LeaseManager;Lkotlinx/remote/classes/lease/LeaseRenewalClient;)V
-	public synthetic fun <init> (Lkotlinx/remote/classes/RemoteInstancesPool;Lkotlinx/remote/classes/lease/LeaseManager;Lkotlinx/remote/classes/lease/LeaseRenewalClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun addInstance (Ljava/lang/Object;Ljava/lang/String;)J
-	public static synthetic fun addInstance$default (Lkotlinx/remote/classes/RemoteRuntime;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)J
-	public final fun clear ()V
-	public final fun getInstancesPool ()Lkotlinx/remote/classes/RemoteInstancesPool;
-	public final fun getLeaseManager ()Lkotlinx/remote/classes/lease/LeaseManager;
-	public final fun getLeaseRenewalClient ()Lkotlinx/remote/classes/lease/LeaseRenewalClient;
-}
-
-public final class kotlinx/remote/classes/RemoteRuntime$Companion {
-	public final fun getDefault ()Lkotlinx/remote/classes/RemoteRuntime;
-}
-
 public abstract interface annotation class kotlinx/remote/classes/RemoteSerializable : java/lang/annotation/Annotation {
 }
 
@@ -292,20 +248,8 @@ public abstract interface class kotlinx/remote/classes/Stub {
 	public abstract fun getUrl ()Ljava/lang/String;
 }
 
-public final class kotlinx/remote/classes/StubIdGenerator {
-	public static final field INSTANCE Lkotlinx/remote/classes/StubIdGenerator;
-	public final fun nextId ()J
-}
-
 public final class kotlinx/remote/classes/StubKt {
 	public static final fun checkIsNotStubForRemoteClassMethod (Ljava/lang/Object;)V
-}
-
-public final class kotlinx/remote/classes/lease/LeaseClientSetupKt {
-	public static final fun startLeaseRenewal (Lkotlinx/remote/network/LeaseClient;Lkotlinx/coroutines/CoroutineScope;Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;Lkotlinx/remote/classes/lease/LeaseRenewalClient;)V
-	public static synthetic fun startLeaseRenewal$default (Lkotlinx/remote/network/LeaseClient;Lkotlinx/coroutines/CoroutineScope;Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;Lkotlinx/remote/classes/lease/LeaseRenewalClient;ILjava/lang/Object;)V
-	public static final fun stopLeaseRenewal (ZLkotlinx/remote/classes/lease/LeaseRenewalClient;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun stopLeaseRenewal$default (ZLkotlinx/remote/classes/lease/LeaseRenewalClient;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }
 
 public final class kotlinx/remote/classes/lease/LeaseConfig {
@@ -380,10 +324,6 @@ public final class kotlinx/remote/classes/lease/LeaseManager {
 	public final fun stopCleanupJob ()V
 }
 
-public final class kotlinx/remote/classes/lease/LeaseManager$Companion {
-	public final fun getDefault ()Lkotlinx/remote/classes/lease/LeaseManager;
-}
-
 public final class kotlinx/remote/classes/lease/LeaseReleaseRequest {
 	public static final field Companion Lkotlinx/remote/classes/lease/LeaseReleaseRequest$Companion;
 	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
@@ -432,10 +372,6 @@ public final class kotlinx/remote/classes/lease/LeaseRenewalClient {
 	public static synthetic fun unregisterStubId$default (Lkotlinx/remote/classes/lease/LeaseRenewalClient;JZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public final fun unregisterStubIds (Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun unregisterStubIds$default (Lkotlinx/remote/classes/lease/LeaseRenewalClient;Ljava/util/List;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/classes/lease/LeaseRenewalClient$Companion {
-	public final fun getDefault ()Lkotlinx/remote/classes/lease/LeaseRenewalClient;
 }
 
 public final class kotlinx/remote/classes/lease/LeaseRenewalClientConfig {
@@ -518,15 +454,6 @@ public final class kotlinx/remote/classes/lease/LeaseRenewalResponse$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
 }
 
-public final class kotlinx/remote/classes/lease/SystemTimeProvider : kotlinx/remote/classes/lease/TimeProvider {
-	public static final field INSTANCE Lkotlinx/remote/classes/lease/SystemTimeProvider;
-	public fun currentTimeMillis ()J
-}
-
-public abstract interface class kotlinx/remote/classes/lease/TimeProvider {
-	public abstract fun currentTimeMillis ()J
-}
-
 public final class kotlinx/remote/classes/lease/TimeProviderKt {
 	public static final fun currentTimeMillis ()J
 }
@@ -552,30 +479,13 @@ public final class kotlinx/remote/classes/network/LeaseClientKt {
 	public static synthetic fun leaseClient$default (Lio/ktor/client/HttpClient;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/classes/network/LeaseClient;
 }
 
-public final class kotlinx/remote/codegen/test/ClientContext : kotlinx/remote/RemoteContext {
-	public static final field INSTANCE Lkotlinx/remote/codegen/test/ClientContext;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getClient ()Lkotlinx/remote/network/RemoteClient;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlinx/remote/codegen/test/ServerConfig : kotlinx/remote/RemoteConfig {
-	public static final field INSTANCE Lkotlinx/remote/codegen/test/ServerConfig;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getClient ()Lkotlinx/remote/network/RemoteClient;
-	public synthetic fun getContext ()Lkotlinx/remote/RemoteContext;
-	public fun getContext ()Lkotlinx/remote/codegen/test/ServerContext;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class kotlinx/remote/codegen/test/ServerConfigKt {
-	public static final fun getServerContext ()Lkotlinx/remote/LocalContext;
+	public static final fun getClientContext ()Lkotlinx/remote/RemoteWrapper;
+	public static final fun getServerContext ()Lkotlinx/remote/RemoteWrapper;
 }
 
-public final class kotlinx/remote/codegen/test/ServerContext : kotlinx/remote/RemoteContext {
-	public static final field INSTANCE Lkotlinx/remote/codegen/test/ServerContext;
+public final class kotlinx/remote/codegen/test/ServerRemoteContext : kotlinx/remote/RemoteContext {
+	public static final field INSTANCE Lkotlinx/remote/codegen/test/ServerRemoteContext;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getClient ()Lkotlinx/remote/RemoteClient;
 	public fun hashCode ()I
@@ -585,189 +495,6 @@ public final class kotlinx/remote/codegen/test/ServerContext : kotlinx/remote/Re
 public final class kotlinx/remote/codegen/test/TestRpcClient : kotlinx/remote/RemoteClient {
 	public static final field INSTANCE Lkotlinx/remote/codegen/test/TestRpcClient;
 	public fun call (Lkotlinx/remote/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/functions/CallableMapClass {
-	public fun <init> ()V
-	public fun <init> (Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun get (Ljava/lang/String;)Lkotlinx/remote/functions/RemoteCallable;
-}
-
-public final class kotlinx/remote/functions/CallableMapKt {
-	public static final fun genCallableMap ()Ljava/util/Map;
-}
-
-public final class kotlinx/remote/functions/LocalContext : kotlinx/remote/functions/RemoteContext {
-	public static final field INSTANCE Lkotlinx/remote/functions/LocalContext;
-	public fun getClient ()Lkotlinx/remote/functions/network/RemoteClient;
-}
-
-public abstract interface annotation class kotlinx/remote/functions/Remote : java/lang/annotation/Annotation {
-}
-
-public final class kotlinx/remote/functions/RemoteCallable {
-	public fun <init> (Ljava/lang/String;Lkotlinx/remote/functions/RemoteType;Lkotlinx/remote/functions/RemoteInvokator;[Lkotlinx/remote/functions/RemoteParameter;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lkotlinx/remote/functions/RemoteType;
-	public final fun component3 ()Lkotlinx/remote/functions/RemoteInvokator;
-	public final fun component4 ()[Lkotlinx/remote/functions/RemoteParameter;
-	public final fun copy (Ljava/lang/String;Lkotlinx/remote/functions/RemoteType;Lkotlinx/remote/functions/RemoteInvokator;[Lkotlinx/remote/functions/RemoteParameter;)Lkotlinx/remote/functions/RemoteCallable;
-	public static synthetic fun copy$default (Lkotlinx/remote/functions/RemoteCallable;Ljava/lang/String;Lkotlinx/remote/functions/RemoteType;Lkotlinx/remote/functions/RemoteInvokator;[Lkotlinx/remote/functions/RemoteParameter;ILjava/lang/Object;)Lkotlinx/remote/functions/RemoteCallable;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getInvokator ()Lkotlinx/remote/functions/RemoteInvokator;
-	public final fun getName ()Ljava/lang/String;
-	public final fun getParameters ()[Lkotlinx/remote/functions/RemoteParameter;
-	public final fun getReturnType ()Lkotlinx/remote/functions/RemoteType;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlinx/remote/functions/RemoteCallableKt {
-	public static final fun returnTypeInfo (Lkotlinx/remote/functions/RemoteCallable;)Lio/ktor/util/reflect/TypeInfo;
-}
-
-public abstract interface class kotlinx/remote/functions/RemoteContext {
-	public abstract fun getClient ()Lkotlinx/remote/functions/network/RemoteClient;
-}
-
-public abstract interface class kotlinx/remote/functions/RemoteInvokator {
-	public abstract fun call ([Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/functions/RemoteParameter {
-	public fun <init> (Ljava/lang/String;Lkotlinx/remote/functions/RemoteType;Z)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lkotlinx/remote/functions/RemoteType;
-	public final fun component3 ()Z
-	public final fun copy (Ljava/lang/String;Lkotlinx/remote/functions/RemoteType;Z)Lkotlinx/remote/functions/RemoteParameter;
-	public static synthetic fun copy$default (Lkotlinx/remote/functions/RemoteParameter;Ljava/lang/String;Lkotlinx/remote/functions/RemoteType;ZILjava/lang/Object;)Lkotlinx/remote/functions/RemoteParameter;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getName ()Ljava/lang/String;
-	public final fun getType ()Lkotlinx/remote/functions/RemoteType;
-	public fun hashCode ()I
-	public final fun isOptional ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlinx/remote/functions/RemoteType {
-	public fun <init> (Lkotlin/reflect/KType;)V
-	public final fun component1 ()Lkotlin/reflect/KType;
-	public final fun copy (Lkotlin/reflect/KType;)Lkotlinx/remote/functions/RemoteType;
-	public static synthetic fun copy$default (Lkotlinx/remote/functions/RemoteType;Lkotlin/reflect/KType;ILjava/lang/Object;)Lkotlinx/remote/functions/RemoteType;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getKType ()Lkotlin/reflect/KType;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlinx/remote/functions/network/RemoteCall {
-	public fun <init> (Ljava/lang/String;[Ljava/lang/Object;)V
-	public final fun getCallableName ()Ljava/lang/String;
-	public final fun getParameters ()[Ljava/lang/Object;
-}
-
-public abstract interface class kotlinx/remote/functions/network/RemoteClient {
-	public abstract fun call (Lkotlinx/remote/functions/network/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/functions/network/RemoteClientImpl : kotlinx/remote/functions/network/RemoteClient {
-	public fun <init> (Lio/ktor/client/HttpClient;Ljava/lang/String;Lkotlinx/remote/functions/CallableMapClass;)V
-	public fun call (Lkotlinx/remote/functions/network/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/functions/network/RemoteClientKt {
-	public static final fun call (Lkotlinx/remote/functions/network/RemoteClient;Lkotlinx/remote/functions/network/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun remoteClient (Lio/ktor/client/HttpClient;Lkotlinx/remote/functions/CallableMapClass;Ljava/lang/String;)Lkotlinx/remote/functions/network/RemoteClient;
-}
-
-public abstract interface class kotlinx/remote/functions/network/RemoteResponse {
-	public static final field Companion Lkotlinx/remote/functions/network/RemoteResponse$Companion;
-}
-
-public final class kotlinx/remote/functions/network/RemoteResponse$Companion {
-	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/functions/network/RemoteResponse$Failure : kotlinx/remote/functions/network/RemoteResponse {
-	public static final field Companion Lkotlinx/remote/functions/network/RemoteResponse$Failure$Companion;
-	public fun <init> (Ljava/lang/Exception;)V
-	public final fun component1 ()Ljava/lang/Exception;
-	public final fun copy (Ljava/lang/Exception;)Lkotlinx/remote/functions/network/RemoteResponse$Failure;
-	public static synthetic fun copy$default (Lkotlinx/remote/functions/network/RemoteResponse$Failure;Ljava/lang/Exception;ILjava/lang/Object;)Lkotlinx/remote/functions/network/RemoteResponse$Failure;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Ljava/lang/Exception;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final synthetic class kotlinx/remote/functions/network/RemoteResponse$Failure$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public static final field INSTANCE Lkotlinx/remote/functions/network/RemoteResponse$Failure$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/functions/network/RemoteResponse$Failure;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/functions/network/RemoteResponse$Failure;)V
-	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/functions/network/RemoteResponse$Failure$Companion {
-	public final fun serializer ()Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/functions/network/RemoteResponse$Success : kotlinx/remote/functions/network/RemoteResponse {
-	public static final field Companion Lkotlinx/remote/functions/network/RemoteResponse$Success$Companion;
-	public fun <init> (Ljava/lang/Object;)V
-	public final fun component1 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/Object;)Lkotlinx/remote/functions/network/RemoteResponse$Success;
-	public static synthetic fun copy$default (Lkotlinx/remote/functions/network/RemoteResponse$Success;Ljava/lang/Object;ILjava/lang/Object;)Lkotlinx/remote/functions/network/RemoteResponse$Success;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final synthetic class kotlinx/remote/functions/network/RemoteResponse$Success$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public fun <init> (Lkotlinx/serialization/KSerializer;)V
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/functions/network/RemoteResponse$Success;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/functions/network/RemoteResponse$Success;)V
-	public final fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/functions/network/RemoteResponse$Success$Companion {
-	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/functions/network/serialization/CallableParametersSerializerKt {
-	public static final fun buildContextual (Lkotlinx/serialization/modules/SerializersModule;Lkotlinx/remote/functions/RemoteType;)Lkotlinx/serialization/KSerializer;
-	public static final fun rpcInternalKClass (Lkotlin/reflect/KType;)Lkotlin/reflect/KClass;
-}
-
-public final class kotlinx/remote/functions/network/serialization/ExceptionSerializer : kotlinx/serialization/KSerializer {
-	public fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Exception;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Exception;)V
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-}
-
-public final class kotlinx/remote/functions/network/serialization/ExceptionSerializerKt {
-	public static final fun setupExceptionSerializers (Lkotlinx/serialization/modules/SerializersModuleBuilder;)V
-}
-
-public final class kotlinx/remote/functions/network/serialization/RpcCallSerializer : kotlinx/serialization/KSerializer {
-	public fun <init> (Lkotlinx/remote/functions/CallableMapClass;Lkotlinx/serialization/modules/SerializersModule;)V
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/functions/network/RemoteCall;
-	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/functions/network/RemoteCall;)V
 }
 
 public final class kotlinx/remote/ktor/KRemoteClassesClientConfig {
@@ -880,173 +607,6 @@ public final class kotlinx/remote/ktor/KRemoteLeaseRoutesKt {
 public final class kotlinx/remote/ktor/KRemoteRouteDslKt {
 	public static final fun handleRemoteCall (Lio/ktor/server/routing/RoutingContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun remote (Lio/ktor/server/routing/Route;Ljava/lang/String;)V
-}
-
-public abstract interface class kotlinx/remote/network/LeaseClient {
-	public abstract fun releaseLeases (Lkotlinx/remote/classes/lease/LeaseReleaseRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun renewLeases (Lkotlinx/remote/classes/lease/LeaseRenewalRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/network/LeaseClientImpl : kotlinx/remote/network/LeaseClient {
-	public fun <init> (Lio/ktor/client/HttpClient;Ljava/lang/String;)V
-	public fun releaseLeases (Lkotlinx/remote/classes/lease/LeaseReleaseRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun renewLeases (Lkotlinx/remote/classes/lease/LeaseRenewalRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/network/LeaseClientKt {
-	public static final fun leaseClient (Lio/ktor/client/HttpClient;Ljava/lang/String;)Lkotlinx/remote/network/LeaseClient;
-	public static synthetic fun leaseClient$default (Lio/ktor/client/HttpClient;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/network/LeaseClient;
-}
-
-public final class kotlinx/remote/network/RemoteCall {
-	public fun <init> (Ljava/lang/String;[Ljava/lang/Object;)V
-	public final fun getCallableName ()Ljava/lang/String;
-	public final fun getParameters ()[Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/network/RemoteCall$Companion {
-	public final fun serializer ()Lkotlinx/serialization/KSerializer;
-}
-
-public abstract interface class kotlinx/remote/network/RemoteClient {
-	public abstract fun call (Lkotlinx/remote/network/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/network/RemoteClientImpl : kotlinx/remote/network/RemoteClient {
-	public fun <init> (Lio/ktor/client/HttpClient;Ljava/lang/String;Lkotlinx/remote/CallableMapClass;)V
-	public fun call (Lkotlinx/remote/network/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/network/RemoteClientKt {
-	public static final fun call (Lkotlinx/remote/network/RemoteClient;Lkotlinx/remote/network/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun remoteClient (Lio/ktor/client/HttpClient;Lkotlinx/remote/CallableMapClass;Ljava/lang/String;)Lkotlinx/remote/network/RemoteClient;
-}
-
-public abstract interface class kotlinx/remote/network/RemoteResponse {
-	public static final field Companion Lkotlinx/remote/network/RemoteResponse$Companion;
-}
-
-public final class kotlinx/remote/network/RemoteResponse$Companion {
-	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/network/RemoteResponse$Failure : kotlinx/remote/network/RemoteResponse {
-	public static final field Companion Lkotlinx/remote/network/RemoteResponse$Failure$Companion;
-	public fun <init> (Ljava/lang/Exception;)V
-	public final fun component1 ()Ljava/lang/Exception;
-	public final fun copy (Ljava/lang/Exception;)Lkotlinx/remote/network/RemoteResponse$Failure;
-	public static synthetic fun copy$default (Lkotlinx/remote/network/RemoteResponse$Failure;Ljava/lang/Exception;ILjava/lang/Object;)Lkotlinx/remote/network/RemoteResponse$Failure;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getError ()Ljava/lang/Exception;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final synthetic class kotlinx/remote/network/RemoteResponse$Failure$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public static final field INSTANCE Lkotlinx/remote/network/RemoteResponse$Failure$$serializer;
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/network/RemoteResponse$Failure;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/network/RemoteResponse$Failure;)V
-	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/network/RemoteResponse$Failure$Companion {
-	public final fun serializer ()Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/network/RemoteResponse$Success : kotlinx/remote/network/RemoteResponse {
-	public static final field Companion Lkotlinx/remote/network/RemoteResponse$Success$Companion;
-	public fun <init> (Ljava/lang/Object;)V
-	public final fun component1 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/Object;)Lkotlinx/remote/network/RemoteResponse$Success;
-	public static synthetic fun copy$default (Lkotlinx/remote/network/RemoteResponse$Success;Ljava/lang/Object;ILjava/lang/Object;)Lkotlinx/remote/network/RemoteResponse$Success;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final synthetic class kotlinx/remote/network/RemoteResponse$Success$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
-	public fun <init> (Lkotlinx/serialization/KSerializer;)V
-	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/network/RemoteResponse$Success;
-	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/network/RemoteResponse$Success;)V
-	public final fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/network/RemoteResponse$Success$Companion {
-	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
-}
-
-public abstract interface class kotlinx/remote/network/RemoteServer {
-	public abstract fun handleCall (Lkotlinx/remote/network/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/network/RemoteServerImpl : kotlinx/remote/network/RemoteServer {
-	public static final field INSTANCE Lkotlinx/remote/network/RemoteServerImpl;
-	public fun handleCall (Lkotlinx/remote/network/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public final class kotlinx/remote/network/ktor/KRemoteConfigBuilder {
-	public field callableMap Lkotlinx/remote/CallableMapClass;
-	public field leaseManager Lkotlinx/remote/classes/lease/LeaseManager;
-	public fun <init> ()V
-	public final fun getCallableMap ()Lkotlinx/remote/CallableMapClass;
-	public final fun getLeaseConfig ()Lkotlinx/remote/classes/lease/LeaseConfig;
-	public final fun getLeaseManager ()Lkotlinx/remote/classes/lease/LeaseManager;
-	public final fun setCallableMap (Lkotlinx/remote/CallableMapClass;)V
-	public final fun setLeaseConfig (Lkotlinx/remote/classes/lease/LeaseConfig;)V
-	public final fun setLeaseManager (Lkotlinx/remote/classes/lease/LeaseManager;)V
-}
-
-public final class kotlinx/remote/network/ktor/KRemoteKt {
-	public static final fun getKRemote ()Lio/ktor/server/application/ApplicationPlugin;
-	public static final fun getKRemoteServerPluginAttributesKey ()Lio/ktor/util/AttributeKey;
-}
-
-public final class kotlinx/remote/network/ktor/KRemoteLeaseRoutesKt {
-	public static final fun leaseRoutes (Lio/ktor/server/routing/Route;Ljava/lang/String;)V
-	public static synthetic fun leaseRoutes$default (Lio/ktor/server/routing/Route;Ljava/lang/String;ILjava/lang/Object;)V
-	public static final fun remoteWithLeasing (Lio/ktor/server/routing/Route;Ljava/lang/String;Ljava/lang/String;)V
-	public static synthetic fun remoteWithLeasing$default (Lio/ktor/server/routing/Route;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)V
-}
-
-public final class kotlinx/remote/network/ktor/KRemoteRouteDslKt {
-	public static final fun handleRemoteCall (Lio/ktor/server/routing/RoutingContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun remote (Lio/ktor/server/routing/Route;Ljava/lang/String;)V
-}
-
-public final class kotlinx/remote/network/serialization/CallableParametersSerializerKt {
-	public static final fun buildContextual (Lkotlinx/serialization/modules/SerializersModule;Lkotlinx/remote/RemoteType;)Lkotlinx/serialization/KSerializer;
-	public static final fun rpcInternalKClass (Lkotlin/reflect/KType;)Lkotlin/reflect/KClass;
-}
-
-public final class kotlinx/remote/network/serialization/ExceptionSerializer : kotlinx/serialization/KSerializer {
-	public fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Exception;
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Exception;)V
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-}
-
-public final class kotlinx/remote/network/serialization/ExceptionSerializerKt {
-	public static final fun setupExceptionSerializers (Lkotlinx/serialization/modules/SerializersModuleBuilder;)V
-}
-
-public final class kotlinx/remote/network/serialization/RpcCallSerializer : kotlinx/serialization/KSerializer {
-	public fun <init> (Lkotlinx/remote/CallableMapClass;Lkotlinx/serialization/modules/SerializersModule;)V
-	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/network/RemoteCall;
-	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/network/RemoteCall;)V
 }
 
 public final class kotlinx/remote/serialization/CallableParametersSerializerKt {

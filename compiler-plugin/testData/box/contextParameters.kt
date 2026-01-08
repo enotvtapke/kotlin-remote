@@ -8,10 +8,11 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.RemoteContext
+import kotlinx.remote.RemoteWrapper
 import kotlinx.remote.codegen.test.ServerContext
 
 @Remote
-context(_: RemoteContext, _: String)
+context(_: RemoteWrapper<RemoteContext>, _: String)
 suspend fun Long.multiply(rhs: Long) = this * rhs
 
 fun box(): String = runBlocking {

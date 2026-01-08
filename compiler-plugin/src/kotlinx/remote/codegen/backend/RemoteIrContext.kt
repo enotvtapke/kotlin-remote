@@ -58,6 +58,10 @@ class RemoteIrContext(
         getIrClassSymbol("kotlin", "Pair")
     }
 
+    val nothing by lazy {
+        getIrClassSymbol("kotlin", "Nothing")
+    }
+
     val stub by lazy {
         getRemoteIrClassSymbol("Stub", "classes")
     }
@@ -68,6 +72,18 @@ class RemoteIrContext(
 
     val localContext by lazy {
         getRemoteIrClassSymbol("LocalContext")
+    }
+
+    val remoteWrapper by lazy {
+        getRemoteIrClassSymbol("RemoteWrapper")
+    }
+
+    val local by lazy {
+        getRemoteIrClassSymbol("Local")
+    }
+
+    val wrappedRemote by lazy {
+        getRemoteIrClassSymbol("WrappedRemote")
     }
 
     val remoteCall by lazy {
@@ -100,6 +116,10 @@ class RemoteIrContext(
 
     val remoteContextClient by lazy {
         remoteContext.property("client")
+    }
+
+    val wrappedRemoteContext by lazy {
+        wrappedRemote.property("context")
     }
 
     val functions = Functions()

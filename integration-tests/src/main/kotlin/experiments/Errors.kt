@@ -3,15 +3,17 @@ package experiments
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
+import kotlinx.remote.RemoteWrapper
+import kotlinx.remote.wrapped
 import roomsChat.HostContext
 
-context(_: RemoteContext)
+context(_: RemoteWrapper<RemoteContext>)
 suspend fun error1() {
     error()
 }
 
 @Remote
-context(_: RemoteContext)
+context(_: RemoteWrapper<RemoteContext>)
 suspend fun error() {
     innerError()
 }
@@ -25,10 +27,10 @@ fun innerInnerError() {
 }
 
 fun main(): Unit = runBlocking {
-//    context(DefaultLocalContext) {
+//    context(Local) {
 //        error()
 //    }
-    context(HostContext) {
+    context(HostContext.wrapped) {
 //        try {
         error1()
 //        } catch (e: Exception) {

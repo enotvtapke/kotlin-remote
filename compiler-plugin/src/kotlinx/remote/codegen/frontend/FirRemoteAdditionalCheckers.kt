@@ -4,8 +4,8 @@
 
 package kotlinx.remote.codegen.frontend
 
-import kotlinx.remote.codegen.common.RemoteClassId
 import kotlinx.remote.codegen.common.RemoteClassId.flow
+import kotlinx.remote.codegen.common.RemoteClassId.remoteWrapper
 import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.NON_SUSPENDING_REMOTE_FUNCTION
 import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.WRONG_REMOTE_FUNCTION_CONTEXT
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.createConeType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.isSubtypeOf
+import org.jetbrains.kotlin.fir.types.*
 
 class FirRemoteAdditionalCheckers(
     session: FirSession,
@@ -48,10 +46,10 @@ class FirRemoteFunctionContextChecker : FirFunctionChecker(MppCheckerKind.Common
         if (!context.session.predicateBasedProvider.matches(FirRemotePredicates.remote, declaration)) {
             return
         }
-        val remoteContextType = RemoteClassId.remoteContext.constructClassLikeType()
+        val remoteWrapperType = remoteWrapper.constructClassLikeType(arrayOf())
         val remoteContextParameters = declaration.contextParameters.filter {
-            it.symbol.resolvedReturnTypeRef.coneType.isSubtypeOf(
-                remoteContextType,
+            it.symbol.resolvedReturnTypeRef.coneType.withArguments(arrayOf()).equalTypes(
+                remoteWrapperType,
                 context.session
             )
         }
@@ -59,7 +57,7 @@ class FirRemoteFunctionContextChecker : FirFunctionChecker(MppCheckerKind.Common
             reporter.reportOn(
                 source = declaration.source,
                 factory = WRONG_REMOTE_FUNCTION_CONTEXT,
-                a = remoteContextType,
+                a = remoteWrapperType,
             )
         }
     }

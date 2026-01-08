@@ -7,12 +7,13 @@ package box/*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
+import kotlinx.remote.RemoteWrapper
 import kotlinx.remote.codegen.test.ServerContext
 import kotlinx.remote.genCallableMap
 
 class Calculator(private var init: Long) {
     @Remote
-    context(ctx: RemoteContext)
+    context(ctx: RemoteWrapper<RemoteContext>)
     suspend fun multiply(x: Long): Long {
         init *= x
         return init

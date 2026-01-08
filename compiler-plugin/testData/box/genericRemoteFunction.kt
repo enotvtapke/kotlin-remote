@@ -5,15 +5,16 @@ package foo.bar
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteContext
+import kotlinx.remote.RemoteWrapper
 import kotlinx.remote.codegen.test.ServerContext
 import kotlinx.remote.genCallableMap
 
 @Remote
-context(_: RemoteContext)
+context(_: RemoteWrapper<RemoteContext>)
 suspend fun <T> multiply(lhs: T) = lhs
 
 @Remote
-context(_: RemoteContext)
+context(_: RemoteWrapper<RemoteContext>)
 suspend fun <K: Number, P: List<Int>, T: Map<K, List<P>>> genericFunction(t: T) = t.entries.first().value.first()
 
 fun box(): String = runBlocking {

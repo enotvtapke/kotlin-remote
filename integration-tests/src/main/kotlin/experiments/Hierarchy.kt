@@ -1,4 +1,4 @@
-package manualFunctionCalling
+package experiments.hierarchy
 
 import io.ktor.client.*
 import io.ktor.client.plugins.*
@@ -9,16 +9,11 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
+import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.remoteSerializersModule
-import kotlinx.remote.wrapped
 import kotlinx.serialization.json.Json
 
-context(_: RemoteWrapper<RemoteContext>)
-private suspend fun expression(a: Long, b: Long): Long {
-    return a + multiply(a, b)
-}
-
-data object ManualServerRemoteContext : RemoteContext {
+open class B: RemoteContext {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")
@@ -28,18 +23,39 @@ data object ManualServerRemoteContext : RemoteContext {
         install(ContentNegotiation) {
             json(Json {
                 serializersModule = remoteSerializersModule {
-                    callableMap = CallableMap(manualCallableMap())
+                    callableMap = genCallableMap()
+                    classes {
+                        remoteClasses = genRemoteClassList()
+                        client { }
+                    }
                 }
             })
         }
         install(Logging) {
             level = LogLevel.BODY
         }
-    }.remoteClient(CallableMap(manualCallableMap()), "/call")
+    }.remoteClient(genCallableMap(), "/call")
+}
+
+object SubB: B()
+
+@Remote
+context(_: RemoteWrapper<B>)
+suspend fun b(): Int {
+    return 1
+}
+
+@Remote
+context(_: RemoteWrapper<SubB>)
+suspend fun subB(): Int {
+    return b() + 2
 }
 
 fun main() = runBlocking {
-    with(ManualServerRemoteContext.wrapped) {
-        println(expression(6, 1))
+    context(SubB.wrap(), "") {
+        println(subB())
+    }
+    context(B().wrap(), "") {
+        println(b())
     }
 }

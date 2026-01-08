@@ -1,6 +1,5 @@
 package auth
 
-import startLeaseOnStubDeserialization
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.auth.*
@@ -14,8 +13,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.remoteSerializersModule
-import kotlinx.remote.RemoteClient
 import kotlinx.serialization.json.Json
+import startLeaseOnStubDeserialization
 
 data object AuthServerContext : RemoteContext {
     override val client: RemoteClient = HttpClient {
@@ -52,11 +51,11 @@ data object AuthServerContext : RemoteContext {
 }
 
 @Remote
-context(ctx: RemoteContext)
+context(_: RemoteWrapper<RemoteContext>)
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
 fun main(): Unit = runBlocking {
-    with(AuthServerContext) {
+    with(AuthServerContext.wrapped) {
         println(multiply(100, 600))
     }
 }

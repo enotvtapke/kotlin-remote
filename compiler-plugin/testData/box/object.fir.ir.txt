@@ -20,27 +20,29 @@ FILE fqName:<root> fileName:/object.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
     FUN name:id visibility:public modality:FINAL returnType:kotlin.Int [suspend]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.IdObject
-      VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:1 type:kotlinx.remote.RemoteContext
+      VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:1 type:kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext>
       VALUE_PARAMETER kind:Regular name:x index:2 type:kotlin.Int
       annotations:
         Remote
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
-            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlinx.remote.LocalContext
-              GET_VAR '<unused var>: kotlinx.remote.RemoteContext declared in <root>.IdObject.id' type=kotlinx.remote.RemoteContext origin=null
+            if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlinx.remote.Local
+              GET_VAR '<unused var>: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext> declared in <root>.IdObject.id' type=kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext> origin=null
             then: BLOCK type=kotlin.Nothing origin=null
               CALL 'public final fun checkIsNotStubForRemoteClassMethod (value: kotlin.Any): kotlin.Unit declared in kotlinx.remote.classes' type=kotlin.Unit origin=null
                 ARG value: GET_VAR '<this>: <root>.IdObject declared in <root>.IdObject.id' type=<root>.IdObject origin=null
-              RETURN type=kotlin.Nothing from='public final fun id (<unused var>: kotlinx.remote.RemoteContext, x: kotlin.Int): kotlin.Int declared in <root>.IdObject'
+              RETURN type=kotlin.Nothing from='public final fun id (<unused var>: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext>, x: kotlin.Int): kotlin.Int declared in <root>.IdObject'
                 GET_VAR 'x: kotlin.Int declared in <root>.IdObject.id' type=kotlin.Int origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: RETURN type=kotlin.Nothing from='public final fun id (<unused var>: kotlinx.remote.RemoteContext, x: kotlin.Int): kotlin.Int declared in <root>.IdObject'
+            then: RETURN type=kotlin.Nothing from='public final fun id (<unused var>: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext>, x: kotlin.Int): kotlin.Int declared in <root>.IdObject'
               CALL 'public final fun call <T> (<this>: kotlinx.remote.RemoteClient, call: kotlinx.remote.RemoteCall): T of kotlinx.remote.call declared in kotlinx.remote' type=T of kotlinx.remote.call origin=null
                 TYPE_ARG T: kotlin.Int
                 ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.RemoteClient declared in kotlinx.remote.RemoteContext' type=kotlinx.remote.RemoteClient origin=null
-                  ARG <this>: GET_VAR '<unused var>: kotlinx.remote.RemoteContext declared in <root>.IdObject.id' type=kotlinx.remote.RemoteContext origin=null
+                  ARG <this>: CALL 'public final fun <get-context> (): T of kotlinx.remote.WrappedRemote declared in kotlinx.remote.WrappedRemote' type=T of kotlinx.remote.WrappedRemote origin=null
+                    ARG <this>: TYPE_OP type=kotlinx.remote.WrappedRemote<T of kotlinx.remote.WrappedRemote> origin=CAST typeOperand=kotlinx.remote.WrappedRemote<T of kotlinx.remote.WrappedRemote>
+                      GET_VAR '<unused var>: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext> declared in <root>.IdObject.id' type=kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext> origin=null
                 ARG call: CONSTRUCTOR_CALL 'public constructor <init> (callableName: kotlin.String, parameters: kotlin.Array<kotlin.Any?>) declared in kotlinx.remote.RemoteCall' type=kotlinx.remote.RemoteCall origin=null
                   ARG callableName: CONST String type=kotlin.String value="IdObject.id"
                   ARG parameters: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOf> origin=null
@@ -74,13 +76,13 @@ FILE fqName:<root> fileName:/object.kt
                             ARG invokator: TYPE_OP type=kotlinx.remote.RemoteInvokator origin=SAM_CONVERSION typeOperand=kotlinx.remote.RemoteInvokator
                               FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Any?, kotlin.Any?> origin=LAMBDA
                                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any? [suspend]
-                                  VALUE_PARAMETER kind:Context name:ctx index:0 type:kotlinx.remote.RemoteContext
+                                  VALUE_PARAMETER kind:Context name:ctx index:0 type:kotlinx.remote.RemoteWrapper<kotlin.Nothing>
                                   VALUE_PARAMETER kind:Regular name:parameters index:1 type:kotlin.Array<out kotlin.Any?>
                                   BLOCK_BODY
-                                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (ctx: kotlinx.remote.RemoteContext, parameters: kotlin.Array<out kotlin.Any?>): kotlin.Any? declared in <root>.box.<anonymous>'
-                                      CALL 'public final fun id (<unused var>: kotlinx.remote.RemoteContext, x: kotlin.Int): kotlin.Int declared in <root>.IdObject' type=kotlin.Int origin=null
+                                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (ctx: kotlinx.remote.RemoteWrapper<kotlin.Nothing>, parameters: kotlin.Array<out kotlin.Any?>): kotlin.Any? declared in <root>.box.<anonymous>'
+                                      CALL 'public final fun id (<unused var>: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext>, x: kotlin.Int): kotlin.Int declared in <root>.IdObject' type=kotlin.Int origin=null
                                         ARG <this>: GET_OBJECT 'CLASS OBJECT name:IdObject modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.IdObject
-                                        ARG <unused var>: GET_VAR 'ctx: kotlinx.remote.RemoteContext declared in <root>.box.<anonymous>.<anonymous>' type=kotlinx.remote.RemoteContext origin=null
+                                        ARG <unused var>: GET_VAR 'ctx: kotlinx.remote.RemoteWrapper<kotlin.Nothing> declared in <root>.box.<anonymous>.<anonymous>' type=kotlinx.remote.RemoteWrapper<kotlin.Nothing> origin=null
                                         ARG x: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
                                           CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array declared in kotlin.Array' type=kotlin.Any? origin=GET_ARRAY_ELEMENT
                                             ARG <this>: GET_VAR 'parameters: kotlin.Array<out kotlin.Any?> declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.Array<out kotlin.Any?> origin=null
@@ -96,20 +98,20 @@ FILE fqName:<root> fileName:/object.kt
                                   ARG isOptional: CONST Boolean type=kotlin.Boolean value=false
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$runBlocking: kotlinx.coroutines.CoroutineScope): kotlin.String declared in <root>.box'
                   CALL 'public final fun context <T, R> (with: T of kotlin.context, block: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<T of kotlin.context, R of kotlin.context>): R of kotlin.context declared in kotlin' type=kotlin.String origin=null
-                    TYPE_ARG T: kotlinx.remote.codegen.test.ServerContext
+                    TYPE_ARG T: kotlinx.remote.WrappedRemote<kotlinx.remote.codegen.test.ServerRemoteContext>
                     TYPE_ARG R: kotlin.String
-                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:ServerContext modality:FINAL visibility:public [data] superTypes:[kotlinx.remote.RemoteContext]' type=kotlinx.remote.codegen.test.ServerContext
-                    ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.codegen.test.ServerContext, kotlin.String> origin=LAMBDA
+                    ARG with: CALL 'public final fun <get-ServerContext> (): kotlinx.remote.WrappedRemote<kotlinx.remote.codegen.test.ServerRemoteContext> declared in kotlinx.remote.codegen.test' type=kotlinx.remote.WrappedRemote<kotlinx.remote.codegen.test.ServerRemoteContext> origin=GET_PROPERTY
+                    ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.WrappedRemote<kotlinx.remote.codegen.test.ServerRemoteContext>, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
-                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.codegen.test.ServerContext
+                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.WrappedRemote<kotlinx.remote.codegen.test.ServerRemoteContext>
                         BLOCK_BODY
                           VAR name:test1 type:kotlin.Long [val]
                             CALL 'public open fun toLong (): kotlin.Long declared in kotlin.Int' type=kotlin.Long origin=null
-                              ARG <this>: CALL 'public final fun id (<unused var>: kotlinx.remote.RemoteContext, x: kotlin.Int): kotlin.Int declared in <root>.IdObject' type=kotlin.Int origin=null
+                              ARG <this>: CALL 'public final fun id (<unused var>: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext>, x: kotlin.Int): kotlin.Int declared in <root>.IdObject' type=kotlin.Int origin=null
                                 ARG <this>: GET_OBJECT 'CLASS OBJECT name:IdObject modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.IdObject
-                                ARG <unused var>: GET_VAR '<unused var>: kotlinx.remote.codegen.test.ServerContext declared in <root>.box.<anonymous>.<anonymous>' type=kotlinx.remote.codegen.test.ServerContext origin=null
+                                ARG <unused var>: GET_VAR '<unused var>: kotlinx.remote.WrappedRemote<kotlinx.remote.codegen.test.ServerRemoteContext> declared in <root>.box.<anonymous>.<anonymous>' type=kotlinx.remote.WrappedRemote<kotlinx.remote.codegen.test.ServerRemoteContext> origin=null
                                 ARG x: CONST Int type=kotlin.Int value=5
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.codegen.test.ServerContext): kotlin.String declared in <root>.box.<anonymous>'
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.WrappedRemote<kotlinx.remote.codegen.test.ServerRemoteContext>): kotlin.String declared in <root>.box.<anonymous>'
                             WHEN type=kotlin.String origin=IF
                               BRANCH
                                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
