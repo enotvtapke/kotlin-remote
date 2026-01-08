@@ -31,18 +31,19 @@ class RemoteClientImpl(
     }
 
     private fun mergeStackTraces(error: Exception, localStackTrace: List<StackFrame>, callableName: String): Exception {
-        if (error.stackTrace().isEmpty()) return error
         val remoteStackTrace = error.stackTrace()
         if (remoteStackTrace.isEmpty() || localStackTrace.isEmpty()) {
             return error
         }
         val methodName = callableName.substringAfterLast('.')
         val containerName = callableName.substringBeforeLast('.')
-        val normalizedContainerName = containerName
-            .replace(Regex("\\$\\d+"), ".<anonymous>")
-            .replace('$', '.')
-        fun StackFrame.matchesCallable() = this.methodName == methodName &&
-                (this.className == normalizedContainerName || this.className.startsWith("$normalizedContainerName."))
+
+        fun StackFrame.matchesCallable(): Boolean {
+            val normalizedClassName = this.className
+                .replace(Regex("\\$\\d+"), ".<anonymous>")
+                .replace('$', '.')
+            return this.methodName == methodName && (normalizedClassName == containerName || normalizedClassName.startsWith("$containerName."))
+        }
         val filteredLocalStackTrace = localStackTrace.reversed().takeWhile { !it.matchesCallable() }.reversed()
         val filteredRemoteCallStack = remoteStackTrace.reversed().dropWhile { !it.matchesCallable() }.reversed()
         val mergedStackTrace = filteredRemoteCallStack + filteredLocalStackTrace

@@ -2,12 +2,13 @@
 
 ### Goals
 
-* Develop a technology for network interactions that does not require to write boilerplate code
+* Develop a technology for network interactions that does not require to write boilerplate code. Mark function that executes remotely to distinguish them from local ones.
 
 ### Objectives
 
 * Make possible to call Kotlin functions from application on different machine
 * Call Kotlin class constructors and methods from application on different machine
+* Distinguish remote functions from ordinary ones (@Remote annotation)
 
 ### Idea and intuition behind
 
@@ -341,6 +342,12 @@ All the features described above are implemented and to some extent tested.
   function bodies with suspend calls.
 * Remote lambdas could be added to make lambdas serializable.
 
+### Requirement
+* Parameters and return values should be serializable.
+
+### Future work
+* Split code for different platforms into separate artifacts.
+
 ### Used technologies
 
 * Kotlin multiplatform
@@ -350,3 +357,6 @@ All the features described above are implemented and to some extent tested.
 
 [Proposal](https://docs.google.com/document/d/128EKwvuhGH6ZR8HTmQvixLaYfMQq2nwm7kQZ1i4RQSc/edit?usp=sharing)  
 [Not updated presentation](https://docs.google.com/presentation/d/1IZ0D4VAie_OU0kUIY3lDtlDDSp9s02DN/edit?slide=id.g2cf53e53948_0_31#slide=id.g2cf53e53948_0_31)
+
+* We reduce time to market
+* Use color predicats from https://journal.stuffwithstuff.com/2015/02/01/what-color-is-your-function/ to define a color
