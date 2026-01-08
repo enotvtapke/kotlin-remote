@@ -1,43 +1,43 @@
 package messagerPolling
 
-import ServerContext
+import ServerConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
+import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.RemoteWrapper
-import kotlinx.remote.wrapped
+import kotlinx.remote.asContext
 
 private val loggedUsers = mutableMapOf<String, MutableList<String>>()
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun login(name: String) {
     loggedUsers[name] = mutableListOf()
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun logout(name: String) {
     loggedUsers.remove(name) ?: error("User $name not found")
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun send(from: String, to: String, message: String) {
     loggedUsers[to]?.add("[$from] $message") ?: error("User $to not found")
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun receive(user: String): String? {
     return (loggedUsers[user] ?: error("User $user not found")).removeFirstOrNull()
 }
 
 fun main(): Unit = runBlocking {
-    context(ServerContext.wrapped) {
+    context(ServerConfig.asContext()) {
         println("Enter your name:")
         val name = readln()
         println("Type 'logout' to exit, or 'userName message' to send message to another user:")

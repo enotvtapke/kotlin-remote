@@ -7,16 +7,17 @@ package box/*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.genCallableMap
+import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.RemoteWrapper
-import kotlinx.remote.codegen.test.ServerContext
+import kotlinx.remote.codegen.test.ServerConfig
+import kotlinx.remote.asContext
 
 @Remote
-context(ctx: RemoteWrapper<RemoteContext>)
+context(ctx: RemoteContext<RemoteConfig>)
 suspend fun Long.multiply(rhs: Long) = this * rhs
 
 fun box(): String = runBlocking {
-    context(ServerContext) {
+    context(ServerConfig.asContext()) {
         val test1 = 5L.multiply(6)
         if (test1 == 42L) "OK" else "Fail: test1=$test1"
     }

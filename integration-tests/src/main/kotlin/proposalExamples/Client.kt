@@ -1,17 +1,17 @@
 package proposalExamples
 
-import ServerContext
+import ServerConfig
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
+import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.RemoteWrapper
-import kotlinx.remote.wrapped
+import kotlinx.remote.asContext
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 private suspend fun power(base: Long, power: Int): Long {
     return generateSequence { base }
         .take(power)
@@ -20,7 +20,7 @@ private suspend fun power(base: Long, power: Int): Long {
 }
 
 fun main(): Unit = runBlocking {
-    with(ServerContext.wrapped) {
+    with(ServerConfig.asContext()) {
         // Power is called on the client
         println(power(2, 10))
     }

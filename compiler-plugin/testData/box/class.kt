@@ -6,14 +6,15 @@ package box/*
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
+import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.RemoteWrapper
-import kotlinx.remote.codegen.test.ServerContext
+import kotlinx.remote.codegen.test.ServerConfig
+import kotlinx.remote.asContext
 import kotlinx.remote.genCallableMap
 
 class Calculator(private var init: Long) {
     @Remote
-    context(ctx: RemoteWrapper<RemoteContext>)
+    context(ctx: RemoteContext<RemoteConfig>)
     suspend fun multiply(x: Long): Long {
         init *= x
         return init
@@ -22,7 +23,7 @@ class Calculator(private var init: Long) {
 
 fun box(): String = runBlocking {
     genCallableMap()
-    context(ServerContext) {
+    context(ServerConfig.asContext()) {
         val c = Calculator(1)
         val test1 = c.multiply(5)
         if (test1 == 42L) "OK" else "Fail: test1=$test1"

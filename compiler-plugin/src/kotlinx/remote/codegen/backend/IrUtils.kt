@@ -69,7 +69,7 @@ fun IrBuilderWithScope.irSafeAs(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.SAFE_CAST, type, argument)
 
 fun IrFunction.nonStaticParameters(ctx: RemoteIrContext): List<IrValueParameter> = parameters.filter { param ->
-    if (param.isRemoteWrapper(ctx)) return@filter false
+    if (param.isRemoteContext(ctx)) return@filter false
 
     val dispatch = dispatchReceiverParameter
     if (param == dispatch) {
@@ -80,4 +80,4 @@ fun IrFunction.nonStaticParameters(ctx: RemoteIrContext): List<IrValueParameter>
     true
 }
 
-fun IrValueParameter.isRemoteWrapper(ctx: RemoteIrContext) = kind == IrParameterKind.Context && type.isSubtypeOfClass(ctx.remoteWrapper)
+fun IrValueParameter.isRemoteContext(ctx: RemoteIrContext) = kind == IrParameterKind.Context && type.isSubtypeOfClass(ctx.remoteContext)

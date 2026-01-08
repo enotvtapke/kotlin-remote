@@ -139,7 +139,7 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
 
             val contextParameter = IrValueParameterBuilder().run {
                 kind = IrParameterKind.Context
-                type = ctx.remoteWrapper.typeWith(ctx.nothing.defaultType)
+                type = ctx.remoteContext.typeWith(ctx.nothing.defaultType)
                 name = Name.identifier("ctx")
                 factory.buildValueParameter(this, this@apply).also { valueParameter ->
                     parameters += valueParameter
@@ -160,7 +160,7 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
                             arguments[dispatch.indexInParameters] = irGetObjectValue(receiverClass.symbol.defaultType, receiverClass.symbol)
                         }
                     }
-                    callable.parameters.filter { it.isRemoteWrapper(ctx) }.forEach {
+                    callable.parameters.filter { it.isRemoteContext(ctx) }.forEach {
                         arguments[it.indexInParameters] = irGet(contextParameter)
                     }
                     callable.nonStaticParameters(ctx).forEachIndexed { index, param ->

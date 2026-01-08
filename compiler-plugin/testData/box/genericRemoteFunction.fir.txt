@@ -1,17 +1,17 @@
 FILE: genericRemoteFunction.kt
     package foo.bar
 
-    context(<unused var>: R|kotlinx/remote/RemoteWrapper<kotlinx/remote/RemoteContext>|)
+    context(<unused var>: R|kotlinx/remote/RemoteContext<kotlinx/remote/RemoteConfig>|)
     @R|kotlinx/remote/Remote|() public final suspend fun <T> multiply(lhs: R|T|): R|T| {
         ^multiply R|<local>/lhs|
     }
-    context(<unused var>: R|kotlinx/remote/RemoteWrapper<kotlinx/remote/RemoteContext>|)
+    context(<unused var>: R|kotlinx/remote/RemoteContext<kotlinx/remote/RemoteConfig>|)
     @R|kotlinx/remote/Remote|() public final suspend fun <K : R|kotlin/Number|, P : R|kotlin/collections/List<kotlin/Int>|, T : R|kotlin/collections/Map<K, kotlin/collections/List<P>>|> genericFunction(t: R|T|): R|P| {
         ^genericFunction R|<local>/t|.R|SubstitutionOverride<kotlin/collections/Map.entries: R|kotlin/collections/Set<kotlin/collections/Map.Entry<K, kotlin/collections/List<P>>>|>|.R|kotlin/collections/first|<R|kotlin/collections/Map.Entry<K, kotlin/collections/List<P>>|>().R|SubstitutionOverride<kotlin/collections/Map.Entry.value: R|kotlin/collections/List<P>|>|.R|kotlin/collections/first|<R|P|>()
     }
     public final fun box(): R|kotlin/String| {
         ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {
-            ^ R|kotlin/context|<R|kotlinx/remote/WrappedRemote<kotlinx/remote/codegen/test/ServerRemoteContext>|, R|kotlin/String|>(R|kotlinx/remote/codegen/test/ServerContext|, <L> = context(<unused var>: R|kotlinx/remote/WrappedRemote<kotlinx/remote/codegen/test/ServerRemoteContext>|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|kotlin/context|<R|kotlinx/remote/ConfiguredContext<kotlinx/remote/codegen/test/ServerConfig>|, R|kotlin/String|>(Q|kotlinx/remote/codegen/test/ServerConfig|.R|kotlinx/remote/asContext|<R|kotlinx/remote/codegen/test/ServerConfig|>(), <L> = context(<unused var>: R|kotlinx/remote/ConfiguredContext<kotlinx/remote/codegen/test/ServerConfig>|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                 lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) R|foo/bar/multiply|<R|kotlin/Long|>(Long(5))
                 lval test2: R|kotlin/Long| = (context(R|<local>/<unused var>|) R|foo/bar/genericFunction|<R|kotlin/Int|, R|kotlin/collections/List<kotlin/Int>|, R|kotlin/collections/Map<kotlin/Int, kotlin/collections/List<kotlin/collections/List<kotlin/Int>>>|>(R|kotlin/collections/mapOf|<R|kotlin/Int|, R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|>(Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|>(R|kotlin/collections/listOf|<R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(2)))))) as R|kotlin/Long|)
                 ^ when () {

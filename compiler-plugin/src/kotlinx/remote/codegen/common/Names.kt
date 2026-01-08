@@ -16,7 +16,7 @@ object RemoteClassId {
     val flow = ClassId(FqName("kotlinx.coroutines.flow"), Name.identifier("Flow"))
     val stubInterface = ClassId(FqName("kotlinx.remote.classes"), Name.identifier("Stub"))
     val remoteContext = ClassId(FqName("kotlinx.remote"), Name.identifier("RemoteContext"))
-    val remoteWrapper = ClassId(FqName("kotlinx.remote"), Name.identifier("RemoteWrapper"))
+    val remoteWrapper = ClassId(FqName("kotlinx.remote"), Name.identifier("RemoteContext"))
     val local = ClassId(FqName("kotlinx.remote"), Name.identifier("Local"))
 }
 

@@ -1,13 +1,13 @@
 FILE: localCall.kt
     package box
 
-    context(ctx: R|kotlinx/remote/RemoteWrapper<kotlinx/remote/RemoteContext>|)
+    context(ctx: R|kotlinx/remote/RemoteContext<kotlinx/remote/RemoteConfig>|)
     @R|kotlinx/remote/Remote|() public final suspend fun multiply(lhs: R|kotlin/Long|, rhs: R|kotlin/Long|): R|kotlin/Long| {
         ^multiply R|<local>/lhs|.R|kotlin/Long.times|(R|<local>/rhs|)
     }
     public final fun box(): R|kotlin/String| {
         ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {
-            ^ R|kotlin/context|<R|kotlinx/remote/Local|, R|kotlin/String|>(Q|kotlinx/remote/Local|, <L> = context(<unused var>: R|kotlinx/remote/Local|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|kotlin/context|<R|kotlinx/remote/LocalContext|, R|kotlin/String|>(Q|kotlinx/remote/LocalContext|, <L> = context(<unused var>: R|kotlinx/remote/LocalContext|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
                 lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) R|box/multiply|(Long(5), Long(6))
                 ^ when () {
                     ==(R|<local>/test1|, Long(30)) ->  {

@@ -6,16 +6,16 @@ package box/*
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
+import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.RemoteWrapper
-import kotlinx.remote.Local
+import kotlinx.remote.LocalContext
 
 @Remote
-context(ctx: RemoteWrapper<RemoteContext>)
+context(ctx: RemoteContext<RemoteConfig>)
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
 fun box(): String = runBlocking {
-    context(Local) {
+    context(LocalContext) {
         val test1 = multiply(5, 6)
         if (test1 == 30L) "OK" else "Fail: test1=$test1"
     }

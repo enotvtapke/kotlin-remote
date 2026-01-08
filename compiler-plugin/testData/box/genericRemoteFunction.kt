@@ -4,21 +4,22 @@ package foo.bar
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
+import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.RemoteWrapper
-import kotlinx.remote.codegen.test.ServerContext
+import kotlinx.remote.codegen.test.ServerConfig
+import kotlinx.remote.asContext
 import kotlinx.remote.genCallableMap
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun <T> multiply(lhs: T) = lhs
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun <K: Number, P: List<Int>, T: Map<K, List<P>>> genericFunction(t: T) = t.entries.first().value.first()
 
 fun box(): String = runBlocking {
-    context(ServerContext) {
+    context(ServerConfig.asContext()) {
         val test1 = multiply(5L)
         val test2 = genericFunction(mapOf(1 to listOf(listOf(2)))) as Long
         if (test1 == 42L && test2 == 42L) "OK" else "Fail: test1=$test1"

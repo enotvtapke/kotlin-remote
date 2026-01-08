@@ -13,10 +13,11 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.remote.asContext
 import kotlinx.serialization.json.Json
 import startLeaseOnStubDeserialization
 
-data object AuthServerContext : RemoteContext {
+data object AuthServerConfig : RemoteConfig {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")
@@ -51,11 +52,11 @@ data object AuthServerContext : RemoteContext {
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
 fun main(): Unit = runBlocking {
-    with(AuthServerContext.wrapped) {
+    with(AuthServerConfig.asContext()) {
         println(multiply(100, 600))
     }
 }

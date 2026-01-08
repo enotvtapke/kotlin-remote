@@ -1,14 +1,14 @@
 package experiments
 
-import ServerContext
+import ServerConfig
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
+import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.RemoteWrapper
-import kotlinx.remote.wrapped
+import kotlinx.remote.asContext
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun fibonacciRecursive(n: Int): Long {
     if (n < 0) {
         throw IllegalArgumentException("n must be non-negative")
@@ -20,21 +20,21 @@ suspend fun fibonacciRecursive(n: Int): Long {
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun isEven(n: Int): Boolean {
     if (n == 0) return true
     return isOdd(n - 1)
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun isOdd(n: Int): Boolean {
     if (n == 0) return false
     return isEven(n - 1)
 }
 
 fun main() = runBlocking {
-    context(ServerContext.wrapped) {
+    context(ServerConfig.asContext()) {
         val n = 20
         val result = fibonacciRecursive(n)
         println("The $n-th Fibonacci number is: $result")

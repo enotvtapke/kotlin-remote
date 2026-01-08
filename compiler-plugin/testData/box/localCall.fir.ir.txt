@@ -10,19 +10,19 @@ FILE fqName:box fileName:/localCall.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$runBlocking: kotlinx.coroutines.CoroutineScope): kotlin.String declared in box.box'
                   CALL 'public final fun context <T, R> (with: T of kotlin.context, block: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<T of kotlin.context, R of kotlin.context>): R of kotlin.context declared in kotlin' type=kotlin.String origin=null
-                    TYPE_ARG T: kotlinx.remote.Local
+                    TYPE_ARG T: kotlinx.remote.LocalContext
                     TYPE_ARG R: kotlin.String
-                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Local modality:FINAL visibility:public superTypes:[kotlinx.remote.RemoteWrapper<kotlin.Nothing>]' type=kotlinx.remote.Local
-                    ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.Local, kotlin.String> origin=LAMBDA
+                    ARG with: GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:LocalContext modality:FINAL visibility:public superTypes:[kotlinx.remote.RemoteContext<kotlin.Nothing>]' type=kotlinx.remote.LocalContext
+                    ARG block: FUN_EXPR type=kotlin.Function1<kotlinx.remote.LocalContext, kotlin.String> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
-                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.Local
+                        VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.LocalContext
                         BLOCK_BODY
                           VAR name:test1 type:kotlin.Long [val]
-                            CALL 'public final fun multiply (ctx: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext>, lhs: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box' type=kotlin.Long origin=null
-                              ARG ctx: GET_VAR '<unused var>: kotlinx.remote.Local declared in box.box.<anonymous>.<anonymous>' type=kotlinx.remote.Local origin=null
+                            CALL 'public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, lhs: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box' type=kotlin.Long origin=null
+                              ARG ctx: GET_VAR '<unused var>: kotlinx.remote.LocalContext declared in box.box.<anonymous>.<anonymous>' type=kotlinx.remote.LocalContext origin=null
                               ARG lhs: CONST Long type=kotlin.Long value=5
                               ARG rhs: CONST Long type=kotlin.Long value=6
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.Local): kotlin.String declared in box.box.<anonymous>'
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.LocalContext): kotlin.String declared in box.box.<anonymous>'
                             WHEN type=kotlin.String origin=IF
                               BRANCH
                                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -35,7 +35,7 @@ FILE fqName:box fileName:/localCall.kt
                                   CONST String type=kotlin.String value="Fail: test1="
                                   GET_VAR 'val test1: kotlin.Long declared in box.box.<anonymous>.<anonymous>' type=kotlin.Long origin=null
   FUN name:multiply visibility:public modality:FINAL returnType:kotlin.Long [suspend]
-    VALUE_PARAMETER kind:Context name:ctx index:0 type:kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext>
+    VALUE_PARAMETER kind:Context name:ctx index:0 type:kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>
     VALUE_PARAMETER kind:Regular name:lhs index:1 type:kotlin.Long
     VALUE_PARAMETER kind:Regular name:rhs index:2 type:kotlin.Long
     annotations:
@@ -43,22 +43,22 @@ FILE fqName:box fileName:/localCall.kt
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
-          if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlinx.remote.Local
-            GET_VAR 'ctx: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext> declared in box.multiply' type=kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext> origin=null
+          if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlinx.remote.LocalContext
+            GET_VAR 'ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> declared in box.multiply' type=kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> origin=null
           then: BLOCK type=kotlin.Nothing origin=null
-            RETURN type=kotlin.Nothing from='public final fun multiply (ctx: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext>, lhs: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box'
+            RETURN type=kotlin.Nothing from='public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, lhs: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box'
               CALL 'public final fun times (other: kotlin.Long): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=MUL
                 ARG <this>: GET_VAR 'lhs: kotlin.Long declared in box.multiply' type=kotlin.Long origin=null
                 ARG other: GET_VAR 'rhs: kotlin.Long declared in box.multiply' type=kotlin.Long origin=null
         BRANCH
           if: CONST Boolean type=kotlin.Boolean value=true
-          then: RETURN type=kotlin.Nothing from='public final fun multiply (ctx: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext>, lhs: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box'
+          then: RETURN type=kotlin.Nothing from='public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, lhs: kotlin.Long, rhs: kotlin.Long): kotlin.Long declared in box'
             CALL 'public final fun call <T> (<this>: kotlinx.remote.RemoteClient, call: kotlinx.remote.RemoteCall): T of kotlinx.remote.call declared in kotlinx.remote' type=T of kotlinx.remote.call origin=null
               TYPE_ARG T: kotlin.Long
-              ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.RemoteClient declared in kotlinx.remote.RemoteContext' type=kotlinx.remote.RemoteClient origin=null
-                ARG <this>: CALL 'public final fun <get-context> (): T of kotlinx.remote.WrappedRemote declared in kotlinx.remote.WrappedRemote' type=T of kotlinx.remote.WrappedRemote origin=null
-                  ARG <this>: TYPE_OP type=kotlinx.remote.WrappedRemote<T of kotlinx.remote.WrappedRemote> origin=CAST typeOperand=kotlinx.remote.WrappedRemote<T of kotlinx.remote.WrappedRemote>
-                    GET_VAR 'ctx: kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext> declared in box.multiply' type=kotlinx.remote.RemoteWrapper<kotlinx.remote.RemoteContext> origin=null
+              ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.RemoteClient declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.RemoteClient origin=null
+                ARG <this>: CALL 'public final fun <get-config> (): T of kotlinx.remote.ConfiguredContext declared in kotlinx.remote.ConfiguredContext' type=T of kotlinx.remote.ConfiguredContext origin=null
+                  ARG <this>: TYPE_OP type=kotlinx.remote.ConfiguredContext<T of kotlinx.remote.ConfiguredContext> origin=CAST typeOperand=kotlinx.remote.ConfiguredContext<T of kotlinx.remote.ConfiguredContext>
+                    GET_VAR 'ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> declared in box.multiply' type=kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> origin=null
               ARG call: CONSTRUCTOR_CALL 'public constructor <init> (callableName: kotlin.String, parameters: kotlin.Array<kotlin.Any?>) declared in kotlinx.remote.RemoteCall' type=kotlinx.remote.RemoteCall origin=null
                 ARG callableName: CONST String type=kotlin.String value="box.multiply"
                 ARG parameters: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOf> origin=null

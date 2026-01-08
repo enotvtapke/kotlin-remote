@@ -1,7 +1,3 @@
-/*
- * Copyright 2023-2025 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
- */
-
 package kotlinx.remote.codegen.backend
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -66,6 +62,10 @@ class RemoteIrContext(
         getRemoteIrClassSymbol("Stub", "classes")
     }
 
+    val remoteConfig by lazy {
+        getRemoteIrClassSymbol("RemoteConfig")
+    }
+
     val remoteContext by lazy {
         getRemoteIrClassSymbol("RemoteContext")
     }
@@ -74,16 +74,8 @@ class RemoteIrContext(
         getRemoteIrClassSymbol("LocalContext")
     }
 
-    val remoteWrapper by lazy {
-        getRemoteIrClassSymbol("RemoteWrapper")
-    }
-
-    val local by lazy {
-        getRemoteIrClassSymbol("Local")
-    }
-
-    val wrappedRemote by lazy {
-        getRemoteIrClassSymbol("WrappedRemote")
+    val configuredContext by lazy {
+        getRemoteIrClassSymbol("ConfiguredContext")
     }
 
     val remoteCall by lazy {
@@ -114,12 +106,12 @@ class RemoteIrContext(
         getRemoteIrClassSymbol("CallableMap")
     }
 
-    val remoteContextClient by lazy {
-        remoteContext.property("client")
+    val remoteConfigClient by lazy {
+        remoteConfig.property("client")
     }
 
-    val wrappedRemoteContext by lazy {
-        wrappedRemote.property("context")
+    val configuredContextConfig by lazy {
+        configuredContext.property("config")
     }
 
     val functions = Functions()

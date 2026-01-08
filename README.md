@@ -61,7 +61,7 @@ context(Local) {
 And here it is called remotely:
 
 ```kotlin
-context(ServerContext.wrapped) {
+context(ServerContext.wrap()) {
     println(multiply(6, 5))
 }
 ```

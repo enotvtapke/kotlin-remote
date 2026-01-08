@@ -25,6 +25,7 @@ import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
+import kotlinx.remote.asContext
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -37,10 +38,10 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
-            context(Local) {
+            context(LocalContext) {
                 assertEquals(100, multiply(10, 10))
             }
         }
@@ -51,10 +52,10 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun multiply(lhs: Long, rhs: Long) = lhs * rhs
 
-            context(testServerRemoteContext().wrapped) {
+            context(testServerRemoteContext().asContext()) {
                 assertEquals(100, multiply(10, 10))
             }
         }
@@ -65,10 +66,10 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun multiply(lhs: Long, rhs: Long): Long = throw IllegalStateException("My exception")
 
-            context(testServerRemoteContext().wrapped) {
+            context(testServerRemoteContext().asContext()) {
                 val exception = assertThrows<IllegalStateException> { multiply(10, 10) }
                 assertEquals("My exception", exception.message)
             }
@@ -80,15 +81,15 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun <T : Int> numberMap(list: List<T>): List<Long> = list.map { it.toLong() }
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun <K : Long, P : List<Int>, T : Map<K, List<P>>> genericFunction(t: T) =
                 t.entries.first().value.first()
 
-            context(testServerRemoteContext().wrapped) {
+            context(testServerRemoteContext().asContext()) {
                 assertEquals(listOf(2), genericFunction(mapOf(1L to listOf(listOf(2)))))
                 assertEquals(listOf(1L, 2L), numberMap(listOf(1, 2)))
             }
@@ -100,13 +101,13 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun power(base: Long, p: Long): Long {
                 if (p == 0L) return 1L
                 return base * power(base, p - 1L)
             }
 
-            context(testServerRemoteContext().wrapped) {
+            context(testServerRemoteContext().asContext()) {
                 assertEquals(1024L, power(2, 10))
             }
         }
@@ -117,10 +118,10 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun Long.multiply(rhs: Long) = this * rhs
 
-            context(testServerRemoteContext().wrapped) {
+            context(testServerRemoteContext().asContext()) {
                 assertEquals(100, 10L.multiply(10))
             }
         }
@@ -131,10 +132,10 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>, x: Int)
+            context(_: RemoteContext<RemoteConfig>, x: Int)
             suspend fun Long.multiply(rhs: Long) = this * rhs * x
 
-            context(testServerRemoteContext().wrapped, 10) {
+            context(testServerRemoteContext().asContext(), 10) {
                 assertEquals(1000, 10L.multiply(10))
             }
         }
@@ -142,7 +143,7 @@ class ApplicationTests {
     @RemoteSerializable
     class TestCalculator(private var init: Int) {
         @Remote
-        context(_: RemoteWrapper<RemoteContext>)
+        context(_: RemoteContext<RemoteConfig>)
         suspend fun multiply(x: Int): Int {
             init *= x
             return init
@@ -155,12 +156,12 @@ class ApplicationTests {
             configureApplication()
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun calculator(init: Int): TestCalculator {
                 return TestCalculator(init)
             }
 
-            context(testServerRemoteContext().wrapped) {
+            context(testServerRemoteContext().asContext()) {
                 val x = calculator(5)
                 assertEquals(30, x.multiply(6))
                 assertEquals(210, x.multiply(7))
@@ -169,7 +170,7 @@ class ApplicationTests {
 
     object IdObject {
         @Remote
-        context(_: RemoteWrapper<RemoteContext>)
+        context(_: RemoteContext<RemoteConfig>)
         suspend fun id(x: Int): Int {
             return x
         }
@@ -180,14 +181,14 @@ class ApplicationTests {
         testApplication {
             configureApplication()
 
-            context(testServerRemoteContext().wrapped) {
+            context(testServerRemoteContext().asContext()) {
                 assertEquals(42, IdObject.id(42))
             }
         }
 
     @Test
     fun `cannot call stub methods in local context`() = runBlocking {
-        context(Local) {
+        context(LocalContext) {
             val e = assertThrows<IllegalArgumentException> { TestCalculator.RemoteClassStub(1L, "http://localhost:80").multiply(42) }
             assertEquals(
                 "Method of the stub `RemoteClassStub` was called in a local context. This may be caused by lease expiration.",
@@ -202,12 +203,12 @@ class ApplicationTests {
             configureApplication(LeaseConfig(100, 50, 0))
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun testCalculator(init: Int): TestCalculator {
                 return TestCalculator(init)
             }
 
-            context(testServerRemoteContext().wrapped) {
+            context(testServerRemoteContext().asContext()) {
                 val x = testCalculator(5)
                 assertEquals(30, x.multiply(6))
                 delay(200)
@@ -222,12 +223,12 @@ class ApplicationTests {
             configureApplication(LeaseConfig(100, 50, 0))
 
             @Remote
-            context(_: RemoteWrapper<RemoteContext>)
+            context(_: RemoteContext<RemoteConfig>)
             suspend fun testCalculator(init: Int): TestCalculator {
                 return TestCalculator(init)
             }
 
-            context(testServerRemoteContext(LeaseRenewalClientConfig(renewalIntervalMs = 50)).wrapped) {
+            context(testServerRemoteContext(LeaseRenewalClientConfig(renewalIntervalMs = 50)).asContext()) {
                 val x = testCalculator(5)
                 assertEquals(30, x.multiply(6))
                 delay(200)
@@ -240,28 +241,28 @@ class ApplicationTests {
         testApplication {
             configureApplication()
 
-            open class BaseContext: RemoteContext {
+            open class BaseConfig: RemoteConfig {
                 override val client: RemoteClient = testRemoteClient()
             }
 
-            class SubBaseContext: BaseContext()
+            class SubBaseConfig: BaseConfig()
 
             @Remote
-            context(_: RemoteWrapper<BaseContext>)
+            context(_: RemoteContext<BaseConfig>)
             suspend fun b(): Int {
                 return 1
             }
 
             @Remote
-            context(_: RemoteWrapper<SubBaseContext>)
+            context(_: RemoteContext<SubBaseConfig>)
             suspend fun subB(): Int {
                 return b() + 2
             }
 
-            context(SubBaseContext().wrapped, "") {
+            context(SubBaseConfig().asContext(), "") {
                 assertEquals(3, subB())
             }
-            context(BaseContext().wrapped, "") {
+            context(BaseConfig().asContext(), "") {
                 assertEquals(1, b())
             }
         }
@@ -282,8 +283,8 @@ class ApplicationTests {
         }.leaseClient()
     }
 
-    private fun ApplicationTestBuilder.testServerRemoteContext(leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()): RemoteContext {
-        return object : RemoteContext {
+    private fun ApplicationTestBuilder.testServerRemoteContext(leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()): RemoteConfig {
+        return object : RemoteConfig {
             override val client: RemoteClient
                 get() = testRemoteClient(leaseRenewalClientConfig)
         }

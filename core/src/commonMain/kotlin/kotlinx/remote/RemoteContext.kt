@@ -3,16 +3,12 @@ package kotlinx.remote
 @Target(AnnotationTarget.FUNCTION)
 annotation class Remote
 
-
-interface RemoteContext {
+interface RemoteConfig {
     val client: RemoteClient
 }
 
-sealed interface RemoteWrapper <out T: RemoteContext>
-object Local: RemoteWrapper<Nothing>
-class WrappedRemote<T: RemoteContext>(val context: T): RemoteWrapper<T>
+sealed interface RemoteContext <out T: RemoteConfig>
+object LocalContext: RemoteContext<Nothing>
+class ConfiguredContext<T: RemoteConfig>(val config: T): RemoteContext<T>
 
-fun <T: RemoteContext> T.wrap() = WrappedRemote(this)
-
-val <T: RemoteContext> T.wrapped
-    get() = wrap()
+fun <T: RemoteConfig> T.asContext() = ConfiguredContext(this)

@@ -1,18 +1,18 @@
 package manualFunctionCalling
 
-import kotlinx.remote.Local
+import kotlinx.remote.LocalContext
 import kotlinx.remote.RemoteCall
+import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
-import kotlinx.remote.RemoteWrapper
-import kotlinx.remote.WrappedRemote
+import kotlinx.remote.ConfiguredContext
 import kotlinx.remote.call
 
-context(ctx: RemoteWrapper<RemoteContext>)
+context(ctx: RemoteContext<RemoteConfig>)
 suspend fun multiply(lhs: Long, rhs: Long) =
-    if (ctx is Local) {
+    if (ctx is LocalContext) {
         lhs / rhs
     } else {
-        (ctx as WrappedRemote<RemoteContext>).context.client.call<Long>(
+        (ctx as ConfiguredContext<RemoteConfig>).config.client.call<Long>(
             RemoteCall("multiply", arrayOf(lhs, rhs))
         )
     }

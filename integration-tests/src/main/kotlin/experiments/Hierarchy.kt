@@ -13,7 +13,7 @@ import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.serialization.json.Json
 
-open class B: RemoteContext {
+open class B: RemoteConfig {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")
@@ -40,22 +40,22 @@ open class B: RemoteContext {
 object SubB: B()
 
 @Remote
-context(_: RemoteWrapper<B>)
+context(_: RemoteContext<B>)
 suspend fun b(): Int {
     return 1
 }
 
 @Remote
-context(_: RemoteWrapper<SubB>)
+context(_: RemoteContext<SubB>)
 suspend fun subB(): Int {
     return b() + 2
 }
 
 fun main() = runBlocking {
-    context(SubB.wrap(), "") {
+    context(SubB.asContext(), "") {
         println(subB())
     }
-    context(B().wrap(), "") {
+    context(B().asContext(), "") {
         println(b())
     }
 }

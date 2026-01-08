@@ -12,12 +12,12 @@ import kotlinx.remote.*
 import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.remoteSerializersModule
-import kotlinx.remote.wrapped
+import kotlinx.remote.asContext
 import kotlinx.serialization.json.Json
 import remoteEmbeddedServer
 import startLeaseOnStubDeserialization
 
-data class User(val name: String, val remoteContext: RemoteWrapper<RemoteContext>)
+data class User(val name: String, val remoteContext: RemoteContext<RemoteConfig>)
 
 val rooms = mutableMapOf<String, Room>()
 val users = mutableMapOf<String, User>()
@@ -27,21 +27,21 @@ class Room private constructor() {
     private val clients = mutableListOf<User>()
 
     @Remote
-    context(_: RemoteWrapper<RemoteContext>)
+    context(_: RemoteContext<RemoteConfig>)
     suspend fun enter(userName: String) {
         if (clients.any { it.name == userName }) error("User $userName is already in this room")
         clients.add(users[userName] ?: error("User $userName not found"))
     }
 
     @Remote
-    context(_: RemoteWrapper<RemoteContext>)
+    context(_: RemoteContext<RemoteConfig>)
     suspend fun exit(userName: String) {
         val user = users[userName] ?: error("User $userName not found")
         if (!clients.remove(user)) error("User $userName is not in this room")
     }
 
     @Remote
-    context(_: RemoteWrapper<RemoteContext>)
+    context(_: RemoteContext<RemoteConfig>)
     suspend fun broadcast(fromUserName: String, message: String) {
         clients.filter { it.name != fromUserName }.forEach {
             context(it.remoteContext) { send("$fromUserName: $message") }
@@ -50,7 +50,7 @@ class Room private constructor() {
 
     companion object {
         @Remote
-        context(_: RemoteWrapper<RemoteContext>)
+        context(_: RemoteContext<RemoteConfig>)
         suspend operator fun invoke(name: String): Room {
             if (rooms.containsKey(name)) error("Room '$name' already exists")
             val room = Room()
@@ -61,42 +61,42 @@ class Room private constructor() {
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun getRoom(name: String): Room {
     return rooms[name] ?: error("Room '$name' not found")
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun listRooms(): List<String> {
     return rooms.keys.toList()
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun send(message: String) {
     println(message)
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun login(userName: String, url: String) {
     if (users.containsKey(userName)) error("User '$userName' already exists")
-    users[userName] = User(userName, ClientContext(url).wrapped)
+    users[userName] = User(userName, ClientConfig(url).asContext())
 }
 
 @Remote
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 suspend fun logout(userName: String) {
     users.remove(userName) ?: error("User '$userName' not found")
 }
 
 val callableMap = genCallableMap()
 
-class ClientContext(private val url: String) : RemoteContext {
+class ClientConfig(private val url: String) : RemoteConfig {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
-            url(this@ClientContext.url)
+            url(this@ClientConfig.url)
             accept(ContentType.Application.Json)
             contentType(ContentType.Application.Json)
         }
@@ -115,7 +115,7 @@ class ClientContext(private val url: String) : RemoteContext {
     }.remoteClient(callableMap)
 }
 
-data object HostContext : RemoteContext {
+data object HostConfig : RemoteConfig {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")
@@ -154,7 +154,7 @@ fun printHelp() {
 }
 
 fun main(): Unit = runBlocking {
-    context(HostContext.wrapped) {
+    context(HostConfig.asContext()) {
         println("Enter your port:")
         val port = readln()
         val clientUrl = "http://localhost:$port"

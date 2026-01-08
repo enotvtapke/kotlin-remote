@@ -1,20 +1,14 @@
-FILE: object.kt
-    public final object IdObject : R|kotlin/Any| {
-        private constructor(): R|IdObject| {
-            super<R|kotlin/Any|>()
-        }
+FILE: noSuspend.kt
+    package foo.bar
 
-        context(<unused var>: R|kotlinx/remote/RemoteContext<kotlinx/remote/RemoteConfig>|)
-        @R|kotlinx/remote/Remote|() public final suspend fun id(x: R|kotlin/Int|): R|kotlin/Int| {
-            ^id R|<local>/x|
-        }
-
+    context(<unused var>: R|kotlinx/remote/RemoteContext<kotlinx/remote/RemoteConfig>|)
+    @R|kotlinx/remote/Remote|() public final fun multiply(lhs: R|kotlin/Long|, rhs: R|kotlin/Long|): R|kotlin/Long| {
+        ^multiply R|<local>/lhs|.R|kotlin/Long.times|(R|<local>/rhs|)
     }
     public final fun box(): R|kotlin/String| {
         ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {
-            R|kotlinx/remote/genCallableMap|()
             ^ R|kotlin/context|<R|kotlinx/remote/ConfiguredContext<kotlinx/remote/codegen/test/ServerConfig>|, R|kotlin/String|>(Q|kotlinx/remote/codegen/test/ServerConfig|.R|kotlinx/remote/asContext|<R|kotlinx/remote/codegen/test/ServerConfig|>(), <L> = context(<unused var>: R|kotlinx/remote/ConfiguredContext<kotlinx/remote/codegen/test/ServerConfig>|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) Q|IdObject|.R|/IdObject.id|(Int(5)).R|kotlin/Int.toLong|()
+                lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) R|foo/bar/multiply|(Long(5), Long(6))
                 ^ when () {
                     ==(R|<local>/test1|, Long(42)) ->  {
                         String(OK)

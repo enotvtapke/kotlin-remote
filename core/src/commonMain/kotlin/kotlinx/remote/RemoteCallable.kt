@@ -22,7 +22,7 @@ data class RemoteCallable(
 )
 
 fun interface RemoteInvokator {
-    context(_: Local)
+    context(_: LocalContext)
     suspend fun call(parameters: Array<Any?>): Any?
 }
 

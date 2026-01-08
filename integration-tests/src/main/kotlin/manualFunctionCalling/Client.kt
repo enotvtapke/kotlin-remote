@@ -10,15 +10,15 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.remoteSerializersModule
-import kotlinx.remote.wrapped
+import kotlinx.remote.asContext
 import kotlinx.serialization.json.Json
 
-context(_: RemoteWrapper<RemoteContext>)
+context(_: RemoteContext<RemoteConfig>)
 private suspend fun expression(a: Long, b: Long): Long {
     return a + multiply(a, b)
 }
 
-data object ManualServerRemoteContext : RemoteContext {
+data object ManualServerRemoteConfig : RemoteConfig {
     override val client: RemoteClient = HttpClient {
         defaultRequest {
             url("http://localhost:8080")
@@ -39,7 +39,7 @@ data object ManualServerRemoteContext : RemoteContext {
 }
 
 fun main() = runBlocking {
-    with(ManualServerRemoteContext.wrapped) {
+    with(ManualServerRemoteConfig.asContext()) {
         println(expression(6, 1))
     }
 }
