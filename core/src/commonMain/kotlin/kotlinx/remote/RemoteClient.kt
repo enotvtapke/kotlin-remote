@@ -25,12 +25,12 @@ class RemoteClientImpl(
         when (val response = post.body<Any?>(callable.returnTypeInfo()) as RemoteResponse<*>) {
             is RemoteResponse.Success -> return response.value
             is RemoteResponse.Failure -> {
-                throw mergeStackTraces(response.error, localStackTrace, call.callableName)
+                throw mergeStackTraces(response.error, localStackTrace)
             }
         }
     }
 
-    private fun mergeStackTraces(error: Exception, localStackTrace: List<StackFrame>, callableName: String): Exception {
+    private fun mergeStackTraces(error: Throwable, localStackTrace: List<StackFrame>): Throwable {
         val remoteStackTrace = error.stackTrace()
         if (remoteStackTrace.isEmpty() || localStackTrace.isEmpty()) {
             return error
@@ -42,6 +42,7 @@ class RemoteClientImpl(
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 suspend fun <T> RemoteClient.call(call: RemoteCall): T {
     return call(call) as T
 }

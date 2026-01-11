@@ -1,5 +1,5 @@
 package kotlinx.remote.serialization
 
-internal expect fun <T : Exception> T.stackTrace(): List<StackFrame>
+internal expect fun <T : Throwable> T.stackTrace(): List<StackFrame>
 
-internal expect fun <T : Exception> T.setStackTrace(stackTrace: List<StackFrame>): T
+internal expect fun <T : Throwable> T.setStackTrace(stackTrace: List<StackFrame>): T

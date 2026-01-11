@@ -6,7 +6,7 @@ import kotlinx.remote.RemoteIntrinsic
 import kotlinx.remote.classes.lease.LeaseManager
 import kotlinx.remote.ktor.KRemoteConfigBuilder
 import kotlinx.remote.serialization.RpcCallSerializer
-import kotlinx.remote.serialization.setupExceptionSerializers
+import kotlinx.remote.serialization.setupThrowableSerializers
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -86,7 +86,7 @@ fun remoteSerializersModule(
             RemoteCall::class,
             RpcCallSerializer(callableMap, serializersModule + classSerializersModule)
         )
-        setupExceptionSerializers()
+        setupThrowableSerializers()
     }
 }
 
