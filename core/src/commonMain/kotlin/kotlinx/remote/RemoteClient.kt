@@ -35,17 +35,8 @@ class RemoteClientImpl(
         if (remoteStackTrace.isEmpty() || localStackTrace.isEmpty()) {
             return error
         }
-        val methodName = callableName.substringAfterLast('.')
-        val containerName = callableName.substringBeforeLast('.')
-
-        fun StackFrame.matchesCallable(): Boolean {
-            val normalizedClassName = this.className
-                .replace(Regex("\\$\\d+"), ".<anonymous>")
-                .replace('$', '.')
-            return this.methodName == methodName && (normalizedClassName == containerName || normalizedClassName.startsWith("$containerName."))
-        }
-        val filteredLocalStackTrace = localStackTrace.reversed().takeWhile { !it.matchesCallable() }.reversed()
-        val filteredRemoteCallStack = remoteStackTrace.reversed().dropWhile { !it.matchesCallable() }.reversed()
+        val filteredLocalStackTrace = localStackTrace.drop(3)
+        val filteredRemoteCallStack = remoteStackTrace.takeWhile { it.methodName != "call#with#unique#name" }
         val mergedStackTrace = filteredRemoteCallStack + filteredLocalStackTrace
         return error.setStackTrace(mergedStackTrace)
     }

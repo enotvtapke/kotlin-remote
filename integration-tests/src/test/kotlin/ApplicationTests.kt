@@ -25,7 +25,6 @@ import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
-import kotlinx.remote.asContext
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -72,8 +71,50 @@ class ApplicationTests {
             context(testServerRemoteContext().asContext()) {
                 val exception = assertThrows<IllegalStateException> { multiply(10, 10) }
                 assertEquals("My exception", exception.message)
+                assertEquals(
+                    $$"""
+                    ApplicationTests$erroneous call$1.invokeSuspend$multiply
+                    ApplicationTests$erroneous call$1.access$invokeSuspend$multiply
+                    ApplicationTests$erroneous call$1.invokeSuspend
+                    ApplicationTests$erroneous call$1.invoke
+                    ApplicationTests$erroneous call$1.invoke
+                    """.trimIndent(),
+                    exception.stackTrace.take(5).joinToString("\n") { "${it.className}.${it.methodName}" }
+                )
             }
         }
+
+    @Test
+    fun `indirect erroneous call`() =
+        testApplication {
+            configureApplication()
+
+            fun erroneous(): Long = throw IllegalStateException("My exception")
+
+            @Remote
+            context(_: RemoteContext<RemoteConfig>)
+            suspend fun multiply(lhs: Long, rhs: Long): Long {
+                val x = lhs * rhs
+                erroneous()
+                return x
+            }
+
+            context(testServerRemoteContext().asContext()) {
+                val exception = assertThrows<IllegalStateException> { multiply(10, 10) }
+                assertEquals("My exception", exception.message)
+                assertEquals(
+                    $$"""
+                    ApplicationTests$indirect erroneous call$1.invokeSuspend$erroneous
+                    ApplicationTests$indirect erroneous call$1.invokeSuspend$multiply
+                    ApplicationTests$indirect erroneous call$1.access$invokeSuspend$multiply
+                    ApplicationTests$indirect erroneous call$1.invokeSuspend
+                    ApplicationTests$indirect erroneous call$1.invoke
+                    """.trimIndent(),
+                    exception.stackTrace.take(5).joinToString("\n") { "${it.className}.${it.methodName}" }
+                )
+            }
+        }
+
 
     @Test
     fun `generic function`() =
@@ -189,7 +230,9 @@ class ApplicationTests {
     @Test
     fun `cannot call stub methods in local context`() = runBlocking {
         context(LocalContext) {
-            val e = assertThrows<IllegalArgumentException> { TestCalculator.RemoteClassStub(1L, "http://localhost:80").multiply(42) }
+            val e = assertThrows<IllegalArgumentException> {
+                TestCalculator.RemoteClassStub(1L, "http://localhost:80").multiply(42)
+            }
             assertEquals(
                 "Method of the stub `RemoteClassStub` was called in a local context. This may be caused by lease expiration.",
                 e.message
@@ -213,7 +256,10 @@ class ApplicationTests {
                 assertEquals(30, x.multiply(6))
                 delay(200)
                 val e = assertThrows<IllegalArgumentException> { x.multiply(7) }
-                assertEquals("Method of the stub `RemoteClassStub` was called in a local context. This may be caused by lease expiration.", e.message?.lines()?.firstOrNull())
+                assertEquals(
+                    "Method of the stub `RemoteClassStub` was called in a local context. This may be caused by lease expiration.",
+                    e.message?.lines()?.firstOrNull()
+                )
             }
         }
 
@@ -241,11 +287,11 @@ class ApplicationTests {
         testApplication {
             configureApplication()
 
-            open class BaseConfig: RemoteConfig {
+            open class BaseConfig : RemoteConfig {
                 override val client: RemoteClient = testRemoteClient()
             }
 
-            class SubBaseConfig: BaseConfig()
+            class SubBaseConfig : BaseConfig()
 
             @Remote
             context(_: RemoteContext<BaseConfig>)
@@ -303,7 +349,7 @@ class ApplicationTests {
             }
             client.registerStub(stub)
         }
-        
+
         return createClient {
             defaultRequest {
                 url("http://localhost:80")
@@ -326,7 +372,10 @@ class ApplicationTests {
         }.remoteClient(genCallableMap(), "/call")
     }
 
-    private fun ApplicationTestBuilder.configureApplication(leaseConfig: LeaseConfig = LeaseConfig(), leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()) {
+    private fun ApplicationTestBuilder.configureApplication(
+        leaseConfig: LeaseConfig = LeaseConfig(),
+        leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig()
+    ) {
         val leaseRenewalClients = mutableMapOf<String, LeaseRenewalClient>()
         val onStubDeserialization: (Stub) -> Unit = { stub ->
             val client = leaseRenewalClients.getOrPut(stub.url) {
@@ -339,7 +388,7 @@ class ApplicationTests {
             }
             client.registerStub(stub)
         }
-        
+
         application {
             install(CallLogging)
             install(KRemote) {
