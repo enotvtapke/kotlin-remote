@@ -28,6 +28,7 @@ import kotlinx.remote.ktor.remote
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.IllegalArgumentException
 import kotlin.test.assertEquals
 
 class ApplicationTests {
@@ -115,6 +116,22 @@ class ApplicationTests {
             }
         }
 
+    @Test
+    fun `erroneous call with cause`() =
+        testApplication {
+            configureApplication()
+
+            @Remote
+            context(_: RemoteContext<RemoteConfig>)
+            suspend fun multiply(lhs: Long, rhs: Long): Long = throw IllegalArgumentException("My exception", IllegalArgumentException("My cause1", IllegalArgumentException("My cause2")))
+
+            context(testServerRemoteContext().asContext()) {
+                val exception = assertThrows<IllegalArgumentException> { multiply(10, 10) }
+                assertEquals("My exception", exception.message)
+                assertEquals("My cause1", exception.cause?.message)
+                assertEquals("My cause2", exception.cause?.cause?.message)
+            }
+        }
 
     @Test
     fun `generic function`() =
