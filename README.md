@@ -225,6 +225,50 @@ suspend fun fibonacciRecursive(n: Int): Long {
 }
 ```
 
+### Remote context and configs hierarchy
+
+```kotlin
+sealed interface RemoteContext <out T: RemoteConfig>
+object LocalContext: RemoteContext<Nothing>
+class ConfiguredContext<T: RemoteConfig>(val config: T): RemoteContext<T>
+```
+
+`RemoteContext` is a special context used to call remote functions. This context passed to the remote function as a
+context parameter. `RemoteContext` has one type parameter of type `RemoteConfig`, which can be though as color. The color 
+is determined by the client inside `RemoteConfig` using which remote request is sent when the remote function is invoked. One could think that
+`RemoteConfig` is enough to represent where remote function should be called so `RemoteContext` is not really needed. But it is not completely true. `RemoteContext` is used to
+determine whether a remote function should be called locally or remotely. When remote function is called with `LocalContext`
+it is called locally, and when called with a custom context that provides a `client`, the function makes a remote call 
+using that client. The beauty of this approach is that each remote function can be called with `LocalContext` and code will type check.
+This happens because for all `T` type `RemoteContext<Nothing>` is a subtype of `RemoteContext<out T: RemoteConfig>` thanks to magic of `Nothing` type in Kotlin.
+
+This approach allows hierarchy of colors. In other words we can call remote function with color `RemoteContext<SomeConfig>` 
+from remote function with color `RemoteContext<SubSomeConfig>` when `SubSomeConfig` is a subtype of `SomeConfig`. This makes 
+`SubSomeConfig` "stronger" than `SomeConfig`.
+
+### Code slicing (future work)
+
+On top of that, type of `RemoteConfig` can be though as a compile time label for remote functions. This label can be 
+used to split code into several artifacts during the compilation. When developing a distributed system where each node
+hosts a number of remote functions, it makes sense to not include remote functions (and the other function used by those)
+hosted on one node in the artifact of another node. To do that entrypoints of each node should be marked. I suggest that it should 
+be done on the level of the build system. Like with Kotlin Multiplatform, several source sets can be used to define and configure 
+the compilation of different artifacts for each node. Each source set should be configured with `RemoteConfig`'s and 
+fully qualified names of functions which is meant to be entrypoint of that node, like `main` functions for example.
+Then special tool should determine all the code reachable from entrypoints and remote functions with context parameters 
+of both subtypes and supertypes of configured `RemoteConfig`'s (or maybe only supertypes). This tool essentially should 
+make dead code analysis and remove unreachable code, which can be challenging for Kotlin especially considering that this 
+dead code analysis should be made one time for each source set.
+
+When dead code elimination is done, the problem arises when making `as` casts of remote contexts and also using `LocalContext` in
+user code. `LocalContext` allows to invoke any remote function locally and can lead to calling a function which code was 
+removed from the artifact. One way to fix it is to make `LocalContext` internal, so that user cannot use it. But this still 
+does not solve the problem with `as` casts. User can cast `RemoteContext<T1>` inside one remote function to `RemoteContext<T2>` to 
+call another remote function. Even when `T1` and `T2` are not related in terms of subtyping the cast will succeed in runtime, because
+in runtime real remote function bodies are called in `LocalContext` which is a subtype for `RemoteContext<T>` for all `T`. 
+
+So I suggest to just add warnings when user tries to use `LocalContext` or make `as` cast involving values of type `RemoteContext` and do not make anything internal.
+
 ### Remote classes
 
 It was said that remote functions can be class methods. Static and non-static. This is implemented by treating
