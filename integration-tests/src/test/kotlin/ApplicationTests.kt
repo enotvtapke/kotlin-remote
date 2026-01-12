@@ -25,7 +25,11 @@ import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
+import kotlinx.serialization.Polymorphic
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.IllegalArgumentException
@@ -144,12 +148,29 @@ class ApplicationTests {
 
             @Remote
             context(_: RemoteContext<RemoteConfig>)
-            suspend fun <K : Long, P : List<Int>, T : Map<K, List<P>>> genericFunction(t: T) =
+            suspend fun <K : Long, P : List<Int>, T : Map<K, List<P>>> genericFunction(t: T): P =
                 t.entries.first().value.first()
 
             context(testServerRemoteContext().asContext()) {
                 assertEquals(listOf(2), genericFunction(mapOf(1L to listOf(listOf(2)))))
                 assertEquals(listOf(1L, 2L), numberMap(listOf(1, 2)))
+            }
+        }
+
+    @Serializable
+    data class WrappedInt(val value: Int)
+
+    @Test
+    fun `generic function argument using polymorphic`() =
+        testApplication {
+            configureApplication()
+
+            @Remote
+            context(_: RemoteContext<RemoteConfig>)
+            suspend fun <T> string(x: @Polymorphic T): String = x.toString()
+
+            context(testServerRemoteContext().asContext()) {
+                assertEquals("WrappedInt(value=2)", string(WrappedInt(2)))
             }
         }
 
@@ -376,6 +397,11 @@ class ApplicationTests {
             install(ContentNegotiation) {
                 json(Json {
                     serializersModule = remoteSerializersModule {
+                        serializersModule = SerializersModule {
+                            polymorphic(Any::class) {
+                                subclass(WrappedInt::class, WrappedInt.serializer())
+                            }
+                        }
                         callableMap = genCallableMap()
                         classes {
                             remoteClasses = genRemoteClassList()
@@ -410,6 +436,11 @@ class ApplicationTests {
             install(CallLogging)
             install(KRemote) {
                 callableMap = genCallableMap()
+                serializersModule = SerializersModule {
+                    polymorphic(Any::class) {
+                        subclass(WrappedInt::class, WrappedInt.serializer())
+                    }
+                }
                 classes {
                     remoteClasses = genRemoteClassList()
                     server {

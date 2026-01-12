@@ -18,6 +18,7 @@ object RemoteClassId {
     val remoteContext = ClassId(FqName("kotlinx.remote"), Name.identifier("RemoteContext"))
     val remoteWrapper = ClassId(FqName("kotlinx.remote"), Name.identifier("RemoteContext"))
     val local = ClassId(FqName("kotlinx.remote"), Name.identifier("Local"))
+    val polymorphicAnnotation = ClassId(FqName("kotlinx.serialization"), Name.identifier("Polymorphic"))
 }
 
 object RemoteNames {

@@ -1,3 +1,4 @@
+import experiments.WrappedInt
 import io.ktor.client.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -9,10 +10,13 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.calllogging.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.remote.*
+import kotlinx.remote.RemoteClient
+import kotlinx.remote.RemoteConfig
 import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
@@ -20,10 +24,14 @@ import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.remote.classes.network.leaseClient
 import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
+import kotlinx.remote.remoteClient
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 
 private val leaseRenewalClients = mutableMapOf<String, LeaseRenewalClient>()
 
@@ -87,8 +95,19 @@ fun remoteEmbeddedServer(
 ): EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration> {
     return embeddedServer(Netty, port = nodeUrl.split(":").last().toInt(), watchPaths = listOf()) {
         install(CallLogging)
+        install(StatusPages) {
+            exception<Throwable> { call, cause ->
+                call.application.environment.log.error("Unhandled exception during request", cause)
+                call.respond(HttpStatusCode.InternalServerError, "Internal Server Error")
+            }
+        }
         install(KRemote) {
             callableMap = genCallableMap()
+            serializersModule = SerializersModule {
+                polymorphic(Any::class) {
+                    subclass(WrappedInt::class, WrappedInt.serializer())
+                }
+            }
             classes {
                 remoteClasses = genRemoteClassList()
                 server {

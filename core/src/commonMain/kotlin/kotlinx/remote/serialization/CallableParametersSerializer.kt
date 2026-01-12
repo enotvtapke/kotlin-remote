@@ -6,6 +6,7 @@ import kotlinx.remote.RemoteType
 import kotlinx.remote.RemoteCall
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.nullable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -40,12 +41,27 @@ internal fun SerializersModule.buildContextualInternal(type: KType): KSerializer
     return if (type.isMarkedNullable) result?.nullable else result as? KSerializer<Any?>
 }
 
+@Suppress("UNCHECKED_CAST")
+private fun buildPolymorphicSerializer(type: KType): KSerializer<Any?> {
+    val baseClass = type.rpcInternalKClass<Any>()
+    val serializer = PolymorphicSerializer(baseClass)
+    return if (type.isMarkedNullable) {
+        serializer.nullable as KSerializer<Any?>
+    } else {
+        serializer as KSerializer<Any?>
+    }
+}
+
 private fun SerializersModule.buildContextual(type: KType): KSerializer<Any?> {
     return buildContextualInternal(type) ?: serializer(type)
 }
 
-fun SerializersModule.buildContextual(type: RemoteType): KSerializer<Any?> {
-    return buildContextual(type.kType)
+fun SerializersModule.buildSerializer(type: RemoteType): KSerializer<Any?> {
+    return if (type.isPolymorphic) {
+        buildPolymorphicSerializer(type.kType)
+    } else {
+        buildContextual(type.kType)
+    }
 }
 
 private class CallableParametersSerializer(
@@ -53,7 +69,7 @@ private class CallableParametersSerializer(
     private val module: SerializersModule,
 ) : KSerializer<Array<Any?>> {
     private val callableSerializers = Array(callable.parameters.size) { i ->
-        module.buildContextual(callable.parameters[i].type)
+        module.buildSerializer(callable.parameters[i].type)
     }
 
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("CallableParametersSerializer") {

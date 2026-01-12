@@ -5,7 +5,8 @@ import kotlinx.remote.serialization.rpcInternalKClass
 import kotlin.reflect.KType
 
 data class RemoteType(
-    val kType: KType
+    val kType: KType,
+    val isPolymorphic: Boolean = false,
 )
 
 data class RemoteParameter(

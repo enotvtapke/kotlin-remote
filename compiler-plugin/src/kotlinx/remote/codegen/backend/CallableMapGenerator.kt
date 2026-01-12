@@ -1,5 +1,6 @@
 package kotlinx.remote.codegen.backend
 
+import kotlinx.remote.codegen.common.RemoteClassId
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -105,7 +107,10 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
                                     ctx.irBuiltIns.stringType,
                                     parameter.name.asString()
                                 )
-                                arguments[1] = irRemoteTypeCall(parameter.type)
+                                arguments[1] = irRemoteTypeCall(
+                                    parameter.type,
+                                    isPolymorphic = parameter.type.hasPolymorphicAnnotation()
+                                )
                                 arguments[2] = IrConstImpl.boolean(
                                     startOffset,
                                     endOffset,
@@ -120,7 +125,10 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
                 }
             arguments[0] =
                 IrConstImpl.string(startOffset, endOffset, ctx.irBuiltIns.stringType, callable.name.asString())
-            arguments[1] = irRemoteTypeCall(ctx.remoteResponse.typeWith(listOf(callable.returnType)))
+            arguments[1] = irRemoteTypeCall(
+                ctx.remoteResponse.typeWith(listOf(callable.returnType)),
+                isPolymorphic = callable.returnType.type.hasPolymorphicAnnotation()
+            )
             arguments[2] = invokator
             arguments[3] = parametersCall
         }
@@ -202,7 +210,7 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
         )
     }
 
-    private fun irRemoteTypeCall(type: IrType): IrConstructorCallImpl {
+    private fun irRemoteTypeCall(type: IrType, isPolymorphic: Boolean = false): IrConstructorCallImpl {
         return IrConstructorCallImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
@@ -212,7 +220,17 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
             constructorTypeArgumentsCount = 0,
         ).apply {
             arguments[0] = irTypeOfCall(substituteTypeParametersWithUpperBounds(type))
+            arguments[1] = IrConstImpl.boolean(
+                startOffset,
+                endOffset,
+                ctx.irBuiltIns.booleanType,
+                isPolymorphic
+            )
         }
+    }
+
+    private fun IrType.hasPolymorphicAnnotation(): Boolean {
+        return hasAnnotation(RemoteClassId.polymorphicAnnotation.asSingleFqName())
     }
 
     private fun irTypeOfCall(type: IrType): IrCall {
@@ -222,10 +240,9 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
             type = ctx.kTypeClass.defaultType,
             symbol = ctx.functions.typeOf,
             typeArgumentsCount = 1,
-        )
-            .apply {
-                typeArguments[0] = type
-            }
+        ).apply {
+            typeArguments[0] = type
+        }
     }
 
     private fun substituteTypeParametersWithUpperBounds(type: IrType): IrType {
