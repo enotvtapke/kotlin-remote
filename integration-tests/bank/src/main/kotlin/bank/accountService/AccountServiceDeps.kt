@@ -6,7 +6,7 @@ import kotlinx.remote.RemoteContext
 
 object AccountServiceDeps {
     private val accountRepository: AccountRepository = AccountRepositoryImpl()
-    private val accountService: AccountService = AccountService(accountRepository)
+    private val accountService: AccountService = AccountServiceImpl(accountRepository)
 
     @Remote
     context(_: RemoteContext<AccountServiceConfig>)

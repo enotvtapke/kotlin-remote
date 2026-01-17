@@ -10,14 +10,21 @@ import kotlinx.remote.RemoteContext
 import kotlinx.remote.asContext
 import kotlinx.remote.classes.RemoteSerializable
 
+interface PaymentService {
+    context(_: RemoteContext<PaymentServiceConfig>)
+    suspend fun makePayment(payment: MakePaymentDto): Payment
+    context(_: RemoteContext<PaymentServiceConfig>)
+    suspend fun userPayments(userId: Long): List<Payment>
+}
+
 @RemoteSerializable
-class PaymentService(
+class PaymentServiceImpl(
     private val accountService: AccountService,
     private val paymentRepository: PaymentRepository,
-) {
+): PaymentService {
     @Remote
     context(_: RemoteContext<PaymentServiceConfig>)
-    suspend fun makePayment(payment: MakePaymentDto): Payment {
+    override suspend fun makePayment(payment: MakePaymentDto): Payment {
         context(AccountServiceConfig.asContext()) {
             accountService.transfer(payment)
         }
@@ -26,7 +33,7 @@ class PaymentService(
 
     @Remote
     context(_: RemoteContext<PaymentServiceConfig>)
-    suspend fun userPayments(userId: Long): List<Payment> {
+    override suspend fun userPayments(userId: Long): List<Payment> {
         return paymentRepository.userPayments(userId)
     }
 }

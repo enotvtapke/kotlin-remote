@@ -1,16 +1,13 @@
 package bank.client
 
-import bank.accountService.AccountServiceDeps
 import bank.model.Account
 import bank.model.User
 import bank.model.dto.CreateAccountDto
 import bank.model.dto.MakePaymentDto
 import bank.model.dto.UserRegisterDto
-import bank.paymentService.PaymentServiceDeps
 import bank.remote.AccountServiceConfig
 import bank.remote.PaymentServiceConfig
 import bank.remote.UserServiceConfig
-import bank.userService.UserServiceDeps
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.asContext
 import java.math.BigDecimal
@@ -18,6 +15,7 @@ import java.math.BigDecimal
 private var currentUser: User? = null
 
 fun main() = runBlocking {
+    ClientDeps.init()
     println(
         """
         ╔════════════════════════════════════════════╗
@@ -122,7 +120,7 @@ private suspend fun registerUser() {
 
     try {
         val user = context(UserServiceConfig.asContext()) {
-            UserServiceDeps.userService().register(UserRegisterDto(login, password, name))
+            ClientDeps.userService.register(UserRegisterDto(login, password, name))
         }
         currentUser = user
         println("\n✅ Registration successful!")
@@ -150,7 +148,7 @@ private suspend fun loginUser() {
 
     try {
         val user = context(UserServiceConfig.asContext()) {
-            UserServiceDeps.userService().login(login, password)
+            ClientDeps.userService.login(login, password)
         }
         currentUser = user
         println("\n✅ Login successful!")
@@ -168,7 +166,7 @@ private suspend fun createAccount() {
 
     try {
         val account = context(AccountServiceConfig.asContext()) {
-            AccountServiceDeps.accountService().createAccount(CreateAccountDto(user.id))
+            ClientDeps.accountService.createAccount(CreateAccountDto(user.id))
         }
         println("\n✅ Account created successfully!")
         printAccount(account)
@@ -185,7 +183,7 @@ private suspend fun viewMyAccounts() {
 
     try {
         val accounts = context(AccountServiceConfig.asContext()) {
-            AccountServiceDeps.accountService().userAccounts(user.id)
+            ClientDeps.accountService.userAccounts(user.id)
         }
         if (accounts.isEmpty()) {
             println("No accounts found. Create one using option 3.")
@@ -206,7 +204,7 @@ private suspend fun viewAccountById() {
 
     try {
         val account = context(AccountServiceConfig.asContext()) {
-            AccountServiceDeps.accountService().accountById(accountId)
+            ClientDeps.accountService.accountById(accountId)
         }
         println("\n✅ Account found!")
         printAccount(account)
@@ -237,7 +235,7 @@ private suspend fun makePayment() {
 
     try {
         val payment = context(PaymentServiceConfig.asContext()) {
-            PaymentServiceDeps.paymentService()
+            ClientDeps.paymentService
                 .makePayment(MakePaymentDto(amount, payerAccountId, payeeAccountId))
         }
         println("\n✅ Payment successful!")
@@ -255,7 +253,7 @@ private suspend fun viewMyPayments() {
 
     try {
         val payments = context(PaymentServiceConfig.asContext()) {
-            PaymentServiceDeps.paymentService().userPayments(user.id)
+            ClientDeps.paymentService.userPayments(user.id)
         }
         if (payments.isEmpty()) {
             println("No payments found.")

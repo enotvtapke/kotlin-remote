@@ -10,7 +10,6 @@ fun main() = runBlocking {
     val nodeUrl = "http://localhost:8001"
     Database.connect("jdbc:h2:./my_shared_db;AUTO_SERVER=TRUE", driver = "org.h2.Driver")
     transaction { SchemaUtils.create(Payments) }
-    PaymentServiceDeps.init()
     remoteEmbeddedServer(nodeUrl).start(wait = true)
     Unit
 }
