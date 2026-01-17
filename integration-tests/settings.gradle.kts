@@ -4,3 +4,5 @@ plugins {
 rootProject.name = "integration-tests"
 
 includeBuild("..")
+
+include("bank")

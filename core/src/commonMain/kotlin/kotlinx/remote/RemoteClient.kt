@@ -36,7 +36,7 @@ class RemoteClientImpl(
             return error
         }
         val filteredLocalStackTrace = localStackTrace.drop(3)
-        val filteredRemoteCallStack = remoteStackTrace.takeWhile { it.methodName != "call#with#unique#name" }
+        val filteredRemoteCallStack = remoteStackTrace.takeWhile { it.methodName != "callWithUniqueName" }
         val mergedStackTrace = filteredRemoteCallStack + filteredLocalStackTrace
         return error.setStackTrace(mergedStackTrace)
     }

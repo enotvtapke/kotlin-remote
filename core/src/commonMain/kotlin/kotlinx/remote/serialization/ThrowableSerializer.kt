@@ -11,7 +11,7 @@ import kotlinx.serialization.modules.SerializersModuleBuilder
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
-inline fun <reified T: Throwable> throwableSerializer(noinline throwableFactory: (String?, Throwable?) -> T): KSerializer<T> {
+inline fun <reified T : Throwable> throwableSerializer(noinline throwableFactory: (String?, Throwable?) -> T): KSerializer<T> {
     return ThrowableSerializer(T::class.simpleName!!, throwableFactory)
 }
 
@@ -45,8 +45,14 @@ class ThrowableSerializer<T : Throwable>(
 
     @Serializable
     @SerialName("Throwable")
-    private data class ThrowableSurrogate(val message: String?, val stackTrace: List<StackFrame>, val cause: @Polymorphic Throwable? = null)
+    private data class ThrowableSurrogate(
+        val message: String?,
+        val stackTrace: List<StackFrame>,
+        val cause: @Polymorphic Throwable? = null
+    )
 }
+
+class UnregisteredRemoteException(message: String?, cause: Throwable?) : Exception(message, cause)
 
 fun SerializersModuleBuilder.setupThrowableSerializers() {
     polymorphic(Throwable::class) {
@@ -54,12 +60,22 @@ fun SerializersModuleBuilder.setupThrowableSerializers() {
         subclass(throwableSerializer(::IllegalArgumentException))
         subclass(throwableSerializer(::IllegalStateException))
         subclass(throwableSerializer(::UnsupportedOperationException))
-        subclass(throwableSerializer { message, _ -> IndexOutOfBoundsException(message)})
+        subclass(throwableSerializer { message, _ -> IndexOutOfBoundsException(message) })
         subclass(throwableSerializer { message, _ -> ArithmeticException(message) })
         subclass(throwableSerializer { message, _ -> NumberFormatException(message) })
         subclass(throwableSerializer { message, _ -> NullPointerException(message) })
         subclass(throwableSerializer { message, _ -> ClassCastException(message) })
         subclass(throwableSerializer { message, _ -> NoSuchElementException(message) })
         subclass(throwableSerializer { message, _ -> ConcurrentModificationException(message) })
+        polymorphicDefaultDeserializer(Throwable::class) {
+            ThrowableSerializer(it ?: "Unknown exception name") { msg, cause ->
+                UnregisteredRemoteException("$it: $msg", cause)
+            }
+        }
+        polymorphicDefaultSerializer(Throwable::class) {
+            ThrowableSerializer(it::class.qualifiedName ?: "Unknown exception name") { _, _ ->
+                error("Not reachable")
+            }
+        }
     }
 }

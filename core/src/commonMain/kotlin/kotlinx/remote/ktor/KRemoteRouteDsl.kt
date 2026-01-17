@@ -26,7 +26,7 @@ suspend fun RoutingContext.handleRemoteCall() {
 private suspend fun invokeCallable(callable: RemoteCallable, remoteCall: RemoteCall): RemoteResponse<*> {
     return try {
         context(LocalContext) {
-            RemoteResponse.Success(callable.invokator.`call#with#unique#name`(remoteCall.parameters))
+            RemoteResponse.Success(callable.invokator.callWithUniqueName(remoteCall.parameters))
         }
     } catch (e: Exception) {
         RemoteResponse.Failure(e)

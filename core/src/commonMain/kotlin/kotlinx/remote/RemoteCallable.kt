@@ -24,7 +24,7 @@ data class RemoteCallable(
 
 fun interface RemoteInvokator {
     context(_: LocalContext)
-    suspend fun `call#with#unique#name`(parameters: Array<Any?>): Any?
+    suspend fun callWithUniqueName(parameters: Array<Any?>): Any?
 }
 
 fun RemoteCallable.returnTypeInfo(): TypeInfo = TypeInfo(

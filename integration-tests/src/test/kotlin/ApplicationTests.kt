@@ -25,6 +25,7 @@ import kotlinx.remote.classes.remoteSerializersModule
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
+import kotlinx.remote.serialization.UnregisteredRemoteException
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -134,6 +135,24 @@ class ApplicationTests {
                 assertEquals("My exception", exception.message)
                 assertEquals("My cause1", exception.cause?.message)
                 assertEquals("My cause2", exception.cause?.cause?.message)
+            }
+        }
+
+    private class MyException(message: String, cause: Throwable?) : Exception(message, cause)
+
+    @Test
+    fun `unknown exception call`() =
+        testApplication {
+            configureApplication()
+
+            @Remote
+            context(_: RemoteContext<RemoteConfig>)
+            suspend fun multiply(lhs: Long, rhs: Long): Long = throw MyException("Message", IllegalArgumentException("My cause1"))
+
+            context(testServerRemoteContext().asContext()) {
+                val exception = assertThrows<UnregisteredRemoteException> { multiply(10, 10) }
+                assertEquals("ApplicationTests.MyException: Message", exception.message)
+                assertEquals("My cause1", exception.cause?.message)
             }
         }
 
