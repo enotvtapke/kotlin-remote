@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.modules.SerializersModuleBuilder
+import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 
@@ -54,7 +54,7 @@ class ThrowableSerializer<T : Throwable>(
 
 class UnregisteredRemoteException(message: String?, cause: Throwable?) : Exception(message, cause)
 
-fun SerializersModuleBuilder.setupThrowableSerializers() {
+fun throwableSerializers() = SerializersModule {
     polymorphic(Throwable::class) {
         subclass(throwableSerializer(::RuntimeException))
         subclass(throwableSerializer(::IllegalArgumentException))

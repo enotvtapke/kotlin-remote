@@ -35,17 +35,12 @@ fun remoteClient(url: String): RemoteClient = HttpClient {
     install(ContentNegotiation) {
         json(Json {
             serializersModule = remoteSerializersModule {
-                serializersModule = SerializersModule {
-                    polymorphic(Throwable::class) {
-                        subclass(SerializationException::class, throwableSerializer(::SerializationException))
-                    }
-                }
                 callableMap = genCallableMap()
                 classes {
                     remoteClasses = genRemoteClassList()
                     client { }
                 }
-            }.addPolymorphicRemoteClasses()
+            }.addAdditionalSerializers()
         })
     }
     install(Logging) {
@@ -53,11 +48,14 @@ fun remoteClient(url: String): RemoteClient = HttpClient {
     }
 }.remoteClient(genCallableMap(), "/call")
 
-fun SerializersModule.addPolymorphicRemoteClasses(): SerializersModule = this + SerializersModule {
+fun SerializersModule.addAdditionalSerializers(): SerializersModule = this + SerializersModule {
+    polymorphic(Throwable::class) {
+        subclass(SerializationException::class, throwableSerializer(::SerializationException))
+    }
     polymorphic(PaymentService::class) {
-        subclass(PaymentServiceImpl::class, this@addPolymorphicRemoteClasses.serializer())
+        subclass(PaymentServiceImpl::class, this@addAdditionalSerializers.serializer())
     }
     polymorphic(AccountService::class) {
-        subclass(AccountServiceImpl::class, this@addPolymorphicRemoteClasses.serializer())
+        subclass(AccountServiceImpl::class, this@addAdditionalSerializers.serializer())
     }
 }

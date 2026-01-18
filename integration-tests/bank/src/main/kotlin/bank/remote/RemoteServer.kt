@@ -18,11 +18,7 @@ import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.KRemoteConfigBuilder
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
-import kotlinx.remote.serialization.throwableSerializer
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
 
 fun remoteEmbeddedServer(
     nodeUrl: String,
@@ -38,11 +34,6 @@ fun remoteEmbeddedServer(
         }
         val config: KRemoteConfigBuilder.() -> Unit = {
             callableMap = genCallableMap()
-            serializersModule = SerializersModule {
-                polymorphic(Throwable::class) {
-                    subclass(SerializationException::class, throwableSerializer(::SerializationException))
-                }
-            }
             classes {
                 remoteClasses = genRemoteClassList()
                 server {
@@ -51,7 +42,7 @@ fun remoteEmbeddedServer(
                 }
             }
         }
-        val module = remoteSerializersModule(config).addPolymorphicRemoteClasses()
+        val module = remoteSerializersModule(config).addAdditionalSerializers()
         install(ContentNegotiation) {
             json(Json { serializersModule = module })
         }

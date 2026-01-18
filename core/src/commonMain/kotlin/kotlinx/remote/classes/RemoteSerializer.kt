@@ -6,7 +6,7 @@ import kotlinx.remote.RemoteIntrinsic
 import kotlinx.remote.classes.lease.LeaseManager
 import kotlinx.remote.ktor.KRemoteConfigBuilder
 import kotlinx.remote.serialization.RemoteCallableSerializer
-import kotlinx.remote.serialization.setupThrowableSerializers
+import kotlinx.remote.serialization.throwableSerializers
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -81,12 +81,14 @@ fun remoteSerializersModule(
     serializersModule: SerializersModule = SerializersModule { }
 ): SerializersModule {
     val classSerializersModule = remoteClassSerializersModule(remoteClasses ?: listOf(), leaseManager, nodeUrl, onStubDeserialization)
-    return serializersModule + classSerializersModule + SerializersModule {
+    return SerializersModule {
+        include(classSerializersModule)
+        include(serializersModule)
+        include(throwableSerializers())
         contextual(
             RemoteCall::class,
             RemoteCallableSerializer(callableMap, serializersModule + classSerializersModule)
         )
-        setupThrowableSerializers()
     }
 }
 
