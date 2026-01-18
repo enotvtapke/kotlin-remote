@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 class RemoteCall(
     val callableName: String,
-    val parameters: Array<Any?>,
+    val arguments: Array<Any?>,
 )
 
 @Serializable
@@ -16,5 +16,5 @@ sealed interface RemoteResponse<T> {
     data class Success<T>(val value: T): RemoteResponse<T>
     @Serializable
     @SerialName("failure")
-    data class Failure(val error: @Polymorphic Throwable): RemoteResponse<Any?>
+    data class Failure(val error: @Polymorphic Throwable): RemoteResponse<Nothing>
 }

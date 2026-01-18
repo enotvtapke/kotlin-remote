@@ -5,7 +5,7 @@ import kotlinx.remote.RemoteCall
 import kotlinx.remote.RemoteIntrinsic
 import kotlinx.remote.classes.lease.LeaseManager
 import kotlinx.remote.ktor.KRemoteConfigBuilder
-import kotlinx.remote.serialization.RpcCallSerializer
+import kotlinx.remote.serialization.RemoteCallableSerializer
 import kotlinx.remote.serialization.setupThrowableSerializers
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
@@ -84,7 +84,7 @@ fun remoteSerializersModule(
     return serializersModule + classSerializersModule + SerializersModule {
         contextual(
             RemoteCall::class,
-            RpcCallSerializer(callableMap, serializersModule + classSerializersModule)
+            RemoteCallableSerializer(callableMap, serializersModule + classSerializersModule)
         )
         setupThrowableSerializers()
     }

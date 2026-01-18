@@ -151,7 +151,7 @@ class ApplicationTests {
 
             context(testServerRemoteContext().asContext()) {
                 val exception = assertThrows<UnregisteredRemoteException> { multiply(10, 10) }
-                assertEquals("ApplicationTests.MyException: Message", exception.message)
+                assertEquals("MyException: Message", exception.message)
                 assertEquals("My cause1", exception.cause?.message)
             }
         }

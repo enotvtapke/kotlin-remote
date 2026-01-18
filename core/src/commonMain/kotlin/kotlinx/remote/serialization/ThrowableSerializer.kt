@@ -73,7 +73,7 @@ fun SerializersModuleBuilder.setupThrowableSerializers() {
             }
         }
         polymorphicDefaultSerializer(Throwable::class) {
-            ThrowableSerializer(it::class.qualifiedName ?: "Unknown exception name") { _, _ ->
+            ThrowableSerializer(it::class.simpleName ?: "Unknown exception name") { _, _ ->
                 error("Not reachable")
             }
         }
