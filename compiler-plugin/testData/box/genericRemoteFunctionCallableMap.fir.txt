@@ -1,0 +1,26 @@
+FILE: genericRemoteFunctionCallableMap.kt
+    package foo.bar
+
+    context(<unused var>: R|kotlinx/remote/RemoteContext<kotlinx/remote/RemoteConfig>|)
+    @R|kotlinx/remote/Remote|() public final suspend fun <T> multiply(lhs: R|@R|kotlinx/serialization/Polymorphic|()  T|): R|T| {
+        ^multiply R|<local>/lhs|
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {
+            R|kotlinx/remote/genCallableMap|()
+            ^ R|kotlin/context|<R|kotlinx/remote/ConfiguredContext<kotlinx/remote/codegen/test/ServerConfig>|, R|kotlin/String|>(Q|kotlinx/remote/codegen/test/ServerConfig|.R|kotlinx/remote/asContext|<R|kotlinx/remote/codegen/test/ServerConfig|>(), <L> = context(<unused var>: R|kotlinx/remote/ConfiguredContext<kotlinx/remote/codegen/test/ServerConfig>|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) R|foo/bar/multiply|<R|kotlin/Long|>(Long(5))
+                ^ when () {
+                    ==(R|<local>/test1|, Long(42)) ->  {
+                        String(OK)
+                    }
+                    else ->  {
+                        <strcat>(String(Fail: test1=), R|<local>/test1|)
+                    }
+                }
+
+            }
+            )
+        }
+        )
+    }

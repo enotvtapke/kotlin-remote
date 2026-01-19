@@ -31,9 +31,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.IllegalArgumentException
+import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
 class ApplicationTests {
@@ -190,6 +191,50 @@ class ApplicationTests {
 
             context(testServerRemoteContext().asContext()) {
                 assertEquals("WrappedInt(value=2)", string(WrappedInt(2)))
+            }
+        }
+
+    @Serializable
+    @Polymorphic
+    open class A {
+        override fun toString(): String {
+            return "ssss"
+        }
+    }
+
+    @Serializable
+    data class SubA(val x: String): A()
+
+    @Test
+    @Ignore("Fails because SubA serialized as A. List<T> is not considered polymorphic by the compiler plugin. If I" +
+    "add @Polymorphic annotation to List<T>, it wont work as well, because only T should be polymorphic.")
+    fun `generic function list argument using polymorphic`() =
+        testApplication {
+            configureApplication()
+
+            @Remote
+            context(_: RemoteContext<RemoteConfig>)
+            suspend fun <T: A> string(x: List<T>): String {
+                val z = x.first() is SubA
+                return x.toString()
+            }
+
+            context(testServerRemoteContext().asContext()) {
+                assertEquals("[SubA(x=str)]", string(listOf(SubA("str"))))
+            }
+        }
+
+    @Test
+    fun `generic function return value using polymorphic`() =
+        testApplication {
+            configureApplication()
+
+            @Remote
+            context(_: RemoteContext<RemoteConfig>)
+            suspend fun <T> string(x: @Polymorphic T): @Polymorphic T = x
+
+            context(testServerRemoteContext().asContext()) {
+                assertEquals(WrappedInt(2), string(WrappedInt(2)))
             }
         }
 
@@ -420,6 +465,9 @@ class ApplicationTests {
                             polymorphic(Any::class) {
                                 subclass(WrappedInt::class, WrappedInt.serializer())
                             }
+                            polymorphic(A::class) {
+                                subclass(SubA.serializer())
+                            }
                         }
                         callableMap = genCallableMap()
                         classes {
@@ -457,7 +505,10 @@ class ApplicationTests {
                 callableMap = genCallableMap()
                 serializersModule = SerializersModule {
                     polymorphic(Any::class) {
-                        subclass(WrappedInt::class, WrappedInt.serializer())
+                        subclass(WrappedInt.serializer())
+                    }
+                    polymorphic(A::class) {
+                        subclass(SubA.serializer())
                     }
                 }
                 classes {
