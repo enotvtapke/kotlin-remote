@@ -6,3 +6,4 @@ rootProject.name = "integration-tests"
 includeBuild("..")
 
 include("bank")
+include("todoapp")

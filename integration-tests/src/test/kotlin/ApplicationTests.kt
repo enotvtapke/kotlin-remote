@@ -129,7 +129,10 @@ class ApplicationTests {
 
             @Remote
             context(_: RemoteContext<RemoteConfig>)
-            suspend fun multiply(lhs: Long, rhs: Long): Long = throw IllegalArgumentException("My exception", IllegalArgumentException("My cause1", IllegalArgumentException("My cause2")))
+            suspend fun multiply(lhs: Long, rhs: Long): Long = throw IllegalArgumentException(
+                "My exception",
+                IllegalArgumentException("My cause1", IllegalArgumentException("My cause2"))
+            )
 
             context(testServerRemoteContext().asContext()) {
                 val exception = assertThrows<IllegalArgumentException> { multiply(10, 10) }
@@ -148,7 +151,8 @@ class ApplicationTests {
 
             @Remote
             context(_: RemoteContext<RemoteConfig>)
-            suspend fun multiply(lhs: Long, rhs: Long): Long = throw MyException("Message", IllegalArgumentException("My cause1"))
+            suspend fun multiply(lhs: Long, rhs: Long): Long =
+                throw MyException("Message", IllegalArgumentException("My cause1"))
 
             context(testServerRemoteContext().asContext()) {
                 val exception = assertThrows<UnregisteredRemoteException> { multiply(10, 10) }
@@ -203,18 +207,20 @@ class ApplicationTests {
     }
 
     @Serializable
-    data class SubA(val x: String): A()
+    data class SubA(val x: String) : A()
 
     @Test
-    @Ignore("Fails because SubA serialized as A. List<T> is not considered polymorphic by the compiler plugin. If I" +
-    "add @Polymorphic annotation to List<T>, it wont work as well, because only T should be polymorphic.")
+    @Ignore(
+        "Fails because SubA serialized as A. List<T> is not considered polymorphic by the compiler plugin. If I" +
+                "add @Polymorphic annotation to List<T>, it wont work as well, because only T should be polymorphic."
+    )
     fun `generic function list argument using polymorphic`() =
         testApplication {
             configureApplication()
 
             @Remote
             context(_: RemoteContext<RemoteConfig>)
-            suspend fun <T: A> string(x: List<T>): String {
+            suspend fun <T : A> string(x: List<T>): String {
                 val z = x.first() is SubA
                 return x.toString()
             }
