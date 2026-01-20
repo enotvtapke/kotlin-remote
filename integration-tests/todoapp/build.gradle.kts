@@ -3,12 +3,15 @@ plugins {
     id("org.jetbrains.kotlin.plugin.remote")
     alias(libs.plugins.atomicfu)
     alias(libs.plugins.serialization)
+    id("org.jetbrains.compose") version "1.7.3"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
 }
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
 
 repositories {
+    google()
     mavenCentral()
 }
 
@@ -43,6 +46,12 @@ dependencies {
     implementation(libs.ktor.serialization.json)
 
     implementation(libs.serialization.core)
+
+    // Compose Multiplatform Desktop
+    implementation(compose.desktop.currentOs)
+    implementation(compose.material3)
+    implementation(compose.materialIconsExtended)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
 }
 
 tasks.test {
@@ -53,5 +62,11 @@ kotlin {
     jvmToolchain(21)
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-parameters")
+    }
+}
+
+compose.desktop {
+    application {
+        mainClass = "todoapp.client.TodoAppKt"
     }
 }
