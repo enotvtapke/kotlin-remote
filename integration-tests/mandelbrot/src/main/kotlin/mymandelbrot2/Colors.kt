@@ -20,11 +20,11 @@ enum class ColorPalette {
         private const val PALETTE_SIZE = 2048
         private val palettes = mutableMapOf<ColorPalette, IntArray>()
 
-        fun getColor(palette: ColorPalette, smoothValue: Double, maxIterations: Int, iterations: Int): Int {
+        fun getColor(palette: ColorPalette, maxIterations: Int, iterations: Int): Int {
             if (iterations >= maxIterations) return 0xFF000000.toInt() // Black for points in the set
 
             val colors = palettes.getOrPut(palette) { generatePalette(palette) }
-            val index = ((smoothValue * 20.0) % PALETTE_SIZE).toInt().coerceIn(0, PALETTE_SIZE - 1)
+            val index = ((iterations * 20) % PALETTE_SIZE).coerceIn(0, PALETTE_SIZE - 1)
             return colors[index]
         }
 

@@ -4,7 +4,6 @@ import kotlinx.coroutines.*
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
-import kotlin.math.*
 
 // ============================================================================
 // Data Classes for Region and Result Representation
@@ -63,8 +62,7 @@ data class MandelbrotResult(
     val region: ComplexRegion,
     val pixelWidth: Int,
     val pixelHeight: Int,
-    val iterations: IntArray,
-    val smoothValues: DoubleArray
+    val iterations: IntArray
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -72,8 +70,7 @@ data class MandelbrotResult(
         return region == other.region &&
                 pixelWidth == other.pixelWidth &&
                 pixelHeight == other.pixelHeight &&
-                iterations.contentEquals(other.iterations) &&
-                smoothValues.contentEquals(other.smoothValues)
+                iterations.contentEquals(other.iterations)
     }
 
     override fun hashCode(): Int {
@@ -81,7 +78,6 @@ data class MandelbrotResult(
         result = 31 * result + pixelWidth
         result = 31 * result + pixelHeight
         result = 31 * result + iterations.contentHashCode()
-        result = 31 * result + smoothValues.contentHashCode()
         return result
     }
 }
@@ -97,15 +93,14 @@ data class MandelbrotResult(
  * Optimizations applied:
  * 1. Cardioid and period-2 bulb checking for early bailout
  * 2. Escape radius squared pre-computation
- * 3. Smooth iteration count for anti-aliased coloring
- * 4. Loop unrolling hints via inline computation
- * 5. Minimal object allocation during iteration
+ * 3. Loop unrolling hints via inline computation
+ * 4. Minimal object allocation during iteration
  *
  * @param region The complex plane region to compute
  * @param pixelWidth Width of the output in pixels
  * @param pixelHeight Height of the output in pixels
  * @param config Configuration for the computation
- * @return mymandelbrot2.MandelbrotResult containing iteration counts and smooth values
+ * @return mymandelbrot2.MandelbrotResult containing iteration counts
  */
 fun computeMandelbrotSingleThreaded(
     region: ComplexRegion,
@@ -114,12 +109,9 @@ fun computeMandelbrotSingleThreaded(
     config: MandelbrotConfig = MandelbrotConfig()
 ): MandelbrotResult {
     val iterations = IntArray(pixelWidth * pixelHeight)
-    val smoothValues = DoubleArray(pixelWidth * pixelHeight)
 
     val maxIter = config.maxIterations
     val escapeRadiusSq = config.escapeRadius * config.escapeRadius
-    val logEscapeRadius = ln(config.escapeRadius)
-    val log2 = ln(2.0)
 
     val xScale = region.width / pixelWidth
     val yScale = region.height / pixelHeight
@@ -140,7 +132,6 @@ fun computeMandelbrotSingleThreaded(
 
             if (inCardioid || inBulb) {
                 iterations[index] = maxIter
-                smoothValues[index] = maxIter.toDouble()
                 continue
             }
 
@@ -161,20 +152,10 @@ fun computeMandelbrotSingleThreaded(
             }
 
             iterations[index] = iter
-
-            // Smooth coloring using continuous potential
-            if (iter < maxIter) {
-                // Normalized iteration count for smooth coloring
-                val logZn = ln(x2 + y2) / 2.0
-                val nu = ln(logZn / logEscapeRadius) / log2
-                smoothValues[index] = iter + 1.0 - nu
-            } else {
-                smoothValues[index] = maxIter.toDouble()
-            }
         }
     }
 
-    return MandelbrotResult(region, pixelWidth, pixelHeight, iterations, smoothValues)
+    return MandelbrotResult(region, pixelWidth, pixelHeight, iterations)
 }
 
 // ============================================================================
@@ -215,7 +196,6 @@ suspend fun computeMandelbrotParallel(
     dispatcher: CoroutineDispatcher = Dispatchers.Default
 ): MandelbrotResult = coroutineScope {
     val iterations = IntArray(pixelWidth * pixelHeight)
-    val smoothValues = DoubleArray(pixelWidth * pixelHeight)
 
     // Create tiles
     val tiles = createTiles(region, pixelWidth, pixelHeight, tilesX, tilesY)
@@ -230,10 +210,10 @@ suspend fun computeMandelbrotParallel(
     // Collect results and merge into final arrays
     deferredResults.forEach { deferred ->
         val tileResult = deferred.await()
-        mergeTileResult(tileResult, iterations, smoothValues, pixelWidth)
+        mergeTileResult(tileResult, iterations, pixelWidth)
     }
 
-    MandelbrotResult(region, pixelWidth, pixelHeight, iterations, smoothValues)
+    MandelbrotResult(region, pixelWidth, pixelHeight, iterations)
 }
 
 /**
@@ -282,8 +262,7 @@ private fun createTiles(
  */
 private data class TileResult(
     val tile: Tile,
-    val iterations: IntArray,
-    val smoothValues: DoubleArray
+    val iterations: IntArray
 )
 
 /**
@@ -296,7 +275,7 @@ private fun computeTile(tile: Tile, config: MandelbrotConfig): TileResult {
         pixelHeight = tile.height,
         config = config
     )
-    return TileResult(tile, result.iterations, result.smoothValues)
+    return TileResult(tile, result.iterations)
 }
 
 /**
@@ -305,7 +284,6 @@ private fun computeTile(tile: Tile, config: MandelbrotConfig): TileResult {
 private fun mergeTileResult(
     tileResult: TileResult,
     iterations: IntArray,
-    smoothValues: DoubleArray,
     totalWidth: Int
 ) {
     val tile = tileResult.tile
@@ -316,7 +294,6 @@ private fun mergeTileResult(
             val globalIndex = (tile.startY + ly) * totalWidth + (tile.startX + lx)
 
             iterations[globalIndex] = tileResult.iterations[localIndex]
-            smoothValues[globalIndex] = tileResult.smoothValues[localIndex]
         }
     }
 }
@@ -339,7 +316,6 @@ fun MandelbrotResult.toImage(
             val index = y * pixelWidth + x
             val color = ColorPalette.getColor(
                 palette,
-                smoothValues[index],
                 maxIterations,
                 iterations[index]
             )
