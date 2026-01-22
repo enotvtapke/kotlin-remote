@@ -7,3 +7,5 @@ includeBuild("..")
 
 include("bank")
 include("todoapp")
+include("raft-lock")
+include("mandelbrot")
