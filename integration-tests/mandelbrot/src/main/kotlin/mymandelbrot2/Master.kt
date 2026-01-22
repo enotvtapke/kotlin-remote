@@ -4,6 +4,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 
 /**
  * Computes the Mandelbrot set by splitting the region into tiles and
@@ -56,7 +59,47 @@ suspend fun computeMandelbrotParallel(
     iterations
 }
 
-private data class Tile(
+/**
+ * Computes the Mandelbrot set by splitting the region into tiles and
+ * emitting each tile result as a Flow as soon as computation completes.
+ * This allows real-time visualization of tiles as they are computed.
+ */
+fun computeMandelbrotStreaming(
+    region: ComplexRegion,
+    pixelWidth: Int,
+    pixelHeight: Int,
+    config: MandelbrotConfig = MandelbrotConfig(),
+    tilesX: Int = Runtime.getRuntime().availableProcessors(),
+    tilesY: Int = Runtime.getRuntime().availableProcessors(),
+    dispatcher: CoroutineDispatcher = Dispatchers.Default
+): Flow<TileResult> = channelFlow {
+    val tiles = createTiles(region, pixelWidth, pixelHeight, tilesX, tilesY)
+    
+    tiles.forEach { tile ->
+        launch(dispatcher) {
+            val result = TileResult(
+                tile,
+                computeMandelbrotSingleThreaded(
+                    region = tile.region,
+                    pixelWidth = tile.width,
+                    pixelHeight = tile.height,
+                    config = config
+                )
+            )
+            send(result)
+        }
+    }
+}
+
+/**
+ * Returns the total number of tiles for the given configuration.
+ */
+fun getTileCount(
+    tilesX: Int = Runtime.getRuntime().availableProcessors(),
+    tilesY: Int = Runtime.getRuntime().availableProcessors()
+): Int = tilesX * tilesY
+
+data class Tile(
     val startX: Int,
     val startY: Int,
     val width: Int,
@@ -64,12 +107,12 @@ private data class Tile(
     val region: ComplexRegion
 )
 
-private data class TileResult(
+data class TileResult(
     val tile: Tile,
     val iterations: IntArray
 )
 
-private fun createTiles(
+fun createTiles(
     region: ComplexRegion,
     pixelWidth: Int,
     pixelHeight: Int,
@@ -107,7 +150,7 @@ private fun createTiles(
     return tiles
 }
 
-private fun mergeTileResult(
+fun mergeTileResult(
     tileResult: TileResult,
     iterations: IntArray,
     totalWidth: Int

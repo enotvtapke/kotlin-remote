@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.serialization.core)
 
     implementation(libs.coroutines.core)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
     
     // Compose Desktop
     implementation(compose.desktop.currentOs)
@@ -59,7 +60,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "mandelbrot.MainKt"
+        mainClass = "mymandelbrot2.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "mandelbrot"
