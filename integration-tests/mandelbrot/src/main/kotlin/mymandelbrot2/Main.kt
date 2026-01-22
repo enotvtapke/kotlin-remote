@@ -303,6 +303,27 @@ private fun mergeTileResult(
 // ============================================================================
 
 /**
+ * Adjusts a complex region to match the aspect ratio of the given pixel dimensions.
+ * Preserves the center and vertical extent, adjusting horizontal extent as needed.
+ */
+fun ComplexRegion.adjustToAspectRatio(pixelWidth: Int, pixelHeight: Int): ComplexRegion {
+    val imageAspect = pixelWidth.toDouble() / pixelHeight
+    val regionAspect = width / height
+
+    return if (imageAspect > regionAspect) {
+        // Image is wider than region - expand horizontally
+        val newWidth = height * imageAspect
+        val centerX = (xMin + xMax) / 2
+        ComplexRegion(centerX - newWidth / 2, centerX + newWidth / 2, yMin, yMax)
+    } else {
+        // Image is taller than region - expand vertically
+        val newHeight = width / imageAspect
+        val centerY = (yMin + yMax) / 2
+        ComplexRegion(xMin, xMax, centerY - newHeight / 2, centerY + newHeight / 2)
+    }
+}
+
+/**
  * Converts a mymandelbrot2.MandelbrotResult to a BufferedImage with the specified color palette.
  */
 fun MandelbrotResult.toImage(
@@ -344,15 +365,18 @@ suspend fun renderMandelbrotToFile(
     palette: ColorPalette = ColorPalette.FIRE,
     outputPath: String = "mandelbrot.png"
 ) {
+    // Adjust region to match image aspect ratio
+    val adjustedRegion = region.adjustToAspectRatio(width, height)
+
     println("Computing Mandelbrot set...")
-    println("Region: $region")
+    println("Region: $adjustedRegion")
     println("Size: ${width}x${height}")
     println("Max iterations: ${config.maxIterations}")
 
     val startTime = System.currentTimeMillis()
 
     val result = computeMandelbrotParallel(
-        region = region,
+        region = adjustedRegion,
         pixelWidth = width,
         pixelHeight = height,
         config = config
