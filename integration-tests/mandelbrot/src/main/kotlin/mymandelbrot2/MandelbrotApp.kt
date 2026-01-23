@@ -1,6 +1,5 @@
 package mymandelbrot2
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,13 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.awt.SwingPanel
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
@@ -27,7 +24,15 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
 import kotlinx.coroutines.withContext
+import java.awt.*
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
+import java.awt.event.MouseWheelEvent
 import java.awt.image.BufferedImage
+import javax.swing.JPanel
+
+// Image resolution presets
+data class ImageResolution(val width: Int, val height: Int, val label: String)
 
 // Color Palette - Cosmic Dark Theme
 private val CosmicDark = Color(0xFF0d0d1a)
@@ -43,9 +48,99 @@ fun launchMandelbrotApp() = application {
     Window(
         onCloseRequest = ::exitApplication,
         title = "Mandelbrot Explorer",
-        state = rememberWindowState(width = 1200.dp, height = 900.dp)
+        state = rememberWindowState(width = 1400.dp, height = 950.dp)
     ) {
         MandelbrotApp()
+    }
+}
+
+private val resolutionPresets = listOf(
+    ImageResolution(800, 600, "800x600"),
+    ImageResolution(1280, 960, "1280x960"),
+    ImageResolution(1600, 1200, "1600x1200"),
+    ImageResolution(1920, 1440, "1920x1440"),
+    ImageResolution(2560, 1920, "2560x1920"),
+    ImageResolution(3840, 2880, "4K"),
+)
+
+/**
+ * Custom JPanel that renders a BufferedImage directly without conversion.
+ * This is much more efficient than converting to Compose ImageBitmap.
+ */
+class MandelbrotPanel : JPanel() {
+    var image: BufferedImage? = null
+        set(value) {
+            field = value
+            repaint()
+        }
+    
+    // Callback for zoom interactions
+    var onZoom: ((relX: Double, relY: Double, zoomFactor: Double) -> Unit)? = null
+    
+    // Stored draw area for coordinate calculations
+    private var drawX = 0
+    private var drawY = 0
+    private var drawWidth = 0
+    private var drawHeight = 0
+    
+    init {
+        background = java.awt.Color(0x1a, 0x1a, 0x2e)
+        
+        // Handle mouse clicks for zooming
+        addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if (e.button == MouseEvent.BUTTON1) {
+                    handleZoom(e.x, e.y, 0.3) // Left click = zoom in 3x
+                } else if (e.button == MouseEvent.BUTTON3) {
+                    handleZoom(e.x, e.y, 2.0) // Right click = zoom out 2x
+                }
+            }
+        })
+        
+        // Handle mouse wheel for zooming
+        addMouseWheelListener { e: MouseWheelEvent ->
+            val zoomFactor = if (e.wheelRotation > 0) 1.5 else 0.5
+            handleZoom(e.x, e.y, zoomFactor)
+        }
+    }
+    
+    private fun handleZoom(mouseX: Int, mouseY: Int, zoomFactor: Double) {
+        if (drawWidth == 0 || drawHeight == 0) return
+        
+        // Convert to relative position (0-1)
+        val relX = ((mouseX - drawX).toDouble() / drawWidth).coerceIn(0.0, 1.0)
+        val relY = ((mouseY - drawY).toDouble() / drawHeight).coerceIn(0.0, 1.0)
+        
+        onZoom?.invoke(relX, relY, zoomFactor)
+    }
+    
+    override fun paintComponent(g: Graphics) {
+        super.paintComponent(g)
+        val g2 = g as Graphics2D
+        
+        // Enable high quality rendering
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+        
+        val img = image ?: return
+        
+        // Calculate scaling to fit while maintaining aspect ratio
+        val panelWidth = width
+        val panelHeight = height
+        val imageAspect = img.width.toDouble() / img.height
+        val panelAspect = panelWidth.toDouble() / panelHeight
+        
+        if (imageAspect > panelAspect) {
+            drawWidth = panelWidth
+            drawHeight = (panelWidth / imageAspect).toInt()
+        } else {
+            drawHeight = panelHeight
+            drawWidth = (panelHeight * imageAspect).toInt()
+        }
+        
+        drawX = (panelWidth - drawWidth) / 2
+        drawY = (panelHeight - drawHeight) / 2
+        
+        g2.drawImage(img, drawX, drawY, drawWidth, drawHeight, null)
     }
 }
 
@@ -54,23 +149,55 @@ fun MandelbrotApp() {
     val scope = rememberCoroutineScope()
 
     // Image dimensions
-    val imageWidth = 1600
-    val imageHeight = 1200
+    var selectedResolution by remember { mutableStateOf(resolutionPresets[2]) } // Default 1600x1200
+    
+    // Current viewing region (can be zoomed/panned independently of presets)
+    var currentRegion by remember { mutableStateOf(ComplexRegion.FULL_SET) }
+    var zoomHistory by remember { mutableStateOf(listOf(ComplexRegion.FULL_SET)) }
 
     // State
-    var imageBitmap by remember { mutableStateOf<ImageBitmap?>(null) }
     var tilesCompleted by remember { mutableIntStateOf(0) }
     var totalTiles by remember { mutableIntStateOf(0) }
     var isComputing by remember { mutableStateOf(false) }
-    var selectedRegion by remember { mutableStateOf(ComplexRegion.FULL_SET) }
     var selectedPalette by remember { mutableStateOf(ColorPalette.OCEAN) }
     var maxIterations by remember { mutableIntStateOf(1000) }
 
-    // Mutable image buffer
-    var imageBuffer by remember { mutableStateOf<BufferedImage?>(null) }
+    // Reference to the Swing panel for direct image updates
+    val mandelbrotPanel = remember { MandelbrotPanel() }
+    
+    // Trigger recomposition when computation state changes
+    var computationTrigger by remember { mutableIntStateOf(0) }
+
+    fun zoomToPoint(relX: Double, relY: Double, zoomFactor: Double) {
+        if (isComputing) return
+        
+        // Map to complex plane coordinates
+        val adjustedRegion = currentRegion.adjustToAspectRatio(selectedResolution.width, selectedResolution.height)
+        val complexX = adjustedRegion.xMin + relX * adjustedRegion.width
+        val complexY = adjustedRegion.yMax - relY * adjustedRegion.height // Y is inverted
+        
+        // Calculate new region centered on click point
+        val newWidth = adjustedRegion.width * zoomFactor
+        val newHeight = adjustedRegion.height * zoomFactor
+        
+        val newRegion = ComplexRegion(
+            xMin = complexX - newWidth / 2,
+            xMax = complexX + newWidth / 2,
+            yMin = complexY - newHeight / 2,
+            yMax = complexY + newHeight / 2
+        )
+        
+        // Save history and update region
+        zoomHistory = zoomHistory + currentRegion
+        currentRegion = newRegion
+        computationTrigger++
+    }
 
     fun startComputation() {
         if (isComputing) return
+        
+        val imageWidth = selectedResolution.width
+        val imageHeight = selectedResolution.height
 
         scope.launch(Dispatchers.Default) {
             withContext(Dispatchers.Swing) {
@@ -85,16 +212,17 @@ fun MandelbrotApp() {
                 totalTiles = tilesX * tilesY
             }
 
-            val adjustedRegion = selectedRegion.adjustToAspectRatio(imageWidth, imageHeight)
+            val adjustedRegion = currentRegion.adjustToAspectRatio(imageWidth, imageHeight)
             val config = MandelbrotConfig(maxIterations = maxIterations, escapeRadius = 256.0)
 
             // Create empty image buffer
             val buffer = createEmptyImage(imageWidth, imageHeight)
             
             withContext(Dispatchers.Swing) {
-                imageBuffer = buffer
-                imageBitmap = buffer.toComposeImageBitmap()
+                mandelbrotPanel.image = buffer
             }
+
+            var localTilesCompleted = 0
 
             // Stream tiles and update UI as each completes
             computeMandelbrotStreaming(
@@ -105,25 +233,71 @@ fun MandelbrotApp() {
                 tilesX = tilesX,
                 tilesY = tilesY
             ).flowOn(Dispatchers.Default).collect { tileResult ->
-                // Apply tile to buffer (can be done off main thread)
+                // Apply tile directly to buffer
                 applyTileToImage(buffer, tileResult, selectedPalette, maxIterations)
+                localTilesCompleted++
                 
-                // Update UI on Swing EDT
+                // Just repaint the panel - no expensive conversion!
                 withContext(Dispatchers.Swing) {
-                    tilesCompleted++
-                    // Convert to ImageBitmap for display
-                    imageBitmap = buffer.toComposeImageBitmap()
+                    tilesCompleted = localTilesCompleted
+                    mandelbrotPanel.repaint()
                 }
             }
 
             withContext(Dispatchers.Swing) {
+                tilesCompleted = localTilesCompleted
+                mandelbrotPanel.repaint()
                 isComputing = false
             }
         }
     }
-
-    // Start computation on first load
+    
+    fun zoomOut() {
+        if (isComputing) return
+        
+        // Zoom out by 2x from center
+        val adjustedRegion = currentRegion.adjustToAspectRatio(selectedResolution.width, selectedResolution.height)
+        val centerX = (adjustedRegion.xMin + adjustedRegion.xMax) / 2
+        val centerY = (adjustedRegion.yMin + adjustedRegion.yMax) / 2
+        val newWidth = adjustedRegion.width * 2
+        val newHeight = adjustedRegion.height * 2
+        
+        val newRegion = ComplexRegion(
+            xMin = centerX - newWidth / 2,
+            xMax = centerX + newWidth / 2,
+            yMin = centerY - newHeight / 2,
+            yMax = centerY + newHeight / 2
+        )
+        
+        zoomHistory = zoomHistory + currentRegion
+        currentRegion = newRegion
+        computationTrigger++
+    }
+    
+    fun goBack() {
+        if (isComputing || zoomHistory.isEmpty()) return
+        
+        currentRegion = zoomHistory.last()
+        zoomHistory = zoomHistory.dropLast(1)
+        computationTrigger++
+    }
+    
+    fun resetToPreset(preset: ComplexRegion) {
+        if (isComputing) return
+        currentRegion = preset
+        zoomHistory = listOf(preset)
+        computationTrigger++
+    }
+    
+    // Set up zoom callback
     LaunchedEffect(Unit) {
+        mandelbrotPanel.onZoom = { relX, relY, zoomFactor ->
+            zoomToPoint(relX, relY, zoomFactor)
+        }
+    }
+
+    // Start/restart computation when trigger changes
+    LaunchedEffect(computationTrigger) {
         startComputation()
     }
 
@@ -142,44 +316,17 @@ fun MandelbrotApp() {
                     .fillMaxHeight()
                     .padding(16.dp)
             ) {
-                // Image display
+                // Image display using SwingPanel for direct BufferedImage rendering
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(12.dp))
                         .border(2.dp, CosmicLight, RoundedCornerShape(12.dp))
-                        .background(CosmicMid),
-                    contentAlignment = Alignment.Center
                 ) {
-                    imageBitmap?.let { bitmap ->
-                        Canvas(
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            val canvasWidth = size.width
-                            val canvasHeight = size.height
-
-                            // Calculate scaling to fit while maintaining aspect ratio
-                            val imageAspect = bitmap.width.toFloat() / bitmap.height.toFloat()
-                            val canvasAspect = canvasWidth / canvasHeight
-
-                            val (drawWidth, drawHeight) = if (imageAspect > canvasAspect) {
-                                canvasWidth to canvasWidth / imageAspect
-                            } else {
-                                canvasHeight * imageAspect to canvasHeight
-                            }
-
-                            val offsetX = (canvasWidth - drawWidth) / 2
-                            val offsetY = (canvasHeight - drawHeight) / 2
-
-                            drawImage(
-                                image = bitmap,
-                                dstSize = IntSize(drawWidth.toInt(), drawHeight.toInt()),
-                                dstOffset = androidx.compose.ui.geometry.Offset(offsetX, offsetY).let {
-                                    androidx.compose.ui.unit.IntOffset(it.x.toInt(), it.y.toInt())
-                                }
-                            )
-                        }
-                    }
+                    SwingPanel(
+                        factory = { mandelbrotPanel },
+                        modifier = Modifier.fillMaxSize()
+                    )
 
                     // Progress overlay
                     if (isComputing && totalTiles > 0) {
@@ -213,14 +360,14 @@ fun MandelbrotApp() {
                 }
             }
 
-            // Control panel
+            // Control panel with scroll
             Column(
                 modifier = Modifier
-                    .width(280.dp)
+                    .width(300.dp)
                     .fillMaxHeight()
                     .background(CosmicMid)
                     .padding(20.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Header
                 Text(
@@ -233,11 +380,114 @@ fun MandelbrotApp() {
                 )
 
                 Divider(color = CosmicLight, thickness = 1.dp)
-
-                // Region selector
+                
+                // Zoom controls
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = "REGION",
+                        text = "ZOOM",
+                        color = TextSecondary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = FontFamily.Monospace,
+                        letterSpacing = 2.sp
+                    )
+                    
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        // Back button
+                        OutlinedButton(
+                            onClick = { goBack() },
+                            enabled = !isComputing && zoomHistory.size > 1,
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = NeonPink,
+                                disabledContentColor = TextSecondary
+                            ),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp, 
+                                if (!isComputing && zoomHistory.size > 1) NeonPink else CosmicLight
+                            ),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Text("BACK", fontFamily = FontFamily.Monospace, fontSize = 12.sp)
+                        }
+                        
+                        // Zoom out button
+                        OutlinedButton(
+                            onClick = { zoomOut() },
+                            enabled = !isComputing,
+                            modifier = Modifier.weight(1f),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = NeonOrange,
+                                disabledContentColor = TextSecondary
+                            ),
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp, 
+                                if (!isComputing) NeonOrange else CosmicLight
+                            ),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Text("OUT", fontFamily = FontFamily.Monospace, fontSize = 12.sp)
+                        }
+                    }
+                    
+                    Text(
+                        text = "Click image to zoom in, scroll to zoom",
+                        color = TextSecondary.copy(alpha = 0.7f),
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                }
+
+                Divider(color = CosmicLight, thickness = 1.dp)
+                
+                // Resolution selector
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "RESOLUTION",
+                        color = TextSecondary,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                        fontFamily = FontFamily.Monospace,
+                        letterSpacing = 2.sp
+                    )
+                    
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        resolutionPresets.take(3).forEach { resolution ->
+                            ResolutionButton(
+                                resolution = resolution,
+                                isSelected = selectedResolution == resolution,
+                                onClick = { selectedResolution = resolution },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        resolutionPresets.drop(3).forEach { resolution ->
+                            ResolutionButton(
+                                resolution = resolution,
+                                isSelected = selectedResolution == resolution,
+                                onClick = { selectedResolution = resolution },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
+                }
+
+                Divider(color = CosmicLight, thickness = 1.dp)
+
+                // Region presets
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        text = "PRESETS",
                         color = TextSecondary,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Medium,
@@ -257,8 +507,8 @@ fun MandelbrotApp() {
                     regions.forEach { (name, region) ->
                         RegionButton(
                             name = name,
-                            isSelected = selectedRegion == region,
-                            onClick = { selectedRegion = region }
+                            isSelected = currentRegion == region,
+                            onClick = { resetToPreset(region) }
                         )
                     }
                 }
@@ -277,7 +527,7 @@ fun MandelbrotApp() {
                     )
 
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         ColorPalette.entries.forEach { palette ->
@@ -294,7 +544,7 @@ fun MandelbrotApp() {
                 Divider(color = CosmicLight, thickness = 1.dp)
 
                 // Iterations slider
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(
                         text = "MAX ITERATIONS: $maxIterations",
                         color = TextSecondary,
@@ -325,7 +575,7 @@ fun MandelbrotApp() {
                     enabled = !isComputing,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp),
+                        .height(52.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = if (isComputing) CosmicLight else NeonCyan,
                         contentColor = CosmicDark,
@@ -336,7 +586,7 @@ fun MandelbrotApp() {
                 ) {
                     Text(
                         text = if (isComputing) "RENDERING..." else "RENDER",
-                        fontSize = 16.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily.Monospace,
                         letterSpacing = 2.sp
@@ -403,5 +653,34 @@ private fun PaletteButton(
             )
             .clickable(onClick = onClick)
     )
+}
+
+@Composable
+private fun ResolutionButton(
+    resolution: ImageResolution,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(4.dp))
+            .background(if (isSelected) NeonCyan.copy(alpha = 0.2f) else Color.Transparent)
+            .border(
+                width = 1.dp,
+                color = if (isSelected) NeonCyan else CosmicLight,
+                shape = RoundedCornerShape(4.dp)
+            )
+            .clickable(onClick = onClick)
+            .padding(horizontal = 6.dp, vertical = 6.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = resolution.label,
+            color = if (isSelected) NeonCyan else TextSecondary,
+            fontSize = 10.sp,
+            fontFamily = FontFamily.Monospace
+        )
+    }
 }
 
