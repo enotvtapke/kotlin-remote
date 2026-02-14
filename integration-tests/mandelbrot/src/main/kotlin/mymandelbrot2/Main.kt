@@ -120,6 +120,7 @@ suspend fun renderMandelbrotToFile(
 }
 
 fun main() {
+    remoteEmbeddedServer("http://localhost:8000").start(wait = false)
     // Launch the Compose Desktop application for real-time visualization
     launchMandelbrotApp()
 }

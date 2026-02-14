@@ -1,5 +1,6 @@
 package manualFunctionCalling
 
+import io.ktor.http.parameters
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
@@ -27,10 +28,8 @@ fun manualCallableMap(): Map<String, RemoteCallable> {
     callableMap["multiply"] = RemoteCallable(
         name = "multiply",
         returnType = RemoteType(typeOf<RemoteResponse<Long>>()),
-        invokator = RemoteInvokator { args ->
-            return@RemoteInvokator context(LocalContext) {
-                multiply(args[0] as Long, args[1] as Long)
-            }
+        invokator = {
+            multiply(it[0] as Long, it[1] as Long)
         },
         parameters = arrayOf(
             RemoteParameter("lhs", RemoteType(typeOf<Long>()), false),

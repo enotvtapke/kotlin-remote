@@ -1,5 +1,6 @@
 package kotlinx.remote.classes
 
+// TODO Add equals and hash code that uses id and url in generated children of Stub interface
 interface Stub {
     val id: Long
     val url: String

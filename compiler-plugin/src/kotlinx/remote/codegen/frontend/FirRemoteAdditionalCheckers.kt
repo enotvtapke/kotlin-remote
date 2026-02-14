@@ -5,7 +5,7 @@
 package kotlinx.remote.codegen.frontend
 
 import kotlinx.remote.codegen.common.RemoteClassId.flow
-import kotlinx.remote.codegen.common.RemoteClassId.remoteWrapper
+import kotlinx.remote.codegen.common.RemoteClassId.remoteContext
 import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.NON_SUSPENDING_REMOTE_FUNCTION
 import kotlinx.remote.codegen.frontend.diagnostics.FirRemoteDiagnostics.WRONG_REMOTE_FUNCTION_CONTEXT
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -46,10 +46,10 @@ class FirRemoteFunctionContextChecker : FirFunctionChecker(MppCheckerKind.Common
         if (!context.session.predicateBasedProvider.matches(FirRemotePredicates.remote, declaration)) {
             return
         }
-        val remoteWrapperType = remoteWrapper.constructClassLikeType(arrayOf())
+        val remoteContextType = remoteContext.constructClassLikeType(arrayOf())
         val remoteContextParameters = declaration.contextParameters.filter {
             it.symbol.resolvedReturnTypeRef.coneType.withArguments(arrayOf()).equalTypes(
-                remoteWrapperType,
+                remoteContextType,
                 context.session
             )
         }
@@ -57,7 +57,7 @@ class FirRemoteFunctionContextChecker : FirFunctionChecker(MppCheckerKind.Common
             reporter.reportOn(
                 source = declaration.source,
                 factory = WRONG_REMOTE_FUNCTION_CONTEXT,
-                a = remoteWrapperType,
+                a = remoteContextType,
             )
         }
     }

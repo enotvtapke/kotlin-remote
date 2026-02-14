@@ -12,3 +12,5 @@ object LocalContext: RemoteContext<Nothing>
 class ConfiguredContext<T: RemoteConfig>(val config: T): RemoteContext<T>
 
 fun <T: RemoteConfig> T.asContext() = ConfiguredContext(this)
+
+fun <T: RemoteConfig, R> T.run(block: context(RemoteContext<T>) () -> R): R = context(ConfiguredContext(this)) { block() }

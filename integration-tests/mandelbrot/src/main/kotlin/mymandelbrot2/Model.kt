@@ -1,5 +1,8 @@
 package mymandelbrot2
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class ComplexRegion(
     val xMin: Double,
     val xMax: Double,
@@ -33,6 +36,7 @@ data class ComplexRegion(
 /**
  * Configuration for Mandelbrot computation.
  */
+@Serializable
 data class MandelbrotConfig(
     val maxIterations: Int = 1000,
     val escapeRadius: Double = 256.0,

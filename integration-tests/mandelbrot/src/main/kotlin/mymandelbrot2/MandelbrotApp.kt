@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
@@ -223,16 +224,15 @@ fun MandelbrotApp() {
             }
 
             var localTilesCompleted = 0
-
             // Stream tiles and update UI as each completes
-            computeMandelbrotStreaming(
+            Master.computeMandelbrotStreaming(
                 region = adjustedRegion,
                 pixelWidth = imageWidth,
                 pixelHeight = imageHeight,
                 config = config,
                 tilesX = tilesX,
                 tilesY = tilesY
-            ).flowOn(Dispatchers.Default).collect { tileResult ->
+            ).collect { tileResult ->
                 // Apply tile directly to buffer
                 applyTileToImage(buffer, tileResult, selectedPalette, maxIterations)
                 localTilesCompleted++

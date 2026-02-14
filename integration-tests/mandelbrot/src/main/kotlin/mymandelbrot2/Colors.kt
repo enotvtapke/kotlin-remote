@@ -85,3 +85,94 @@ enum class ColorPalette {
         }
     }
 }
+
+fun main() {
+//    val p = Solution().deleteNode(N(10, N(5, N(4, N(3), N(-2)), N(2, null, N(1))), N(-3, null, N(11))), 4)
+    val p = Solution().deleteNode(N(10, N(5, N(2), N(7)), N(20)), 5)
+//    val root = N(10, N(5, N(2, null, N(3)), N(7)), N(20))
+//    val p = Solution().removeMin(root)
+    println(p)
+//    println(root)
+}
+
+typealias N = TreeNode
+
+data class TreeNode(var `val`: Int, var left: TreeNode? = null, var right: TreeNode? = null) {
+    override fun equals(other: Any?): Boolean {
+        return this.`val` == (other as? TreeNode)?.`val`
+    }
+}
+
+class Solution {
+
+    fun TreeNode.nullify() = TreeNode(`val`)
+
+    fun removeMin1(root: TreeNode): Pair<TreeNode, TreeNode?> {
+        return when {
+            root.left == null -> root.nullify() to root.right
+            root.left!!.left == null -> {
+                val left = root.left!!
+                root.left = left.right
+                left.nullify() to root
+            }
+            else -> removeMin1(root.left!!).first to root
+        }
+    }
+
+    fun removeRoot1(root: TreeNode): TreeNode? {
+        return when {
+            root.left == null -> root.right
+            root.right == null -> root.left
+            else -> {
+                val (removed, newRoot) = removeMin1(root.right!!)
+                removed.left = root.left
+                removed.right = newRoot
+                removed
+            }
+        }
+    }
+
+    fun deleteNode(root: TreeNode?, key: Int): TreeNode? {
+        if (root == null) return null
+        if (root.left?.`val` == key) {
+            root.left = removeRoot1(root.left!!)
+//            if (root.left!!.right == null) {
+//                root.left = root.left!!.left
+//            } else {
+//                val node = removeMin(root.left!!.right!!)
+//                if (node.`val` == root.left!!.right!!.`val`) {
+//                    node.right = null
+//                } else {
+//                    node.right = root.left?.right
+//                }
+//                node.left = root.left?.left
+//                root.left = node
+//            }
+        }
+        if (root.right?.`val` == key) {
+            root.right = removeRoot1(root.right!!)
+
+//            if (root.right!!.right == null) {
+//                root.right = root.right!!.left
+//            } else {
+//                val node = removeMin(root.right!!.right!!)
+//                if (node.`val` == root.right!!.right!!.`val`) {
+//                    node.right = null
+//                } else {
+//                    node.right = root.right?.right
+//                }
+//                node.left = root.right?.left
+//                node.right = root.right?.right
+//                root.right = node
+//            }
+        }
+        if (root.`val` > key) {
+            deleteNode(root.left, key)
+        } else if (root.`val` < key) {
+            deleteNode(root.right, key)
+        } else {
+            return removeRoot1(root)
+        }
+        return root
+    }
+}

@@ -20,6 +20,7 @@ class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInst
     )
 
     fun addInstanceWithLease(value: Any, clientId: String? = null): Long {
+        // TODO Return existing instance if value is already in the pool
         val id = pool.addInstance(value)
         createLease(id, clientId)
         return id
