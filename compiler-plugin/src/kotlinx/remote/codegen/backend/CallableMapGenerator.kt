@@ -46,6 +46,8 @@ class CallableMapGenerator(private val ctx: RemoteIrContext, private val remoteF
                 ctx.irBuiltIns.stringType,
                 ctx.remoteCallable.defaultType,
                 remoteFunctions.map {
+                    if (it.visibility in listOf(DescriptorVisibilities.PRIVATE, DescriptorVisibilities.PROTECTED))
+                        it.visibility = DescriptorVisibilities.INTERNAL
                     IrConstImpl.string(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,

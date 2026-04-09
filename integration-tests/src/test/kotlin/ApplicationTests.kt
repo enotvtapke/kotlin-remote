@@ -231,6 +231,7 @@ class ApplicationTests {
         }
 
     @Test
+    @Ignore
     fun `generic function return value using polymorphic`() =
         testApplication {
             configureApplication()

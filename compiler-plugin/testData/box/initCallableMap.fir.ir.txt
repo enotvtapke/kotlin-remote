@@ -18,7 +18,7 @@ FILE fqName:box fileName:/initCallableMap.kt
                           TYPE_ARG A: kotlin.String
                           TYPE_ARG B: kotlinx.remote.RemoteCallable
                           ARG <this>: CONST String type=kotlin.String value="box.multiply"
-                          ARG that: CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, returnType: kotlinx.remote.RemoteType, invokator: kotlinx.remote.RemoteInvokator, parameters: kotlin.Array<out kotlinx.remote.RemoteParameter>) declared in kotlinx.remote.RemoteCallable' type=kotlinx.remote.RemoteCallable origin=null
+                          ARG that: CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, returnType: kotlinx.remote.RemoteType, invokator: kotlinx.remote.RemoteInvokator, parameters: kotlin.Array<kotlinx.remote.RemoteParameter>) declared in kotlinx.remote.RemoteCallable' type=kotlinx.remote.RemoteCallable origin=null
                             ARG name: CONST String type=kotlin.String value="multiply"
                             ARG returnType: CONSTRUCTOR_CALL 'public constructor <init> (kType: kotlin.reflect.KType, isPolymorphic: kotlin.Boolean) declared in kotlinx.remote.RemoteType' type=kotlinx.remote.RemoteType origin=null
                               ARG kType: CALL 'public final fun typeOf <T> (): kotlin.reflect.KType declared in kotlin.reflect' type=kotlin.reflect.KType origin=null
@@ -111,9 +111,9 @@ FILE fqName:box fileName:/initCallableMap.kt
                 ARG <this>: CALL 'public final fun <get-config> (): T of kotlinx.remote.ConfiguredContext declared in kotlinx.remote.ConfiguredContext' type=T of kotlinx.remote.ConfiguredContext origin=null
                   ARG <this>: TYPE_OP type=kotlinx.remote.ConfiguredContext<T of kotlinx.remote.ConfiguredContext> origin=CAST typeOperand=kotlinx.remote.ConfiguredContext<T of kotlinx.remote.ConfiguredContext>
                     GET_VAR 'ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> declared in box.multiply' type=kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> origin=null
-              ARG call: CONSTRUCTOR_CALL 'public constructor <init> (callableName: kotlin.String, parameters: kotlin.Array<kotlin.Any?>) declared in kotlinx.remote.RemoteCall' type=kotlinx.remote.RemoteCall origin=null
+              ARG call: CONSTRUCTOR_CALL 'public constructor <init> (callableName: kotlin.String, arguments: kotlin.Array<kotlin.Any?>) declared in kotlinx.remote.RemoteCall' type=kotlinx.remote.RemoteCall origin=null
                 ARG callableName: CONST String type=kotlin.String value="box.multiply"
-                ARG parameters: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOf> origin=null
+                ARG arguments: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOf> origin=null
                   TYPE_ARG T: kotlin.Any?
                   ARG elements: VARARG type=kotlin.Array<kotlin.Any?> varargElementType=kotlin.Any?
                     GET_VAR 'lhs: kotlin.Long declared in box.multiply' type=kotlin.Long origin=null

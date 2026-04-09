@@ -76,6 +76,12 @@ public class JvmBoxTestGenerated extends AbstractJvmBoxTest {
   }
 
   @Test
+  @TestMetadata("interface.kt")
+  public void testInterface() {
+    runTest("compiler-plugin/testData/box/interface.kt");
+  }
+
+  @Test
   @TestMetadata("localCall.kt")
   public void testLocalCall() {
     runTest("compiler-plugin/testData/box/localCall.kt");
@@ -85,6 +91,12 @@ public class JvmBoxTestGenerated extends AbstractJvmBoxTest {
   @TestMetadata("object.kt")
   public void testObject() {
     runTest("compiler-plugin/testData/box/object.kt");
+  }
+
+  @Test
+  @TestMetadata("privateRemoteFunction.kt")
+  public void testPrivateRemoteFunction() {
+    runTest("compiler-plugin/testData/box/privateRemoteFunction.kt");
   }
 
   @Test

@@ -1,0 +1,38 @@
+FILE: interface.kt
+    package box
+
+    public abstract interface Calculator : R|kotlin/Any| {
+        context(ctx: R|kotlinx/remote/RemoteContext<kotlinx/remote/RemoteConfig>|)
+        public abstract suspend fun multiply(x: R|kotlin/Long|): R|kotlin/Long|
+
+    }
+    public final class CalculatorStub : R|box/Calculator| {
+        public constructor(): R|box/CalculatorStub| {
+            super<R|kotlin/Any|>()
+        }
+
+        context(ctx: R|kotlinx/remote/RemoteContext<kotlinx/remote/RemoteConfig>|)
+        @R|kotlinx/remote/Remote|() public open override suspend fun multiply(x: R|kotlin/Long|): R|kotlin/Long| {
+            ^multiply R|<local>/x|
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|kotlinx/coroutines/runBlocking|<R|kotlin/String|>(<L> = runBlocking@fun R|kotlinx/coroutines/CoroutineScope|.<anonymous>(): R|kotlin/String| <inline=NoInline, kind=EXACTLY_ONCE>  {
+            ^ R|kotlin/context|<R|kotlinx/remote/ConfiguredContext<kotlinx/remote/codegen/test/ServerConfig>|, R|kotlin/String|>(Q|kotlinx/remote/codegen/test/ServerConfig|.R|kotlinx/remote/asContext|<R|kotlinx/remote/codegen/test/ServerConfig|>(), <L> = context(<unused var>: R|kotlinx/remote/ConfiguredContext<kotlinx/remote/codegen/test/ServerConfig>|) context@fun <anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+                lval c: R|box/CalculatorStub| = R|box/CalculatorStub.CalculatorStub|()
+                lval test1: R|kotlin/Long| = context(R|<local>/<unused var>|) R|<local>/c|.R|box/CalculatorStub.multiply|(Long(5))
+                ^ when () {
+                    ==(R|<local>/test1|, Long(42)) ->  {
+                        String(OK)
+                    }
+                    else ->  {
+                        <strcat>(String(Fail: test1=), R|<local>/test1|)
+                    }
+                }
+
+            }
+            )
+        }
+        )
+    }
