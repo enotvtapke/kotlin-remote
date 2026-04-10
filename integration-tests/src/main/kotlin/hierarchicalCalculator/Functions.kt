@@ -9,7 +9,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
-import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.serialization.json.Json
 import kotlin.math.PI
 import kotlin.math.abs

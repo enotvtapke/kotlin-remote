@@ -10,7 +10,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.serialization.json.Json
 
 open class B: RemoteConfig {

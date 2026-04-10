@@ -11,7 +11,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.asContext
 import kotlinx.serialization.json.Json
 import remoteEmbeddedServer

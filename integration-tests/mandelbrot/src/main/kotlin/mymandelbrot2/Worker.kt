@@ -31,7 +31,7 @@ import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseManager
-import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.KRemoteConfigBuilder

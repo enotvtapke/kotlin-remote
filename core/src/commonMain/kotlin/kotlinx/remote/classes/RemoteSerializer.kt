@@ -1,12 +1,7 @@
 package kotlinx.remote.classes
 
-import kotlinx.remote.CallableMap
-import kotlinx.remote.RemoteCall
 import kotlinx.remote.RemoteIntrinsic
 import kotlinx.remote.classes.lease.LeaseManager
-import kotlinx.remote.ktor.KRemoteConfigBuilder
-import kotlinx.remote.serialization.RemoteCallableSerializer
-import kotlinx.remote.serialization.throwableSerializers
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -14,7 +9,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.plus
 import kotlin.reflect.KClass
 
 class RemoteSerializer<T : Any>(
@@ -58,38 +52,6 @@ class RemoteSerializer<T : Any>(
     @Serializable
     @SerialName("Stub")
     private class StubSurrogate(val id: Long, val url: String)
-}
-
-fun remoteSerializersModule(block: KRemoteConfigBuilder.() -> Unit): SerializersModule {
-    val config = KRemoteConfigBuilder().apply(block).build()
-    return remoteSerializersModule(
-        callableMap = config.callableMap,
-        remoteClasses = config.classes?.remoteClasses,
-        leaseManager = config.classes?.server?.leaseManager,
-        nodeUrl = config.classes?.server?.nodeUrl,
-        onStubDeserialization = config.classes?.client?.onStubDeserialization,
-        serializersModule = config.serializersModule ?: SerializersModule { }
-    )
-}
-
-fun remoteSerializersModule(
-    callableMap: CallableMap,
-    remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>? = null,
-    leaseManager: LeaseManager? = null,
-    nodeUrl: String? = null,
-    onStubDeserialization: ((Stub) -> Unit)? = null,
-    serializersModule: SerializersModule = SerializersModule { }
-): SerializersModule {
-    val classSerializersModule = remoteClassSerializersModule(remoteClasses ?: listOf(), leaseManager, nodeUrl, onStubDeserialization)
-    return SerializersModule {
-        include(classSerializersModule)
-        include(serializersModule)
-        include(throwableSerializers())
-        contextual(
-            RemoteCall::class,
-            RemoteCallableSerializer(callableMap, serializersModule + classSerializersModule)
-        )
-    }
 }
 
 fun remoteClassSerializersModule(

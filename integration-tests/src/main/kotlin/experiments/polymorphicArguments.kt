@@ -16,7 +16,7 @@ import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.asContext
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.remoteClient
 import kotlinx.serialization.Polymorphic

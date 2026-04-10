@@ -9,7 +9,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.remote.RemoteClient
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.remoteClient
 import kotlinx.remote.serialization.throwableSerializer

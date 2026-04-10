@@ -6,7 +6,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.remote.classes.remoteSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 
