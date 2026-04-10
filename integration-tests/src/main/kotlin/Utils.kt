@@ -23,7 +23,8 @@ import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.remote.classes.network.leaseClient
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.simpleRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
@@ -31,6 +32,7 @@ import kotlinx.remote.ktor.remote
 import kotlinx.remote.remoteClient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
 
 private val leaseRenewalClients = mutableMapOf<String, LeaseRenewalClient>()
@@ -74,13 +76,8 @@ data object ServerConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModule {
-                    callableMap = genCallableMap()
-                    classes {
-                        remoteClasses = genRemoteClassList()
-                        client { }
-                    }
-                }
+                serializersModule = remoteSerializersModuleShort(genCallableMap()) +
+                        simpleRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {

@@ -11,11 +11,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.simpleRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.asContext
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.plus
 import remoteEmbeddedServer
-import startLeaseOnStubDeserialization
 
 data class User(val name: String, val remoteContext: RemoteContext<RemoteConfig>)
 
@@ -102,11 +103,8 @@ class ClientConfig(private val url: String) : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModule(
-                    remoteClasses = genRemoteClassList(),
-                    callableMap = callableMap,
-                    onStubDeserialization = startLeaseOnStubDeserialization(),
-                )
+                serializersModule = remoteSerializersModuleShort(callableMap) +
+                        simpleRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {
@@ -124,13 +122,8 @@ data object HostConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModule {
-                    callableMap = genCallableMap()
-                    classes {
-                        remoteClasses = genRemoteClassList()
-                        client { }
-                    }
-                }
+                serializersModule = remoteSerializersModuleShort(genCallableMap()) +
+                        simpleRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {

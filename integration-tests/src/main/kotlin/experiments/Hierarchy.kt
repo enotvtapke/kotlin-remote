@@ -10,8 +10,10 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.simpleRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.plus
 
 open class B: RemoteConfig {
     override val client: RemoteClient = HttpClient {
@@ -22,13 +24,8 @@ open class B: RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModule {
-                    callableMap = genCallableMap()
-                    classes {
-                        remoteClasses = genRemoteClassList()
-                        client { }
-                    }
-                }
+                serializersModule = remoteSerializersModuleShort(genCallableMap()) +
+                        simpleRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {

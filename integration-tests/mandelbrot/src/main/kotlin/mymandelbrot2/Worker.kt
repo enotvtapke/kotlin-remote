@@ -31,7 +31,8 @@ import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseManager
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.simpleRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.KRemoteConfigBuilder
@@ -40,6 +41,7 @@ import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
 import kotlinx.remote.remoteClient
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.plus
 
 fun main() = runBlocking {
     val nodeUrl = "http://localhost:8001"
@@ -164,28 +166,26 @@ fun computeMandelbrotSingleThreaded(
     return iterations
 }
 
-fun remoteClient(url: String, block: KRemoteClassesServerConfigBuilder.() -> Unit = {}): RemoteClient = HttpClient {
-    defaultRequest {
-        url(url)
-        accept(ContentType.Application.Json)
-        contentType(ContentType.Application.Json)
-    }
-    install(ContentNegotiation) {
-        json(Json {
-            serializersModule = remoteSerializersModule {
-                callableMap = genCallableMap()
-                classes {
-                    remoteClasses = genRemoteClassList()
-                    client { }
-                    server { block() }
-                }
-            }
-        })
-    }
-    install(Logging) {
-        level = LogLevel.BODY
-    }
-}.remoteClient(genCallableMap(), "/call")
+fun remoteClient(url: String, block: KRemoteClassesServerConfigBuilder.() -> Unit = {}): RemoteClient {
+    return HttpClient {
+        defaultRequest {
+            url(url)
+            accept(ContentType.Application.Json)
+            contentType(ContentType.Application.Json)
+        }
+        install(ContentNegotiation) {
+            json(Json {
+                serializersModule = remoteSerializersModuleShort(genCallableMap()) + simpleRemoteClassSerializersModule(
+                    remoteClasses = genRemoteClassList(),
+                    nodeUrl = KRemoteClassesServerConfigBuilder().apply(block).nodeUrl,
+                )
+            })
+        }
+        install(Logging) {
+            level = LogLevel.BODY
+        }
+    }.remoteClient(genCallableMap(), "/call")
+}
 
 fun remoteEmbeddedServer(
     nodeUrl: String,

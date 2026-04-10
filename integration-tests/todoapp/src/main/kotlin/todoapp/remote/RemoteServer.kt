@@ -12,13 +12,14 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.simpleRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
-import kotlinx.remote.ktor.KRemoteConfigBuilder
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.plus
 
 fun remoteEmbeddedServer(
     nodeUrl: String,
@@ -32,7 +33,14 @@ fun remoteEmbeddedServer(
                 call.respond(HttpStatusCode.InternalServerError, "Internal Server Error")
             }
         }
-        val config: KRemoteConfigBuilder.() -> Unit = {
+        val module = remoteSerializersModuleShort(genCallableMap()) + simpleRemoteClassSerializersModule(
+            remoteClasses = genRemoteClassList(),
+            nodeUrl = nodeUrl,
+        ).addAdditionalSerializers()
+        install(ContentNegotiation) {
+            json(Json { serializersModule = module })
+        }
+        install(KRemote) {
             callableMap = genCallableMap()
             classes {
                 remoteClasses = genRemoteClassList()
@@ -42,11 +50,6 @@ fun remoteEmbeddedServer(
                 }
             }
         }
-        val module = remoteSerializersModule(config).addAdditionalSerializers()
-        install(ContentNegotiation) {
-            json(Json { serializersModule = module })
-        }
-        install(KRemote, config)
         routing {
             remote("/call")
             leaseRoutes()

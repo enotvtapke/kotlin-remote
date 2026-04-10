@@ -6,9 +6,11 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.remoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.plus
 
 val KRemoteServerPluginAttributesKey = AttributeKey<KRemoteConfig>("KRemoteServerPluginAttributesKey")
 
@@ -21,13 +23,13 @@ val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
     application.pluginOrNull(ContentNegotiation) ?: run {
         application.install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModule(
+                serializersModule = (config.serializersModule ?: SerializersModule { }) + remoteSerializersModuleShort(
                     callableMap = config.callableMap,
-                    remoteClasses = config.classes?.remoteClasses,
+                ) + remoteClassSerializersModule(
+                    remoteClasses = config.classes?.remoteClasses ?: listOf(),
                     leaseManager = config.classes?.server?.leaseManager,
                     nodeUrl = config.classes?.server?.nodeUrl,
                     onStubDeserialization = config.classes?.client?.onStubDeserialization,
-                    serializersModule = config.serializersModule ?: SerializersModule { }
                 )
             })
         }

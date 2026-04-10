@@ -9,7 +9,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.asContext
 import kotlinx.serialization.json.Json
 
@@ -27,9 +27,7 @@ data object ManualServerRemoteConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModule {
-                    callableMap = CallableMap(manualCallableMap())
-                }
+                serializersModule = remoteSerializersModuleShort(CallableMap(manualCallableMap()))
             })
         }
         install(Logging) {

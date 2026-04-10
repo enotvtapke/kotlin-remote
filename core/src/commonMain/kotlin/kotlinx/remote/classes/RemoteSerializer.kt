@@ -1,7 +1,10 @@
 package kotlinx.remote.classes
 
 import kotlinx.remote.RemoteIntrinsic
+import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseManager
+import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
+import kotlinx.remote.ktor.startLeaseOnStubDeserialization
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -65,6 +68,22 @@ fun remoteClassSerializersModule(
             leaseManager = leaseManager,
             nodeUrl = nodeUrl,
             onStubDeserialization = onStubDeserialization,
+            stubFabric = stubFabric
+        ))
+    }
+}
+
+fun simpleRemoteClassSerializersModule(
+    remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>,
+    leaseConfig: LeaseConfig = LeaseConfig(),
+    leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig(),
+    nodeUrl: String? = null,
+): SerializersModule = SerializersModule {
+    remoteClasses.forEach { (clazz, stubFabric) ->
+        contextual(clazz, RemoteSerializer(
+            leaseManager = LeaseManager(leaseConfig, RemoteInstancesPool()),
+            nodeUrl = nodeUrl,
+            onStubDeserialization = startLeaseOnStubDeserialization(leaseRenewalClientConfig),
             stubFabric = stubFabric
         ))
     }

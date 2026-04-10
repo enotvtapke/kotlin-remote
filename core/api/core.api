@@ -238,9 +238,6 @@ public final class kotlinx/remote/classes/RemoteSerializerKt {
 	public static final fun genRemoteClassList ()Ljava/util/List;
 	public static final fun remoteClassSerializersModule (Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlinx/serialization/modules/SerializersModule;
 	public static synthetic fun remoteClassSerializersModule$default (Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlinx/serialization/modules/SerializersModule;
-	public static final fun remoteSerializersModule (Lkotlin/jvm/functions/Function1;)Lkotlinx/serialization/modules/SerializersModule;
-	public static final fun remoteSerializersModule (Lkotlinx/remote/CallableMap;Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlinx/serialization/modules/SerializersModule;)Lkotlinx/serialization/modules/SerializersModule;
-	public static synthetic fun remoteSerializersModule$default (Lkotlinx/remote/CallableMap;Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlinx/serialization/modules/SerializersModule;ILjava/lang/Object;)Lkotlinx/serialization/modules/SerializersModule;
 }
 
 public abstract interface class kotlinx/remote/classes/Stub {
@@ -628,12 +625,16 @@ public final class kotlinx/remote/serialization/ExceptionSerializerKt {
 }
 
 public final class kotlinx/remote/serialization/RpcCallSerializer : kotlinx/serialization/KSerializer {
-	public fun <init> (Lkotlinx/remote/CallableMap;Lkotlinx/serialization/modules/SerializersModule;)V
+	public fun <init> (Lkotlinx/remote/CallableMap;)V
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
 	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/RemoteCall;
 	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/RemoteCall;)V
+}
+
+public final class kotlinx/remote/serialization/SerializersModuleBuildersKt {
+	public static final fun remoteSerializersModuleShort (Lkotlinx/remote/CallableMap;)Lkotlinx/serialization/modules/SerializersModule;
 }
 
 public final class kotlinx/remote/serialization/StackFrame {

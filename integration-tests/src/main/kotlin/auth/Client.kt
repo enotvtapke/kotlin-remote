@@ -12,10 +12,11 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.simpleRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.asContext
 import kotlinx.serialization.json.Json
-import startLeaseOnStubDeserialization
+import kotlinx.serialization.modules.plus
 
 data object AuthServerConfig : RemoteConfig {
     override val client: RemoteClient = HttpClient {
@@ -26,12 +27,8 @@ data object AuthServerConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModule(
-                    remoteClasses = genRemoteClassList(),
-                    callableMap = genCallableMap(),
-                    leaseManager = null,
-                    onStubDeserialization = startLeaseOnStubDeserialization(),
-                )
+                serializersModule = remoteSerializersModuleShort(genCallableMap()) +
+                        simpleRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {

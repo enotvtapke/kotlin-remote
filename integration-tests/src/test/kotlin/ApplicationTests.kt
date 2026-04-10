@@ -21,7 +21,8 @@ import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.remote.classes.network.LeaseClient
 import kotlinx.remote.classes.network.leaseClient
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.remoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
@@ -30,6 +31,7 @@ import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import org.junit.jupiter.api.Test
@@ -467,23 +469,17 @@ class ApplicationTests {
             }
             install(ContentNegotiation) {
                 json(Json {
-                    serializersModule = remoteSerializersModule {
-                        serializersModule = SerializersModule {
-                            polymorphic(Any::class) {
-                                subclass(WrappedInt::class, WrappedInt.serializer())
-                            }
-                            polymorphic(A::class) {
-                                subclass(SubA.serializer())
-                            }
+                    serializersModule = SerializersModule {
+                        polymorphic(Any::class) {
+                            subclass(WrappedInt::class, WrappedInt.serializer())
                         }
-                        callableMap = genCallableMap()
-                        classes {
-                            remoteClasses = genRemoteClassList()
-                            client {
-                                this.onStubDeserialization = onStubDeserialization
-                            }
+                        polymorphic(A::class) {
+                            subclass(SubA.serializer())
                         }
-                    }
+                    } + remoteSerializersModuleShort(genCallableMap()) + remoteClassSerializersModule(
+                        remoteClasses = genRemoteClassList(),
+                        onStubDeserialization = onStubDeserialization,
+                    )
                 })
             }
         }.remoteClient(genCallableMap(), "/call")

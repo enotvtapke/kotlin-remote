@@ -122,7 +122,7 @@ private fun <T> memo(f: (String) -> T): (String) -> T {
     }
 }
 
-private fun startLeaseOnStubDeserialization(config: LeaseRenewalClientConfig): (Stub) -> Unit {
+fun startLeaseOnStubDeserialization(config: LeaseRenewalClientConfig): (Stub) -> Unit {
     val memoGetLeaseRenewalClient = memo { url ->
         LeaseRenewalClient(
             config, HttpClient {

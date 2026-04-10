@@ -16,13 +16,15 @@ import kotlinx.remote.RemoteConfig
 import kotlinx.remote.RemoteContext
 import kotlinx.remote.asContext
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.simpleRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.remoteClient
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
 
 @Remote
@@ -41,18 +43,11 @@ data object GenericServerConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModule {
-                    serializersModule = SerializersModule {
-                        polymorphic(Any::class) {
-                            subclass(WrappedInt::class, WrappedInt.serializer())
-                        }
+                serializersModule = SerializersModule {
+                    polymorphic(Any::class) {
+                        subclass(WrappedInt::class, WrappedInt.serializer())
                     }
-                    callableMap = genCallableMap()
-                    classes {
-                        remoteClasses = genRemoteClassList()
-                        client { }
-                    }
-                }
+                } + remoteSerializersModuleShort(genCallableMap()) + simpleRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {

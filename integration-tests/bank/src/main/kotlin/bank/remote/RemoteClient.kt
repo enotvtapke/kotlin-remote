@@ -4,20 +4,19 @@ import bank.accountService.AccountService
 import bank.accountService.AccountServiceImpl
 import bank.paymentService.PaymentService
 import bank.paymentService.PaymentServiceImpl
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.accept
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
+import io.ktor.client.request.*
+import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.remote.RemoteClient
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.serialization.remoteSerializersModule
+import kotlinx.remote.classes.simpleRemoteClassSerializersModule
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.remoteClient
+import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.serialization.throwableSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -34,13 +33,8 @@ fun remoteClient(url: String): RemoteClient = HttpClient {
     }
     install(ContentNegotiation) {
         json(Json {
-            serializersModule = remoteSerializersModule {
-                callableMap = genCallableMap()
-                classes {
-                    remoteClasses = genRemoteClassList()
-                    client { }
-                }
-            }.addAdditionalSerializers()
+            serializersModule = remoteSerializersModuleShort(genCallableMap()) +
+                    simpleRemoteClassSerializersModule(genRemoteClassList()).addAdditionalSerializers()
         })
     }
     install(Logging) {

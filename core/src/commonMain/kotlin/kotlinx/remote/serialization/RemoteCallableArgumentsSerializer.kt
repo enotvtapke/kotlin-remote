@@ -81,7 +81,7 @@ private class RemoteCallableArgumentsSerializer(
 }
 
 
-class RemoteCallableSerializer(private val callableMap: CallableMap, private val module: SerializersModule) : KSerializer<RemoteCall> {
+class RemoteCallableSerializer(private val callableMap: CallableMap) : KSerializer<RemoteCall> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("RpcCall") {
         element<String>("callableName")
         element("parameters", buildClassSerialDescriptor("Parameters"))
@@ -93,7 +93,7 @@ class RemoteCallableSerializer(private val callableMap: CallableMap, private val
 
             // Find the callable and create serializer for arguments
             val callable = callableMap[value.callableName]
-            val parametersSerializer = RemoteCallableArgumentsSerializer(callable.parameters, module)
+            val parametersSerializer = RemoteCallableArgumentsSerializer(callable.parameters, encoder.serializersModule)
 
             encodeSerializableElement(descriptor, 1, parametersSerializer, value.arguments)
         }
@@ -111,7 +111,10 @@ class RemoteCallableSerializer(private val callableMap: CallableMap, private val
                         // We need the callable name first to create the parameters serializer
                         val name = callableName ?: error("Callable name must be decoded before parameters")
                         val callable = callableMap[name]
-                        val parametersSerializer = RemoteCallableArgumentsSerializer(callable.parameters, module)
+                        val parametersSerializer = RemoteCallableArgumentsSerializer(
+                            callable.parameters,
+                            decoder.serializersModule
+                        )
                         parameters = decodeSerializableElement(descriptor, 1, parametersSerializer)
                     }
                     CompositeDecoder.DECODE_DONE -> break
