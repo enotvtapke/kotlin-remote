@@ -20,7 +20,7 @@ import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.remote.classes.network.LeaseClient
-import kotlinx.remote.classes.network.leaseClient
+import kotlinx.remote.ktor.classes.leaseClient
 import kotlinx.remote.classes.remoteClassSerializersModule
 import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.ktor.KRemote
@@ -85,8 +85,8 @@ class ApplicationTests {
                     $$"""
                     ApplicationTests$erroneous call$1.invokeSuspend$multiply
                     ApplicationTests$erroneous call$1.access$invokeSuspend$multiply
+                    == Remote Call Boundary ==.
                     ApplicationTests$erroneous call$1.invokeSuspend
-                    ApplicationTests$erroneous call$1.invoke
                     ApplicationTests$erroneous call$1.invoke
                     """.trimIndent(),
                     exception.stackTrace.take(5).joinToString("\n") { "${it.className}.${it.methodName}" }
@@ -117,8 +117,8 @@ class ApplicationTests {
                     ApplicationTests$indirect erroneous call$1.invokeSuspend$erroneous
                     ApplicationTests$indirect erroneous call$1.invokeSuspend$multiply
                     ApplicationTests$indirect erroneous call$1.access$invokeSuspend$multiply
+                    == Remote Call Boundary ==.
                     ApplicationTests$indirect erroneous call$1.invokeSuspend
-                    ApplicationTests$indirect erroneous call$1.invoke
                     """.trimIndent(),
                     exception.stackTrace.take(5).joinToString("\n") { "${it.className}.${it.methodName}" }
                 )

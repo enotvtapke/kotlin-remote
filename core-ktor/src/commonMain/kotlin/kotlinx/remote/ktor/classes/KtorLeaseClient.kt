@@ -1,4 +1,4 @@
-package kotlinx.remote.classes.network
+package kotlinx.remote.ktor.classes
 
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -6,8 +6,9 @@ import io.ktor.client.request.*
 import kotlinx.remote.classes.lease.LeaseReleaseRequest
 import kotlinx.remote.classes.lease.LeaseRenewalRequest
 import kotlinx.remote.classes.lease.LeaseRenewalResponse
+import kotlinx.remote.classes.network.LeaseClient
 
-internal class LeaseClientImpl(
+internal class KtorLeaseClient(
     private val httpClient: HttpClient,
     private val basePath: String
 ) : LeaseClient {
@@ -25,4 +26,4 @@ internal class LeaseClientImpl(
     }
 }
 
-fun HttpClient.leaseClient(path: String = "/lease"): LeaseClient = LeaseClientImpl(this, path)
+fun HttpClient.leaseClient(path: String = "/lease"): LeaseClient = KtorLeaseClient(this, path)

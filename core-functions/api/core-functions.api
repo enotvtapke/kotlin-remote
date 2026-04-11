@@ -71,6 +71,10 @@ public final class kotlinx/remote/RemoteContextKt {
 	public static final fun run (Lkotlinx/remote/RemoteConfig;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
+public final class kotlinx/remote/RemoteException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+}
+
 public abstract interface class kotlinx/remote/RemoteInvokator {
 	public abstract fun callWithUniqueName (Lkotlinx/remote/LocalContext;[Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -152,6 +156,10 @@ public final class kotlinx/remote/RemoteResponse$Success$Companion {
 	public final fun serializer (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;
 }
 
+public final class kotlinx/remote/RemoteServerKt {
+	public static final fun invokeCallable (Lkotlinx/remote/RemoteCallable;Lkotlinx/remote/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
 public final class kotlinx/remote/RemoteType {
 	public fun <init> (Lkotlin/reflect/KType;Z)V
 	public synthetic fun <init> (Lkotlin/reflect/KType;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -223,11 +231,6 @@ public final synthetic class kotlinx/remote/serialization/StackFrame$$serializer
 
 public final class kotlinx/remote/serialization/StackFrame$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/serialization/StackTraceSupport_jvmKt {
-	public static final fun setStackTrace (Ljava/lang/Throwable;Ljava/util/List;)Ljava/lang/Throwable;
-	public static final fun stackTrace (Ljava/lang/Throwable;)Ljava/util/List;
 }
 
 public final class kotlinx/remote/serialization/ThrowableSerializer : kotlinx/serialization/KSerializer {

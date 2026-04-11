@@ -1,6 +1,7 @@
 package kotlinx.remote.ktor
 
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.accept
 import io.ktor.http.ContentType
@@ -14,7 +15,7 @@ import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseManager
 import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
-import kotlinx.remote.classes.network.leaseClient
+import kotlinx.remote.ktor.classes.leaseClient
 import kotlinx.remote.classes.remoteClassSerializersModule
 import kotlinx.serialization.modules.SerializersModule
 import kotlin.reflect.KClass
@@ -47,7 +48,7 @@ fun startLeaseOnStubDeserialization(config: LeaseRenewalClientConfig): (Stub) ->
                     accept(ContentType.Application.Json)
                     contentType(ContentType.Application.Json)
                 }
-                install(io.ktor.client.plugins.contentnegotiation.ContentNegotiation) {
+                install(ContentNegotiation) {
                     json()
                 }
             }.leaseClient()
