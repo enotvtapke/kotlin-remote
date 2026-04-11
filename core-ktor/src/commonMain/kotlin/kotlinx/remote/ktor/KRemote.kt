@@ -12,7 +12,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
 
-val KRemoteServerPluginAttributesKey = AttributeKey<KRemoteConfig>("KRemoteServerPluginAttributesKey")
+internal val KRemoteServerPluginAttributesKey = AttributeKey<KRemoteConfig>("KRemoteServerPluginAttributesKey")
 
 val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
     name = "KRemote",

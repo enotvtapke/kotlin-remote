@@ -1,6 +1,6 @@
 package kotlinx.remote.classes.lease
 
-actual class WeakRef<T : Any> actual constructor(referent: T) {
+internal actual class WeakRef<T : Any> actual constructor(referent: T) {
     private val ref = JsWeakRef(referent)
     actual fun get(): T? = ref.deref()
 }

@@ -12,7 +12,7 @@ import kotlinx.remote.serialization.StackFrame
 import kotlinx.remote.serialization.setStackTrace
 import kotlinx.remote.serialization.stackTrace
 
-class RemoteClientImpl(
+internal class RemoteClientImpl(
     private val httpClient: HttpClient,
     private val path: String,
     private val callableMap: CallableMap

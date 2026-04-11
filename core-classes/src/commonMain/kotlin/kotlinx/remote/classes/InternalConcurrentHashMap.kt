@@ -1,13 +1,9 @@
-/*
- * Copyright 2023-2025 JetBrains s.r.o and contributors. Use of this source code is governed by the Apache 2.0 license.
- */
-
 package kotlinx.remote.classes
 
 import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 
-interface InternalConcurrentHashMap<K : Any, V : Any> {
+internal interface InternalConcurrentHashMap<K : Any, V : Any> {
     fun put(key: K, value: V): V?
 
     operator fun set(key: K, value: V) {
@@ -38,7 +34,7 @@ interface InternalConcurrentHashMap<K : Any, V : Any> {
     )
 }
 
-fun <K : Any, V : Any> InternalConcurrentHashMap(): InternalConcurrentHashMap<K, V> = SynchronizedHashMap()
+internal fun <K : Any, V : Any> InternalConcurrentHashMap(): InternalConcurrentHashMap<K, V> = SynchronizedHashMap()
 
 internal class SynchronizedHashMap<K : Any, V: Any> : InternalConcurrentHashMap<K, V>, SynchronizedObject() {
     private val map = hashMapOf<K, V>()

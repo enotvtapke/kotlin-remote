@@ -1,85 +1,19 @@
-public final class kotlinx/remote/classes/network/LeaseClientImpl : kotlinx/remote/classes/network/LeaseClient {
-	public fun <init> (Lio/ktor/client/HttpClient;Ljava/lang/String;)V
-	public fun releaseLeases (Lkotlinx/remote/classes/lease/LeaseReleaseRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun renewLeases (Lkotlinx/remote/classes/lease/LeaseRenewalRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public final class kotlinx/remote/classes/network/LeaseClientImplKt {
 	public static final fun leaseClient (Lio/ktor/client/HttpClient;Ljava/lang/String;)Lkotlinx/remote/classes/network/LeaseClient;
 	public static synthetic fun leaseClient$default (Lio/ktor/client/HttpClient;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/classes/network/LeaseClient;
 }
 
-public final class kotlinx/remote/ktor/KRemoteClassesClientConfig {
-	public fun <init> (Lkotlin/jvm/functions/Function1;)V
-	public final fun component1 ()Lkotlin/jvm/functions/Function1;
-	public final fun copy (Lkotlin/jvm/functions/Function1;)Lkotlinx/remote/ktor/KRemoteClassesClientConfig;
-	public static synthetic fun copy$default (Lkotlinx/remote/ktor/KRemoteClassesClientConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlinx/remote/ktor/KRemoteClassesClientConfig;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getOnStubDeserialization ()Lkotlin/jvm/functions/Function1;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlinx/remote/ktor/KRemoteClassesConfig {
-	public fun <init> (Ljava/util/List;Lkotlinx/remote/ktor/KRemoteClassesClientConfig;Lkotlinx/remote/ktor/KRemoteClassesServerConfig;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun component2 ()Lkotlinx/remote/ktor/KRemoteClassesClientConfig;
-	public final fun component3 ()Lkotlinx/remote/ktor/KRemoteClassesServerConfig;
-	public final fun copy (Ljava/util/List;Lkotlinx/remote/ktor/KRemoteClassesClientConfig;Lkotlinx/remote/ktor/KRemoteClassesServerConfig;)Lkotlinx/remote/ktor/KRemoteClassesConfig;
-	public static synthetic fun copy$default (Lkotlinx/remote/ktor/KRemoteClassesConfig;Ljava/util/List;Lkotlinx/remote/ktor/KRemoteClassesClientConfig;Lkotlinx/remote/ktor/KRemoteClassesServerConfig;ILjava/lang/Object;)Lkotlinx/remote/ktor/KRemoteClassesConfig;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getClient ()Lkotlinx/remote/ktor/KRemoteClassesClientConfig;
-	public final fun getRemoteClasses ()Ljava/util/List;
-	public final fun getServer ()Lkotlinx/remote/ktor/KRemoteClassesServerConfig;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlinx/remote/ktor/KRemoteClassesServerConfig {
-	public fun <init> (Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;)V
-	public final fun component1 ()Lkotlinx/remote/classes/lease/LeaseManager;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;)Lkotlinx/remote/ktor/KRemoteClassesServerConfig;
-	public static synthetic fun copy$default (Lkotlinx/remote/ktor/KRemoteClassesServerConfig;Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/ktor/KRemoteClassesServerConfig;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getLeaseManager ()Lkotlinx/remote/classes/lease/LeaseManager;
-	public final fun getNodeUrl ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlinx/remote/ktor/KRemoteConfig {
-	public fun <init> (Lkotlinx/remote/CallableMap;Lkotlinx/serialization/modules/SerializersModule;Lkotlinx/remote/ktor/KRemoteClassesConfig;)V
-	public synthetic fun <init> (Lkotlinx/remote/CallableMap;Lkotlinx/serialization/modules/SerializersModule;Lkotlinx/remote/ktor/KRemoteClassesConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lkotlinx/remote/CallableMap;
-	public final fun component2 ()Lkotlinx/serialization/modules/SerializersModule;
-	public final fun component3 ()Lkotlinx/remote/ktor/KRemoteClassesConfig;
-	public final fun copy (Lkotlinx/remote/CallableMap;Lkotlinx/serialization/modules/SerializersModule;Lkotlinx/remote/ktor/KRemoteClassesConfig;)Lkotlinx/remote/ktor/KRemoteConfig;
-	public static synthetic fun copy$default (Lkotlinx/remote/ktor/KRemoteConfig;Lkotlinx/remote/CallableMap;Lkotlinx/serialization/modules/SerializersModule;Lkotlinx/remote/ktor/KRemoteClassesConfig;ILjava/lang/Object;)Lkotlinx/remote/ktor/KRemoteConfig;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCallableMap ()Lkotlinx/remote/CallableMap;
-	public final fun getClasses ()Lkotlinx/remote/ktor/KRemoteClassesConfig;
-	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
-	public fun hashCode ()I
-	public final fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class kotlinx/remote/ktor/KRemoteConfigBuilder {
 	public fun <init> ()V
-	public final fun build ()Lkotlinx/remote/ktor/KRemoteConfig;
 	public final fun classes (Lkotlin/jvm/functions/Function1;)V
 	public final fun getCallableMap ()Lkotlinx/remote/CallableMap;
-	public final fun getClassesConfig ()Lkotlinx/remote/ktor/KRemoteClassesConfig;
 	public final fun getSerializersModule ()Lkotlinx/serialization/modules/SerializersModule;
 	public final fun setCallableMap (Lkotlinx/remote/CallableMap;)V
-	public final fun setClassesConfig (Lkotlinx/remote/ktor/KRemoteClassesConfig;)V
 	public final fun setSerializersModule (Lkotlinx/serialization/modules/SerializersModule;)V
 }
 
 public final class kotlinx/remote/ktor/KRemoteConfigBuilder$KRemoteClassesConfigBuilder {
 	public fun <init> ()V
-	public final fun build ()Lkotlinx/remote/ktor/KRemoteClassesConfig;
 	public final fun client (Lkotlin/jvm/functions/Function1;)V
 	public final fun getRemoteClasses ()Ljava/util/List;
 	public final fun server (Lkotlin/jvm/functions/Function1;)V
@@ -88,7 +22,6 @@ public final class kotlinx/remote/ktor/KRemoteConfigBuilder$KRemoteClassesConfig
 
 public final class kotlinx/remote/ktor/KRemoteConfigBuilder$KRemoteClassesConfigBuilder$KRemoteClassesClientConfigBuilder {
 	public fun <init> ()V
-	public final fun build ()Lkotlinx/remote/ktor/KRemoteClassesClientConfig;
 	public final fun getLeaseRenewalClientConfig ()Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;
 	public final fun getOnStubDeserialization ()Lkotlin/jvm/functions/Function1;
 	public final fun setLeaseRenewalClientConfig (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;)V
@@ -97,7 +30,6 @@ public final class kotlinx/remote/ktor/KRemoteConfigBuilder$KRemoteClassesConfig
 
 public final class kotlinx/remote/ktor/KRemoteConfigBuilder$KRemoteClassesConfigBuilder$KRemoteClassesServerConfigBuilder {
 	public fun <init> ()V
-	public final fun build ()Lkotlinx/remote/ktor/KRemoteClassesServerConfig;
 	public final fun getLeaseConfig ()Lkotlinx/remote/classes/lease/LeaseConfig;
 	public final fun getLeaseManager ()Lkotlinx/remote/classes/lease/LeaseManager;
 	public final fun getNodeUrl ()Ljava/lang/String;
@@ -106,13 +38,8 @@ public final class kotlinx/remote/ktor/KRemoteConfigBuilder$KRemoteClassesConfig
 	public final fun setNodeUrl (Ljava/lang/String;)V
 }
 
-public final class kotlinx/remote/ktor/KRemoteConfigBuilderKt {
-	public static final fun startLeaseOnStubDeserialization (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;)Lkotlin/jvm/functions/Function1;
-}
-
 public final class kotlinx/remote/ktor/KRemoteKt {
 	public static final fun getKRemote ()Lio/ktor/server/application/ApplicationPlugin;
-	public static final fun getKRemoteServerPluginAttributesKey ()Lio/ktor/util/AttributeKey;
 }
 
 public final class kotlinx/remote/ktor/KRemoteLeaseRoutesKt {
@@ -123,11 +50,6 @@ public final class kotlinx/remote/ktor/KRemoteLeaseRoutesKt {
 public final class kotlinx/remote/ktor/KRemoteRouteDslKt {
 	public static final fun handleRemoteCall (Lio/ktor/server/routing/RoutingContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun remote (Lio/ktor/server/routing/Route;Ljava/lang/String;)V
-}
-
-public final class kotlinx/remote/ktor/RemoteClientImpl : kotlinx/remote/RemoteClient {
-	public fun <init> (Lio/ktor/client/HttpClient;Ljava/lang/String;Lkotlinx/remote/CallableMap;)V
-	public fun call (Lkotlinx/remote/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class kotlinx/remote/ktor/RemoteClientImplKt {

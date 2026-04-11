@@ -7,7 +7,7 @@ import kotlinx.remote.classes.lease.LeaseReleaseRequest
 import kotlinx.remote.classes.lease.LeaseRenewalRequest
 import kotlinx.remote.classes.lease.LeaseRenewalResponse
 
-class LeaseClientImpl(
+internal class LeaseClientImpl(
     private val httpClient: HttpClient,
     private val basePath: String
 ) : LeaseClient {

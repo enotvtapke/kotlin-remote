@@ -1,38 +1,3 @@
-public abstract interface class kotlinx/remote/classes/InternalConcurrentHashMap {
-	public abstract fun clear ()V
-	public abstract fun computeIfAbsent (Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
-	public abstract fun containsKey (Ljava/lang/Object;)Z
-	public abstract fun get (Ljava/lang/Object;)Ljava/lang/Object;
-	public abstract fun getEntries ()Ljava/util/Set;
-	public abstract fun getKeys ()Ljava/util/Collection;
-	public abstract fun getValues ()Ljava/util/Collection;
-	public abstract fun merge (Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
-	public abstract fun put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-	public abstract fun remove (Ljava/lang/Object;)Ljava/lang/Object;
-	public fun set (Ljava/lang/Object;Ljava/lang/Object;)V
-}
-
-public final class kotlinx/remote/classes/InternalConcurrentHashMap$DefaultImpls {
-	public static fun set (Lkotlinx/remote/classes/InternalConcurrentHashMap;Ljava/lang/Object;Ljava/lang/Object;)V
-}
-
-public final class kotlinx/remote/classes/InternalConcurrentHashMap$Entry {
-	public fun <init> (Ljava/lang/Object;Ljava/lang/Object;)V
-	public final fun component1 ()Ljava/lang/Object;
-	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/Object;Ljava/lang/Object;)Lkotlinx/remote/classes/InternalConcurrentHashMap$Entry;
-	public static synthetic fun copy$default (Lkotlinx/remote/classes/InternalConcurrentHashMap$Entry;Ljava/lang/Object;Ljava/lang/Object;ILjava/lang/Object;)Lkotlinx/remote/classes/InternalConcurrentHashMap$Entry;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getKey ()Ljava/lang/Object;
-	public final fun getValue ()Ljava/lang/Object;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlinx/remote/classes/InternalConcurrentHashMapKt {
-	public static final fun InternalConcurrentHashMap ()Lkotlinx/remote/classes/InternalConcurrentHashMap;
-}
-
 public final class kotlinx/remote/classes/RemoteInstancesPool {
 	public fun <init> ()V
 	public final fun addInstance (Ljava/lang/Object;)J
@@ -270,15 +235,6 @@ public final synthetic class kotlinx/remote/classes/lease/LeaseRenewalResponse$$
 
 public final class kotlinx/remote/classes/lease/LeaseRenewalResponse$Companion {
 	public final fun serializer ()Lkotlinx/serialization/KSerializer;
-}
-
-public final class kotlinx/remote/classes/lease/TimeProviderKt {
-	public static final fun currentTimeMillis ()J
-}
-
-public final class kotlinx/remote/classes/lease/WeakRef {
-	public fun <init> (Ljava/lang/Object;)V
-	public final fun get ()Ljava/lang/Object;
 }
 
 public abstract interface class kotlinx/remote/classes/network/LeaseClient {
