@@ -31,12 +31,12 @@ import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseManager
-import kotlinx.remote.ktor.simpleRemoteClassSerializersModule
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.ktor.ktorRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.KRemoteConfigBuilder
-import kotlinx.remote.ktor.KRemoteConfigBuilder.KRemoteClassesConfigBuilder.KRemoteClassesServerConfigBuilder
+import kotlinx.remote.ktor.KRemoteConfigBuilder.KRemoteClassesConfigBuilder.KRemoteClassesSerializationConfigBuilder
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
 import kotlinx.remote.ktor.remoteClient
@@ -46,7 +46,7 @@ import kotlinx.serialization.modules.plus
 fun main() = runBlocking {
     val nodeUrl = "http://localhost:8001"
     val leaseManager = LeaseManager(LeaseConfig(), RemoteInstancesPool())
-    val block: KRemoteClassesServerConfigBuilder.() -> Unit = {
+    val block: KRemoteClassesSerializationConfigBuilder.() -> Unit = {
         this.nodeUrl = nodeUrl
         this.leaseManager = leaseManager
     }
@@ -166,7 +166,7 @@ fun computeMandelbrotSingleThreaded(
     return iterations
 }
 
-fun remoteClient(url: String, block: KRemoteClassesServerConfigBuilder.() -> Unit = {}): RemoteClient {
+fun remoteClient(url: String, block: KRemoteClassesSerializationConfigBuilder.() -> Unit = {}): RemoteClient {
     return HttpClient {
         defaultRequest {
             url(url)
@@ -175,9 +175,9 @@ fun remoteClient(url: String, block: KRemoteClassesServerConfigBuilder.() -> Uni
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModuleShort(genCallableMap()) + simpleRemoteClassSerializersModule(
+                serializersModule = remoteSerializersModule(genCallableMap()) + ktorRemoteClassSerializersModule(
                     remoteClasses = genRemoteClassList(),
-                    nodeUrl = KRemoteClassesServerConfigBuilder().apply(block).nodeUrl,
+                    nodeUrl = KRemoteClassesSerializationConfigBuilder().apply(block).nodeUrl,
                 )
             })
         }
@@ -203,8 +203,8 @@ fun remoteEmbeddedServer(
             callableMap = genCallableMap()
             classes {
                 remoteClasses = genRemoteClassList()
-                client {}
-                server {
+                deserialization {}
+                serialization {
                     this.leaseManager = leaseManager
                     this.nodeUrl = nodeUrl
                 }

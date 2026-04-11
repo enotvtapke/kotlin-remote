@@ -10,7 +10,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.ktor.remoteClient
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.serialization.json.Json
 import kotlin.math.PI
 import kotlin.math.abs
@@ -23,7 +23,7 @@ fun remoteClient(url: String): RemoteClient = HttpClient {
     }
     install(ContentNegotiation) {
         json(Json {
-            serializersModule = remoteSerializersModuleShort(genCallableMap())
+            serializersModule = remoteSerializersModule(genCallableMap())
         })
     }
     install(Logging) {

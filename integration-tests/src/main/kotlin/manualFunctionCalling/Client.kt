@@ -10,7 +10,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.ktor.remoteClient
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.serialization.json.Json
 
 context(_: RemoteContext<RemoteConfig>)
@@ -27,7 +27,7 @@ data object ManualServerRemoteConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModuleShort(CallableMap(manualCallableMap()))
+                serializersModule = remoteSerializersModule(CallableMap(manualCallableMap()))
             })
         }
         install(Logging) {

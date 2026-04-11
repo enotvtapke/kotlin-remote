@@ -11,8 +11,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.ktor.remoteClient
-import kotlinx.remote.ktor.simpleRemoteClassSerializersModule
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.ktor.ktorRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -40,7 +40,7 @@ data object GenericServerConfig : RemoteConfig {
                     polymorphic(Any::class) {
                         subclass(WrappedInt::class, WrappedInt.serializer())
                     }
-                } + remoteSerializersModuleShort(genCallableMap()) + simpleRemoteClassSerializersModule(genRemoteClassList())
+                } + remoteSerializersModule(genCallableMap()) + ktorRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {

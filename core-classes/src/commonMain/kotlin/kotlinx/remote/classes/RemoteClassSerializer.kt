@@ -10,7 +10,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.modules.SerializersModule
 import kotlin.reflect.KClass
 
-class RemoteSerializer<T : Any>(
+class RemoteClassSerializer<T : Any>(
     private val leaseManager: LeaseManager? = null,
     private val nodeUrl: String? = null,
     private val onStubDeserialization: ((Stub) -> Unit)? = null,
@@ -60,7 +60,7 @@ fun remoteClassSerializersModule(
     onStubDeserialization: ((Stub) -> Unit)? = null
 ): SerializersModule = SerializersModule {
     remoteClasses.forEach { (clazz, stubFabric) ->
-        contextual(clazz, RemoteSerializer(
+        contextual(clazz, RemoteClassSerializer(
             leaseManager = leaseManager,
             nodeUrl = nodeUrl,
             onStubDeserialization = onStubDeserialization,

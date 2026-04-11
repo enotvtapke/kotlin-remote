@@ -7,7 +7,7 @@ import io.ktor.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.remote.classes.remoteClassSerializersModule
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
@@ -23,7 +23,7 @@ val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
     application.pluginOrNull(ContentNegotiation) ?: run {
         application.install(ContentNegotiation) {
             json(Json {
-                serializersModule = (config.serializersModule ?: SerializersModule { }) + remoteSerializersModuleShort(
+                serializersModule = (config.serializersModule ?: SerializersModule { }) + remoteSerializersModule(
                     callableMap = config.callableMap,
                 ) + remoteClassSerializersModule(
                     remoteClasses = config.classes?.remoteClasses ?: listOf(),

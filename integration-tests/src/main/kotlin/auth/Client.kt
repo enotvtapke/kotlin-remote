@@ -12,8 +12,8 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.*
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.ktor.simpleRemoteClassSerializersModule
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.ktor.ktorRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.asContext
 import kotlinx.remote.ktor.remoteClient
 import kotlinx.serialization.json.Json
@@ -28,8 +28,8 @@ data object AuthServerConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModuleShort(genCallableMap()) +
-                        simpleRemoteClassSerializersModule(genRemoteClassList())
+                serializersModule = remoteSerializersModule(genCallableMap()) +
+                        ktorRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {

@@ -1,3 +1,18 @@
+public final class kotlinx/remote/classes/RemoteClassSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class kotlinx/remote/classes/RemoteClassSerializerKt {
+	public static final fun genRemoteClassList ()Ljava/util/List;
+	public static final fun remoteClassSerializersModule (Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlinx/serialization/modules/SerializersModule;
+	public static synthetic fun remoteClassSerializersModule$default (Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlinx/serialization/modules/SerializersModule;
+}
+
 public final class kotlinx/remote/classes/RemoteInstancesPool {
 	public fun <init> ()V
 	public final fun addInstance (Ljava/lang/Object;)J

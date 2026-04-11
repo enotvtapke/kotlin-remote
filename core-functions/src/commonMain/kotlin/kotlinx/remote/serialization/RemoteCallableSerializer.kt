@@ -129,3 +129,8 @@ class RemoteCallableSerializer(private val callableMap: CallableMap) : KSerializ
         }
     }
 }
+
+fun remoteSerializersModule(callableMap: CallableMap) = SerializersModule {
+    include(throwableSerializers())
+    contextual(RemoteCall::class, RemoteCallableSerializer(callableMap))
+}

@@ -19,7 +19,7 @@ fun main() {
             callableMap = genCallableMap()
             classes {
                 remoteClasses = genRemoteClassList()
-                server {
+                serialization {
                     nodeUrl = "http://localhost:$port"
                 }
             }

@@ -12,8 +12,8 @@ import kotlinx.remote.*
 import kotlinx.remote.classes.RemoteSerializable
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.ktor.remoteClient
-import kotlinx.remote.ktor.simpleRemoteClassSerializersModule
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.ktor.ktorRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.plus
 import remoteEmbeddedServer
@@ -103,8 +103,8 @@ class ClientConfig(private val url: String) : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModuleShort(callableMap) +
-                        simpleRemoteClassSerializersModule(genRemoteClassList())
+                serializersModule = remoteSerializersModule(callableMap) +
+                        ktorRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {
@@ -122,8 +122,8 @@ data object HostConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModuleShort(genCallableMap()) +
-                        simpleRemoteClassSerializersModule(genRemoteClassList())
+                serializersModule = remoteSerializersModule(genCallableMap()) +
+                        ktorRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {

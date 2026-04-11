@@ -13,10 +13,10 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.remote.RemoteClient
 import kotlinx.remote.classes.genRemoteClassList
-import kotlinx.remote.ktor.simpleRemoteClassSerializersModule
+import kotlinx.remote.ktor.ktorRemoteClassSerializersModule
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.remoteClient
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.serialization.throwableSerializer
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -33,8 +33,8 @@ fun remoteClient(url: String): RemoteClient = HttpClient {
     }
     install(ContentNegotiation) {
         json(Json {
-            serializersModule = remoteSerializersModuleShort(genCallableMap()) +
-                    simpleRemoteClassSerializersModule(genRemoteClassList()).addAdditionalSerializers()
+            serializersModule = remoteSerializersModule(genCallableMap()) +
+                    ktorRemoteClassSerializersModule(genRemoteClassList()).addAdditionalSerializers()
         })
     }
     install(Logging) {

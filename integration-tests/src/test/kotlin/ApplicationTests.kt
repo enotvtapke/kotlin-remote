@@ -22,7 +22,7 @@ import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.remote.classes.network.LeaseClient
 import kotlinx.remote.classes.network.leaseClient
 import kotlinx.remote.classes.remoteClassSerializersModule
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
@@ -477,7 +477,7 @@ class ApplicationTests {
                         polymorphic(A::class) {
                             subclass(SubA.serializer())
                         }
-                    } + remoteSerializersModuleShort(genCallableMap()) + remoteClassSerializersModule(
+                    } + remoteSerializersModule(genCallableMap()) + remoteClassSerializersModule(
                         remoteClasses = genRemoteClassList(),
                         onStubDeserialization = onStubDeserialization,
                     )
@@ -517,11 +517,11 @@ class ApplicationTests {
                 }
                 classes {
                     remoteClasses = genRemoteClassList()
-                    server {
+                    serialization {
                         this.leaseConfig = leaseConfig
                         nodeUrl = "http://localhost:80"
                     }
-                    client {
+                    deserialization {
                         this.onStubDeserialization = onStubDeserialization
                     }
                 }

@@ -12,8 +12,8 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
-import kotlinx.remote.ktor.simpleRemoteClassSerializersModule
-import kotlinx.remote.serialization.remoteSerializersModuleShort
+import kotlinx.remote.ktor.ktorRemoteClassSerializersModule
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.KRemoteConfigBuilder
@@ -38,13 +38,13 @@ fun remoteEmbeddedServer(
             callableMap = genCallableMap()
             classes {
                 remoteClasses = genRemoteClassList()
-                server {
+                serialization {
                     this.leaseConfig = leaseConfig
                     this.nodeUrl = nodeUrl
                 }
             }
         }
-        val module = remoteSerializersModuleShort(genCallableMap()) + simpleRemoteClassSerializersModule(
+        val module = remoteSerializersModule(genCallableMap()) + ktorRemoteClassSerializersModule(
             remoteClasses = genRemoteClassList(),
             nodeUrl = nodeUrl,
         ).addAdditionalSerializers()

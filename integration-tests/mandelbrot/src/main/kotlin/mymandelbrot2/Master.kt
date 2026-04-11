@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.remote.*
 import kotlinx.remote.classes.Stub
-import kotlinx.remote.ktor.KRemoteConfigBuilder.KRemoteClassesConfigBuilder.KRemoteClassesServerConfigBuilder
+import kotlinx.remote.ktor.KRemoteConfigBuilder.KRemoteClassesConfigBuilder.KRemoteClassesSerializationConfigBuilder
 import java.io.File
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.imageio.ImageIO
@@ -58,7 +58,7 @@ fun main() = runBlocking {
     Unit
 }
 
-class MasterConfig(private val block: KRemoteClassesServerConfigBuilder.() -> Unit = {}): RemoteConfig {
+class MasterConfig(private val block: KRemoteClassesSerializationConfigBuilder.() -> Unit = {}): RemoteConfig {
     override val client: RemoteClient
         get() = remoteClient("http://localhost:8000", block)
 

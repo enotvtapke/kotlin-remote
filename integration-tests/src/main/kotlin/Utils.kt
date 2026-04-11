@@ -13,59 +13,17 @@ import io.ktor.server.plugins.calllogging.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.remote.RemoteClient
 import kotlinx.remote.RemoteConfig
-import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
-import kotlinx.remote.classes.lease.LeaseRenewalClient
-import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
-import kotlinx.remote.classes.network.leaseClient
-import kotlinx.remote.ktor.simpleRemoteClassSerializersModule
-import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.genCallableMap
-import kotlinx.remote.ktor.KRemote
-import kotlinx.remote.ktor.leaseRoutes
-import kotlinx.remote.ktor.remote
-import kotlinx.remote.ktor.remoteClient
+import kotlinx.remote.ktor.*
+import kotlinx.remote.serialization.remoteSerializersModule
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus
 import kotlinx.serialization.modules.polymorphic
-
-private val leaseRenewalClients = mutableMapOf<String, LeaseRenewalClient>()
-
-fun getOrCreateLeaseRenewalClient(
-    url: String,
-    config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(500)
-): LeaseRenewalClient {
-    return leaseRenewalClients.getOrPut(url) {
-        LeaseRenewalClient(
-            config, HttpClient {
-                defaultRequest {
-                    url(url)
-                    accept(ContentType.Application.Json)
-                    contentType(ContentType.Application.Json)
-                }
-                install(ContentNegotiation) {
-                    json()
-                }
-                install(Logging) {
-                    level = LogLevel.BODY
-                }
-            }.leaseClient()
-        ).also {
-            it.startRenewalJob(CoroutineScope(Dispatchers.IO))
-        }
-    }
-}
-
-fun startLeaseOnStubDeserialization(config: LeaseRenewalClientConfig = LeaseRenewalClientConfig(5000)): (Stub) -> Unit =
-    { stub ->
-        getOrCreateLeaseRenewalClient(stub.url, config).registerStub(stub)
-    }
 
 data object ServerConfig : RemoteConfig {
     override val client: RemoteClient = HttpClient {
@@ -76,8 +34,8 @@ data object ServerConfig : RemoteConfig {
         }
         install(ContentNegotiation) {
             json(Json {
-                serializersModule = remoteSerializersModuleShort(genCallableMap()) +
-                        simpleRemoteClassSerializersModule(genRemoteClassList())
+                serializersModule = remoteSerializersModule(genCallableMap()) +
+                        ktorRemoteClassSerializersModule(genRemoteClassList())
             })
         }
         install(Logging) {
@@ -107,7 +65,7 @@ fun remoteEmbeddedServer(
             }
             classes {
                 remoteClasses = genRemoteClassList()
-                server {
+                serialization {
                     this.leaseConfig = leaseConfig
                     this.nodeUrl = nodeUrl
                 }
