@@ -13,17 +13,23 @@ private val coreRuntimeClasspath =
     System.getProperty("coreRuntime.classpath")?.split(File.pathSeparator)?.map(::File)
         ?: error("Unable to get a valid classpath from 'coreRuntime.classpath' property")
 
+private val testFixturesClasspath =
+    System.getProperty("testFixtures.classpath")?.split(File.pathSeparator)?.map(::File)
+        ?: error("Unable to get a valid classpath from 'testFixtures.classpath' property")
+
 fun TestConfigurationBuilder.configureCore() {
     useConfigurators(::PluginCoreProvider)
     useCustomRuntimeClasspathProviders(::PluginCoreClasspathProvider)
 }
 
+private val combinedClasspath = coreRuntimeClasspath + testFixturesClasspath
+
 private class PluginCoreProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        configuration.addJvmClasspathRoots(coreRuntimeClasspath)
+        configuration.addJvmClasspathRoots(combinedClasspath)
     }
 }
 
 private class PluginCoreClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
-    override fun runtimeClassPaths(module: TestModule) = coreRuntimeClasspath
+    override fun runtimeClassPaths(module: TestModule) = combinedClasspath
 }

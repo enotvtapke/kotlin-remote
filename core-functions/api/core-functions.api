@@ -174,19 +174,6 @@ public final class kotlinx/remote/RemoteType {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlinx/remote/codegen/test/ServerConfig : kotlinx/remote/RemoteConfig {
-	public static final field INSTANCE Lkotlinx/remote/codegen/test/ServerConfig;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getClient ()Lkotlinx/remote/RemoteClient;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class kotlinx/remote/codegen/test/TestRpcClient : kotlinx/remote/RemoteClient {
-	public static final field INSTANCE Lkotlinx/remote/codegen/test/TestRpcClient;
-	public fun call (Lkotlinx/remote/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
 public final class kotlinx/remote/serialization/RemoteCallableSerializer : kotlinx/serialization/KSerializer {
 	public fun <init> (Lkotlinx/remote/CallableMap;)V
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;

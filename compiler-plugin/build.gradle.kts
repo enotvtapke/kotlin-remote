@@ -31,6 +31,7 @@ dependencies {
     testFixturesApi(libs.kotlin.test.junit5)
     testFixturesApi(libs.kotlin.test.framework)
     testFixturesApi(libs.kotlin.compiler)
+    testFixturesApi(project(":core-functions"))
 
     coreRuntimeClasspath(project(":core-functions"))
     coreRuntimeClasspath(project(":core-classes"))
@@ -64,6 +65,7 @@ tasks.test {
     workingDir = rootDir
 
     systemProperty("coreRuntime.classpath", coreRuntimeClasspath.asPath)
+    systemProperty("testFixtures.classpath", sourceSets.testFixtures.get().output.classesDirs.asPath)
 
     // Properties required to run the internal test framework.
     setLibraryProperty("org.jetbrains.kotlin.test.kotlin-stdlib", "kotlin-stdlib")
