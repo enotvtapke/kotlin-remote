@@ -91,7 +91,7 @@ FILE fqName:box fileName:/initCallableMap.kt
     VALUE_PARAMETER kind:Regular name:lhs index:1 type:kotlin.Long
     VALUE_PARAMETER kind:Regular name:rhs index:2 type:kotlin.Long
     annotations:
-      Remote
+      Remote(name = <null>)
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH

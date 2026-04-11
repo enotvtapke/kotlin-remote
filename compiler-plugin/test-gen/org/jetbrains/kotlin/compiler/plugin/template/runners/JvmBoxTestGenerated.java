@@ -46,6 +46,18 @@ public class JvmBoxTestGenerated extends AbstractJvmBoxTest {
   }
 
   @Test
+  @TestMetadata("customName.kt")
+  public void testCustomName() {
+    runTest("compiler-plugin/testData/box/customName.kt");
+  }
+
+  @Test
+  @TestMetadata("customNameCallableMap.kt")
+  public void testCustomNameCallableMap() {
+    runTest("compiler-plugin/testData/box/customNameCallableMap.kt");
+  }
+
+  @Test
   @TestMetadata("extensionFunction.kt")
   public void testExtensionFunction() {
     runTest("compiler-plugin/testData/box/extensionFunction.kt");

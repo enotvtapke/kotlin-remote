@@ -46,7 +46,7 @@ FILE fqName:box fileName:/contextParameters.kt
     VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:2 type:kotlin.Long
     VALUE_PARAMETER kind:Regular name:rhs index:3 type:kotlin.Long
     annotations:
-      Remote
+      Remote(name = <null>)
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH

@@ -70,7 +70,7 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
     VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>
     VALUE_PARAMETER kind:Regular name:t index:1 type:T of foo.bar.genericFunction
     annotations:
-      Remote
+      Remote(name = <null>)
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH
@@ -105,7 +105,7 @@ FILE fqName:foo.bar fileName:/genericRemoteFunction.kt
     VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>
     VALUE_PARAMETER kind:Regular name:lhs index:1 type:T of foo.bar.multiply
     annotations:
-      Remote
+      Remote(name = <null>)
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=null
         BRANCH

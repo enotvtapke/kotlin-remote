@@ -1,7 +1,7 @@
 package kotlinx.remote
 
 @Target(AnnotationTarget.FUNCTION)
-annotation class Remote
+annotation class Remote(val name: String = "")
 
 interface RemoteConfig {
     val client: RemoteClient

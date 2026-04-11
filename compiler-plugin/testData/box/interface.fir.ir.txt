@@ -23,7 +23,7 @@ FILE fqName:box fileName:/interface.kt
       VALUE_PARAMETER kind:Context name:ctx index:1 type:kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>
       VALUE_PARAMETER kind:Regular name:x index:2 type:kotlin.Long
       annotations:
-        Remote
+        Remote(name = <null>)
       overridden:
         public abstract fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, x: kotlin.Long): kotlin.Long declared in box.Calculator
       BLOCK_BODY

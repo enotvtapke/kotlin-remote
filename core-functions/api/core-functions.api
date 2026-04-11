@@ -22,6 +22,7 @@ public final class kotlinx/remote/LocalContext : kotlinx/remote/RemoteContext {
 }
 
 public abstract interface annotation class kotlinx/remote/Remote : java/lang/annotation/Annotation {
+	public abstract fun name ()Ljava/lang/String;
 }
 
 public final class kotlinx/remote/RemoteCall {

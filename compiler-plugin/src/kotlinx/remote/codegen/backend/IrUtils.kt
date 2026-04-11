@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.types.Variance
@@ -62,8 +64,15 @@ fun IrDeclaration.remoteSerializable(): Boolean = hasAnnotation(remoteSerializab
 fun RemoteIrContext.irBuilder(symbol: IrSymbol): DeclarationIrBuilder =
     DeclarationIrBuilder(pluginContext, symbol, symbol.owner.startOffset, symbol.owner.endOffset)
 
-fun IrFunction.remoteFunctionName(): String = fqNameWhenAvailable?.asString()
-    ?: error("Remote function `${name.asString()}` doesn't have fully qualified name")
+fun IrFunction.remoteFunctionName(): String {
+    val annotation = getAnnotation(remoteAnnotation.asSingleFqName())
+    if (annotation != null) {
+        val nameArg = (annotation.arguments[0] as? IrConst)?.value as? String
+        if (!nameArg.isNullOrEmpty()) return nameArg
+    }
+    return fqNameWhenAvailable?.asString()
+        ?: error("Remote function `${name.asString()}` doesn't have fully qualified name")
+}
 
 fun IrBuilderWithScope.irSafeAs(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.SAFE_CAST, type, argument)
