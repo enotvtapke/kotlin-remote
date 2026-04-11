@@ -3,6 +3,8 @@ package org.jetbrains.kotlin.compiler.plugin.template
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.plugin.remote.BuildConfig.CORE_LIBRARY_COORDINATES
+import org.jetbrains.kotlin.plugin.remote.BuildConfig.CORE_CLASSES_LIBRARY_COORDINATES
+import org.jetbrains.kotlin.plugin.remote.BuildConfig.CORE_KTOR_LIBRARY_COORDINATES
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
@@ -30,9 +32,15 @@ class SimpleGradlePlugin : KotlinCompilerPluginSupportPlugin {
     ): Provider<List<SubpluginOption>> {
         val project = kotlinCompilation.target.project
 
-        kotlinCompilation.dependencies { implementation(CORE_LIBRARY_COORDINATES) }
+        kotlinCompilation.dependencies {
+            implementation(CORE_LIBRARY_COORDINATES)
+            implementation(CORE_CLASSES_LIBRARY_COORDINATES)
+            implementation(CORE_KTOR_LIBRARY_COORDINATES)
+        }
         if (kotlinCompilation.implementationConfigurationName == "metadataCompilationImplementation") {
             project.dependencies.add("commonMainImplementation", CORE_LIBRARY_COORDINATES)
+            project.dependencies.add("commonMainImplementation", CORE_CLASSES_LIBRARY_COORDINATES)
+            project.dependencies.add("commonMainImplementation", CORE_KTOR_LIBRARY_COORDINATES)
         }
 
         return project.provider {

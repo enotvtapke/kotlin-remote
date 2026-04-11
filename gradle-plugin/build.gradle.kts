@@ -30,11 +30,25 @@ buildConfig {
     buildConfigField("String", "KOTLIN_PLUGIN_NAME", "\"${pluginProject.name}\"")
     buildConfigField("String", "KOTLIN_PLUGIN_VERSION", "\"${pluginProject.version}\"")
 
-    val coreProject = project(":core")
+    val coreProject = project(":core-functions")
     buildConfigField(
         type = "String",
         name = "CORE_LIBRARY_COORDINATES",
         expression = "\"${coreProject.group}:${coreProject.name}:${coreProject.version}\""
+    )
+
+    val coreClassesProject = project(":core-classes")
+    buildConfigField(
+        type = "String",
+        name = "CORE_CLASSES_LIBRARY_COORDINATES",
+        expression = "\"${coreClassesProject.group}:${coreClassesProject.name}:${coreClassesProject.version}\""
+    )
+
+    val coreKtorProject = project(":core-ktor")
+    buildConfigField(
+        type = "String",
+        name = "CORE_KTOR_LIBRARY_COORDINATES",
+        expression = "\"${coreKtorProject.group}:${coreKtorProject.name}:${coreKtorProject.version}\""
     )
 }
 

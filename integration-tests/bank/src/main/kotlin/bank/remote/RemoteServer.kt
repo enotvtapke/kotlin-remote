@@ -12,7 +12,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.remote.classes.genRemoteClassList
 import kotlinx.remote.classes.lease.LeaseConfig
-import kotlinx.remote.classes.simpleRemoteClassSerializersModule
+import kotlinx.remote.ktor.simpleRemoteClassSerializersModule
 import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote

@@ -16,4 +16,6 @@ rootProject.name = "kotlin-remote"
 
 include("compiler-plugin")
 include("gradle-plugin")
-include("core")
+include("core-functions")
+include("core-classes")
+include("core-ktor")

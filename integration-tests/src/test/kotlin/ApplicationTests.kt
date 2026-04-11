@@ -26,6 +26,7 @@ import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
+import kotlinx.remote.ktor.remoteClient
 import kotlinx.remote.serialization.UnregisteredRemoteException
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable

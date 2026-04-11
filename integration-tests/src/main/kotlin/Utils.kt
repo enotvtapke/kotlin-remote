@@ -23,13 +23,13 @@ import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseRenewalClient
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.remote.classes.network.leaseClient
-import kotlinx.remote.classes.simpleRemoteClassSerializersModule
+import kotlinx.remote.ktor.simpleRemoteClassSerializersModule
 import kotlinx.remote.serialization.remoteSerializersModuleShort
 import kotlinx.remote.genCallableMap
 import kotlinx.remote.ktor.KRemote
 import kotlinx.remote.ktor.leaseRoutes
 import kotlinx.remote.ktor.remote
-import kotlinx.remote.remoteClient
+import kotlinx.remote.ktor.remoteClient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.plus

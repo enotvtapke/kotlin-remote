@@ -1,0 +1,288 @@
+public abstract interface class kotlinx/remote/classes/InternalConcurrentHashMap {
+	public abstract fun clear ()V
+	public abstract fun computeIfAbsent (Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public abstract fun containsKey (Ljava/lang/Object;)Z
+	public abstract fun get (Ljava/lang/Object;)Ljava/lang/Object;
+	public abstract fun getEntries ()Ljava/util/Set;
+	public abstract fun getKeys ()Ljava/util/Collection;
+	public abstract fun getValues ()Ljava/util/Collection;
+	public abstract fun merge (Ljava/lang/Object;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public abstract fun put (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+	public abstract fun remove (Ljava/lang/Object;)Ljava/lang/Object;
+	public fun set (Ljava/lang/Object;Ljava/lang/Object;)V
+}
+
+public final class kotlinx/remote/classes/InternalConcurrentHashMap$DefaultImpls {
+	public static fun set (Lkotlinx/remote/classes/InternalConcurrentHashMap;Ljava/lang/Object;Ljava/lang/Object;)V
+}
+
+public final class kotlinx/remote/classes/InternalConcurrentHashMap$Entry {
+	public fun <init> (Ljava/lang/Object;Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;Ljava/lang/Object;)Lkotlinx/remote/classes/InternalConcurrentHashMap$Entry;
+	public static synthetic fun copy$default (Lkotlinx/remote/classes/InternalConcurrentHashMap$Entry;Ljava/lang/Object;Ljava/lang/Object;ILjava/lang/Object;)Lkotlinx/remote/classes/InternalConcurrentHashMap$Entry;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKey ()Ljava/lang/Object;
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/remote/classes/InternalConcurrentHashMapKt {
+	public static final fun InternalConcurrentHashMap ()Lkotlinx/remote/classes/InternalConcurrentHashMap;
+}
+
+public final class kotlinx/remote/classes/RemoteInstancesPool {
+	public fun <init> ()V
+	public final fun addInstance (Ljava/lang/Object;)J
+	public final fun clear ()V
+	public final fun containsKey (J)Z
+	public final fun getOrDefault (JLjava/lang/Object;)Ljava/lang/Object;
+	public final fun instanceCount ()I
+	public final fun remove (J)Ljava/lang/Object;
+}
+
+public abstract interface annotation class kotlinx/remote/classes/RemoteSerializable : java/lang/annotation/Annotation {
+}
+
+public final class kotlinx/remote/classes/RemoteSerializer : kotlinx/serialization/KSerializer {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+}
+
+public final class kotlinx/remote/classes/RemoteSerializerKt {
+	public static final fun genRemoteClassList ()Ljava/util/List;
+	public static final fun remoteClassSerializersModule (Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlinx/serialization/modules/SerializersModule;
+	public static synthetic fun remoteClassSerializersModule$default (Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lkotlinx/serialization/modules/SerializersModule;
+}
+
+public abstract interface class kotlinx/remote/classes/Stub {
+	public abstract fun getId ()J
+	public abstract fun getUrl ()Ljava/lang/String;
+}
+
+public final class kotlinx/remote/classes/StubKt {
+	public static final fun checkIsNotStubForRemoteClassMethod (Ljava/lang/Object;)V
+}
+
+public final class kotlinx/remote/classes/lease/LeaseConfig {
+	public static final field Companion Lkotlinx/remote/classes/lease/LeaseConfig$Companion;
+	public static final field DEFAULT_CLEANUP_INTERVAL_MS J
+	public static final field DEFAULT_GRACE_PERIOD_MS J
+	public static final field DEFAULT_LEASE_DURATION_MS J
+	public fun <init> ()V
+	public fun <init> (JJJ)V
+	public synthetic fun <init> (JJJILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun component3 ()J
+	public final fun copy (JJJ)Lkotlinx/remote/classes/lease/LeaseConfig;
+	public static synthetic fun copy$default (Lkotlinx/remote/classes/lease/LeaseConfig;JJJILjava/lang/Object;)Lkotlinx/remote/classes/lease/LeaseConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCleanupIntervalMs ()J
+	public final fun getGracePeriodMs ()J
+	public final fun getLeaseDurationMs ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseConfig$Companion {
+}
+
+public final class kotlinx/remote/classes/lease/LeaseInfo {
+	public static final field Companion Lkotlinx/remote/classes/lease/LeaseInfo$Companion;
+	public fun <init> (JJLjava/lang/String;)V
+	public synthetic fun <init> (JJLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()J
+	public final fun component2 ()J
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (JJLjava/lang/String;)Lkotlinx/remote/classes/lease/LeaseInfo;
+	public static synthetic fun copy$default (Lkotlinx/remote/classes/lease/LeaseInfo;JJLjava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/classes/lease/LeaseInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClientId ()Ljava/lang/String;
+	public final fun getExpirationTimeMs ()J
+	public final fun getInstanceId ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class kotlinx/remote/classes/lease/LeaseInfo$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lkotlinx/remote/classes/lease/LeaseInfo$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/classes/lease/LeaseInfo;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/classes/lease/LeaseInfo;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseInfo$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseManager {
+	public fun <init> (Lkotlinx/remote/classes/lease/LeaseConfig;Lkotlinx/remote/classes/RemoteInstancesPool;)V
+	public final fun addInstanceWithLease (Ljava/lang/Object;Ljava/lang/String;)J
+	public static synthetic fun addInstanceWithLease$default (Lkotlinx/remote/classes/lease/LeaseManager;Ljava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)J
+	public final fun cleanupExpiredInstances ()I
+	public final fun clear ()V
+	public final fun getInstance (J)Ljava/lang/Object;
+	public final fun getLeaseInfo (J)Lkotlinx/remote/classes/lease/LeaseInfo;
+	public final fun hasActiveLease (J)Z
+	public final fun leaseCount ()I
+	public final fun releaseLeases (Lkotlinx/remote/classes/lease/LeaseReleaseRequest;)V
+	public final fun renewLeases (Lkotlinx/remote/classes/lease/LeaseRenewalRequest;)Lkotlinx/remote/classes/lease/LeaseRenewalResponse;
+	public final fun startCleanupJob (Lkotlinx/coroutines/CoroutineScope;)V
+	public final fun stopCleanupJob ()V
+}
+
+public final class kotlinx/remote/classes/lease/LeaseReleaseRequest {
+	public static final field Companion Lkotlinx/remote/classes/lease/LeaseReleaseRequest$Companion;
+	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;)Lkotlinx/remote/classes/lease/LeaseReleaseRequest;
+	public static synthetic fun copy$default (Lkotlinx/remote/classes/lease/LeaseReleaseRequest;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/classes/lease/LeaseReleaseRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClientId ()Ljava/lang/String;
+	public final fun getInstanceIds ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class kotlinx/remote/classes/lease/LeaseReleaseRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lkotlinx/remote/classes/lease/LeaseReleaseRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/classes/lease/LeaseReleaseRequest;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/classes/lease/LeaseReleaseRequest;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseReleaseRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseRenewalClient {
+	public fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;Lkotlinx/remote/classes/network/LeaseClient;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;Lkotlinx/remote/classes/network/LeaseClient;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun clear ()V
+	public final fun getOnLeaseExpired ()Lkotlin/jvm/functions/Function1;
+	public final fun isTracking (J)Z
+	public final fun registerStub (Lkotlinx/remote/classes/Stub;)V
+	public final fun renewAllLeases (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun shutdown (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun startRenewalJob (Lkotlinx/coroutines/CoroutineScope;)V
+	public final fun stopRenewalJob ()V
+	public final fun trackedCount ()I
+	public final fun unregisterStub (Lkotlinx/remote/classes/Stub;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun unregisterStub$default (Lkotlinx/remote/classes/lease/LeaseRenewalClient;Lkotlinx/remote/classes/Stub;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun unregisterStubId (JZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun unregisterStubId$default (Lkotlinx/remote/classes/lease/LeaseRenewalClient;JZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun unregisterStubIds (Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun unregisterStubIds$default (Lkotlinx/remote/classes/lease/LeaseRenewalClient;Ljava/util/List;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseRenewalClientConfig {
+	public static final field Companion Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig$Companion;
+	public static final field DEFAULT_RENEWAL_INTERVAL_MS J
+	public fun <init> ()V
+	public fun <init> (JLjava/lang/String;)V
+	public synthetic fun <init> (JLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()J
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (JLjava/lang/String;)Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;
+	public static synthetic fun copy$default (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;JLjava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClientId ()Ljava/lang/String;
+	public final fun getRenewalIntervalMs ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseRenewalClientConfig$Companion {
+}
+
+public final class kotlinx/remote/classes/lease/LeaseRenewalRequest {
+	public static final field Companion Lkotlinx/remote/classes/lease/LeaseRenewalRequest$Companion;
+	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;)Lkotlinx/remote/classes/lease/LeaseRenewalRequest;
+	public static synthetic fun copy$default (Lkotlinx/remote/classes/lease/LeaseRenewalRequest;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/classes/lease/LeaseRenewalRequest;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getClientId ()Ljava/lang/String;
+	public final fun getInstanceIds ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class kotlinx/remote/classes/lease/LeaseRenewalRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lkotlinx/remote/classes/lease/LeaseRenewalRequest$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/classes/lease/LeaseRenewalRequest;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/classes/lease/LeaseRenewalRequest;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseRenewalRequest$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseRenewalResponse {
+	public static final field Companion Lkotlinx/remote/classes/lease/LeaseRenewalResponse$Companion;
+	public fun <init> (Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Ljava/util/List;Ljava/util/List;)Lkotlinx/remote/classes/lease/LeaseRenewalResponse;
+	public static synthetic fun copy$default (Lkotlinx/remote/classes/lease/LeaseRenewalResponse;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lkotlinx/remote/classes/lease/LeaseRenewalResponse;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFailedIds ()Ljava/util/List;
+	public final fun getRenewedLeases ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final synthetic class kotlinx/remote/classes/lease/LeaseRenewalResponse$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+	public static final field INSTANCE Lkotlinx/remote/classes/lease/LeaseRenewalResponse$$serializer;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lkotlinx/remote/classes/lease/LeaseRenewalResponse;
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lkotlinx/remote/classes/lease/LeaseRenewalResponse;)V
+	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
+}
+
+public final class kotlinx/remote/classes/lease/LeaseRenewalResponse$Companion {
+	public final fun serializer ()Lkotlinx/serialization/KSerializer;
+}
+
+public final class kotlinx/remote/classes/lease/TimeProviderKt {
+	public static final fun currentTimeMillis ()J
+}
+
+public final class kotlinx/remote/classes/lease/WeakRef {
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun get ()Ljava/lang/Object;
+}
+
+public abstract interface class kotlinx/remote/classes/network/LeaseClient {
+	public abstract fun releaseLeases (Lkotlinx/remote/classes/lease/LeaseReleaseRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun renewLeases (Lkotlinx/remote/classes/lease/LeaseRenewalRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
