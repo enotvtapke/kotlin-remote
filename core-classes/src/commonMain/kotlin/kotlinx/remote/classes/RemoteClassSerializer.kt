@@ -38,15 +38,16 @@ class RemoteClassSerializer<T : Any>(
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(decoder: Decoder): T {
         val surrogate = decoder.decodeSerializableValue(StubSurrogate.serializer())
-        val instance = leaseManager?.getInstance(surrogate.id)
-        if (instance != null) {
-            return instance as T
-        } else {
-            val stub = stubFabric?.invoke(surrogate.id, surrogate.url)
-                ?: error("Cannot deserialize stub with id `${surrogate.id}`. No stub fabric provided.")
-            onStubDeserialization?.invoke(stub as Stub)
-            return stub
+        if (surrogate.url == nodeUrl) {  // TODO This is safety risk. One client can get remote class instance of another client by providing fake id.
+            val instance = leaseManager?.getInstance(surrogate.id)
+            if (instance != null) {
+                return instance as T
+            }
         }
+        val stub = stubFabric?.invoke(surrogate.id, surrogate.url)
+            ?: error("Cannot deserialize stub with id `${surrogate.id}`. No stub fabric provided.")
+        onStubDeserialization?.invoke(stub as Stub)
+        return stub
     }
 
     @Serializable

@@ -34,7 +34,6 @@ fun authRemoteEmbeddedServer(): EmbeddedServer<NettyApplicationEngine, NettyAppl
         install(KRemote) {
             this.callableMap = callableMap
         }
-//        installRemoteServerContentNegotiation()
         routing {
             authenticate("auth-basic") {
                 post("/callAuth") {
