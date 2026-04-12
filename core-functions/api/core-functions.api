@@ -69,7 +69,7 @@ public abstract interface class kotlinx/remote/RemoteContext {
 
 public final class kotlinx/remote/RemoteContextKt {
 	public static final fun asContext (Lkotlinx/remote/RemoteConfig;)Lkotlinx/remote/ConfiguredContext;
-	public static final fun run (Lkotlinx/remote/RemoteConfig;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
+	public static final fun runWith (Lkotlinx/remote/RemoteConfig;Lkotlin/jvm/functions/Function1;)Ljava/lang/Object;
 }
 
 public final class kotlinx/remote/RemoteException : java/lang/RuntimeException {

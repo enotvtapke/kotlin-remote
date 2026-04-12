@@ -4,6 +4,7 @@ import kotlinx.remote.CallableMap
 import kotlinx.remote.RemoteType
 import kotlinx.remote.RemoteCall
 import kotlinx.remote.RemoteParameter
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.builtins.nullable
@@ -99,17 +100,35 @@ class RemoteCallableSerializer(private val callableMap: CallableMap) : KSerializ
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun deserialize(decoder: Decoder): RemoteCall {
         return decoder.decodeStructure(descriptor) {
+            if (decodeSequentially()) {
+                // Sequential mode: elements arrive in descriptor order (callableName first)
+                val callableName = decodeStringElement(descriptor, 0)
+                val callable = callableMap[callableName]
+                val parametersSerializer = RemoteCallableArgumentsSerializer(
+                    callable.parameters,
+                    decoder.serializersModule
+                )
+                val parameters = decodeSerializableElement(descriptor, 1, parametersSerializer)
+                return@decodeStructure RemoteCall(callableName, parameters)
+            }
+
             var callableName: String? = null
             var parameters: Array<Any?>? = null
 
             while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
-                    0 -> callableName = decodeStringElement(descriptor, 0)
+                    0 -> {
+                        callableName = decodeStringElement(descriptor, 0)
+                    }
                     1 -> {
-                        // We need the callable name first to create the parameters serializer
-                        val name = callableName ?: error("Callable name must be decoded before parameters")
+                        val name = callableName
+                            ?: error(
+                                "Cannot deserialize RemoteCall: 'callableName' must appear before 'parameters' in the stream. " +
+                                    "This format does not support sequential decoding and emits fields in non-descriptor order."
+                            )
                         val callable = callableMap[name]
                         val parametersSerializer = RemoteCallableArgumentsSerializer(
                             callable.parameters,

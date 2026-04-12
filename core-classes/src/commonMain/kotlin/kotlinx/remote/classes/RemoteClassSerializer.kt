@@ -11,13 +11,14 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlin.reflect.KClass
 
 class RemoteClassSerializer<T : Any>(
+    serialName: String,
     private val leaseManager: LeaseManager? = null,
     private val nodeUrl: String? = null,
     private val onStubDeserialization: ((Stub) -> Unit)? = null,
     private val stubFabric: ((Long, String) -> T)? = null
 ) : KSerializer<T> {
     override val descriptor: SerialDescriptor = SerialDescriptor(
-        "kotlinx.remote.classes.RemoteSerializable",
+        serialName,
         StubSurrogate.serializer().descriptor
     )
 
@@ -61,6 +62,8 @@ fun remoteClassSerializersModule(
 ): SerializersModule = SerializersModule {
     remoteClasses.forEach { (clazz, stubFabric) ->
         contextual(clazz, RemoteClassSerializer(
+            // TODO use clazz.qualifiedName (this reflection API is not supported)
+            serialName = clazz.simpleName ?: "kotlinx.remote.classes.RemoteSerializable",
             leaseManager = leaseManager,
             nodeUrl = nodeUrl,
             onStubDeserialization = onStubDeserialization,

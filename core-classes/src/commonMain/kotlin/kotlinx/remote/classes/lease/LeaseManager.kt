@@ -6,11 +6,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.remote.classes.InternalConcurrentHashMap
 import kotlinx.remote.classes.RemoteInstancesPool
 
 class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInstancesPool) : SynchronizedObject() {
-    private val leases = InternalConcurrentHashMap<Long, LeaseEntry>()
+    private val leases = hashMapOf<Long, LeaseEntry>()
     private var cleanupJob: Job? = null
 
     private data class LeaseEntry(
@@ -34,7 +33,7 @@ class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInst
         val currentConfig = config
         val expirationTime = currentTimeMillis() + currentConfig.leaseDurationMs
         
-        val entry = leases.computeIfAbsent(instanceId) {
+        val entry = leases.getOrPut(instanceId) {
             LeaseEntry(instanceId, expirationTime)
         }
         
@@ -136,6 +135,6 @@ class LeaseManager(private val config: LeaseConfig, private val pool: RemoteInst
     }
     
     fun leaseCount(): Int = synchronized(this) {
-        leases.entries.size
+        leases.size
     }
 }

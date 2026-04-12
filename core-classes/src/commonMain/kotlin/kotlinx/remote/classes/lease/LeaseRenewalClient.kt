@@ -110,8 +110,8 @@ class LeaseRenewalClient(private val config: LeaseRenewalClientConfig, private v
                 try {
                     renewAllLeases()
                 } catch (e: Exception) {
-                    println(e.printStackTrace())
                     // TODO Log error
+                    e.printStackTrace()
                 }
             }
         }

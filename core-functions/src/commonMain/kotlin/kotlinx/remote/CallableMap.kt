@@ -6,7 +6,13 @@ class CallableMap(val callableMap: Map<String, RemoteCallable> = mapOf()) {
             "Function $name is not registered in CallableMap. Registered functions: ${callableMap.keys.joinToString()}."
         )
 
-    operator fun plus(other: CallableMap): CallableMap = CallableMap(callableMap + other.callableMap)
+    operator fun plus(other: CallableMap): CallableMap {
+        val duplicateKeys = callableMap.keys.intersect(other.callableMap.keys)
+        require(duplicateKeys.isEmpty()) {
+            "CallableMap merge conflict: the following function names are registered in both maps: ${duplicateKeys.joinToString()}"
+        }
+        return CallableMap(callableMap + other.callableMap)
+    }
     override fun toString(): String {
         return callableMap.entries.joinToString("\n")
     }

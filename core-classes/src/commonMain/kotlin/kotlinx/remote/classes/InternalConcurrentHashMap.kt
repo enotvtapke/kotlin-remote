@@ -79,8 +79,8 @@ internal class SynchronizedHashMap<K : Any, V: Any> : InternalConcurrentHashMap<
         get() = synchronized(this) { map.entries }.map { InternalConcurrentHashMap.Entry(it.key, it.value) }.toSet()
 
     override val keys: Collection<K>
-        get() = synchronized(this) { map.keys }
+        get() = synchronized(this) { map.keys.toList() }
 
     override val values: Collection<V>
-        get() = synchronized(this) { map.values }
+        get() = synchronized(this) { map.values.toList() }
 }

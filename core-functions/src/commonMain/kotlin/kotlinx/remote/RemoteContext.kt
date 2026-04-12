@@ -1,5 +1,9 @@
 package kotlinx.remote
 
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
 @Target(AnnotationTarget.FUNCTION)
 annotation class Remote(val name: String = "")
 
@@ -13,4 +17,10 @@ class ConfiguredContext<T: RemoteConfig>(val config: T): RemoteContext<T>
 
 fun <T: RemoteConfig> T.asContext() = ConfiguredContext(this)
 
-fun <T: RemoteConfig, R> T.run(block: context(RemoteContext<T>) () -> R): R = context(ConfiguredContext(this)) { block() }
+@OptIn(ExperimentalContracts::class)
+inline fun <T: RemoteConfig, R> T.runWith(block: context(RemoteContext<T>) () -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return context(ConfiguredContext(this)) { block() }
+}

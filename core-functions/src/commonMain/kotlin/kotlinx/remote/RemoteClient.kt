@@ -38,7 +38,7 @@ private val STACK_TRACE_SEPARATOR = StackFrame(
 private fun mergeStackTraces(error: Throwable, localStackTrace: List<StackFrame>): Throwable {
     val remoteStackTrace = error.stackTrace()
     if (remoteStackTrace.isEmpty() || localStackTrace.isEmpty()) {
-        return error
+        return RemoteException("Stack trace altering is not supported on your Kotlin backend", error)
     }
     val filteredLocalStackTrace = localStackTrace.drop(3)
     val filteredRemoteCallStack = remoteStackTrace.takeWhile { it.methodName != "callWithUniqueName" }

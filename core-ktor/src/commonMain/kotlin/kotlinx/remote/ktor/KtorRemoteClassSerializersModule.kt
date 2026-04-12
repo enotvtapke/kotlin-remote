@@ -40,8 +40,8 @@ private fun <T> memo(f: (String) -> T): (String) -> T {
 }
 
 fun startLeaseOnStubDeserialization(config: LeaseRenewalClientConfig): (Stub) -> Unit {
-    val memoGetLeaseRenewalClient = memo { url ->
-        LeaseRenewalClient(
+    val memoGetLeaseRenewalClient = memo { url -> // TODO I should have a single client for all the URLs
+        LeaseRenewalClient( // TODO This clients are never shutdown
             config, HttpClient {
                 defaultRequest {
                     url(url)
