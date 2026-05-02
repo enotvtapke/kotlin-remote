@@ -35,7 +35,6 @@ dependencies {
 
     coreRuntimeClasspath(project(":core-functions"))
     coreRuntimeClasspath(project(":core-classes"))
-    coreRuntimeClasspath(project(":core-ktor"))
     coreRuntimeClasspath(libs.kotlin.reflect)
     coreRuntimeClasspath(libs.coroutines.core)
     coreRuntimeClasspath(libs.ktor.utils)
