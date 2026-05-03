@@ -62,6 +62,10 @@ class RemoteIrContext(
         getRemoteIrClassSymbol("Stub", "classes")
     }
 
+    val remoteClassDescriptor by lazy {
+        getRemoteIrClassSymbol("RemoteClassDescriptor", "classes")
+    }
+
     val remoteConfig by lazy {
         getRemoteIrClassSymbol("RemoteConfig")
     }

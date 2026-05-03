@@ -56,27 +56,32 @@ class RemoteClassSerializer<T : Any>(
 }
 
 fun remoteClassSerializersModule(
-    remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>,
+    remoteClasses: List<RemoteClassDescriptor<Any>>,
     leaseManager: LeaseManager? = null,
     nodeUrl: String? = null,
     onStubDeserialization: ((Stub) -> Unit)? = null
 ): SerializersModule = SerializersModule {
-    remoteClasses.forEach { (clazz, stubFabric) ->
-        contextual(clazz, RemoteClassSerializer(
-            // TODO use clazz.qualifiedName (this reflection API is not supported)
-            serialName = clazz.simpleName ?: "kotlinx.remote.classes.RemoteSerializable",
+    remoteClasses.forEach { descriptor ->
+        contextual(descriptor.clazz, RemoteClassSerializer(
+            serialName = descriptor.serialName,
             leaseManager = leaseManager,
             nodeUrl = nodeUrl,
             onStubDeserialization = onStubDeserialization,
-            stubFabric = stubFabric
+            stubFabric = descriptor.stubFabric
         ))
     }
 }
 
+data class RemoteClassDescriptor<T : Any>(
+    val clazz: KClass<T>,
+    val serialName: String,
+    val stubFabric: (Long, String) -> T,
+)
+
 /**
  * The compiler plugin will replace every call to this function with generated code
  */
-fun genRemoteClassList(): List<Pair<KClass<Any>, (Long, String) -> Any>> = RemoteIntrinsic
+fun genRemoteClassList(): List<RemoteClassDescriptor<Any>> = RemoteIntrinsic
 
 private val RemoteIntrinsic: Nothing
     get() = error("Intrinsic function should have been replaced by compiler plugin")

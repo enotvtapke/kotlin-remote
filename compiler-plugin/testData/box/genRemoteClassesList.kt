@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM
 
+package foo.bar
+
 import kotlinx.coroutines.runBlocking
 import kotlinx.remote.Remote
 import kotlinx.remote.RemoteConfig

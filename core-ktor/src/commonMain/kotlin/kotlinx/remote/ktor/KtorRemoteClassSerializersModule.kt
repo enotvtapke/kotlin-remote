@@ -9,6 +9,7 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.remote.classes.RemoteClassDescriptor
 import kotlinx.remote.classes.RemoteInstancesPool
 import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.lease.LeaseConfig
@@ -18,10 +19,9 @@ import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.remote.ktor.classes.leaseClient
 import kotlinx.remote.classes.remoteClassSerializersModule
 import kotlinx.serialization.modules.SerializersModule
-import kotlin.reflect.KClass
 
 fun ktorRemoteClassSerializersModule(
-    remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>,
+    remoteClasses: List<RemoteClassDescriptor<Any>>,
     leaseConfig: LeaseConfig = LeaseConfig(),
     leaseRenewalClientConfig: LeaseRenewalClientConfig = LeaseRenewalClientConfig(),
     nodeUrl: String? = null,

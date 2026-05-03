@@ -1,13 +1,13 @@
 package kotlinx.remote.ktor
 
 import kotlinx.remote.CallableMap
+import kotlinx.remote.classes.RemoteClassDescriptor
 import kotlinx.remote.classes.RemoteInstancesPool
 import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseManager
 import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.serialization.modules.SerializersModule
-import kotlin.reflect.KClass
 
 class KRemoteConfigBuilder {
     class KRemoteClassesConfigBuilder {
@@ -37,7 +37,7 @@ class KRemoteConfigBuilder {
             }
         }
 
-        var remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>? = null
+        var remoteClasses: List<RemoteClassDescriptor<Any>>? = null
         private var clientConfig: KRemoteClassesDeserializationConfig? = null
         private var serverConfig: KRemoteClassesSerializationConfig? = null
 
@@ -93,7 +93,7 @@ internal data class KRemoteConfig(
 )
 
 internal data class KRemoteClassesConfig(
-    val remoteClasses: List<Pair<KClass<Any>, (Long, String) -> Any>>,
+    val remoteClasses: List<RemoteClassDescriptor<Any>>,
     val client: KRemoteClassesDeserializationConfig?,
     val server: KRemoteClassesSerializationConfig?,
 )

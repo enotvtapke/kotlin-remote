@@ -1,12 +1,16 @@
 package gc
 
+import kotlinx.remote.classes.RemoteClassDescriptor
 import kotlinx.remote.classes.lease.LeaseConfig
 import remoteEmbeddedServer
 import kotlin.reflect.KClass
 
-fun manualGenRemoteClassList(): List<Pair<KClass<Any>, (Long, String) -> Any>> {
+fun manualGenRemoteClassList(): List<RemoteClassDescriptor<Any>> {
     return listOf(
-        CalculatorGC::class as KClass<Any> to { id, url -> CalculatorGC.RemoteClassStub(id, url) }
+        RemoteClassDescriptor(
+            CalculatorGC::class as KClass<Any>,
+            "gc.CalculatorGC",
+        ) { id, url -> CalculatorGC.RemoteClassStub(id, url) }
     )
 }
 

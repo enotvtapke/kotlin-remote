@@ -1,93 +1,93 @@
-FILE fqName:<root> fileName:/genRemoteClassesList.kt
+FILE fqName:foo.bar fileName:/genRemoteClassesList.kt
   CLASS CLASS name:Calculator modality:OPEN visibility:public superTypes:[kotlin.Any]
     annotations:
       RemoteSerializable
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Calculator
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.Calculator
     PROPERTY name:init visibility:private modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:init type:kotlin.Long visibility:private
         EXPRESSION_BODY
-          GET_VAR 'init: kotlin.Long declared in <root>.Calculator.<init>' type=kotlin.Long origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+          GET_VAR 'init: kotlin.Long declared in foo.bar.Calculator.<init>' type=kotlin.Long origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-init> visibility:private modality:FINAL returnType:kotlin.Long
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Calculator
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.Calculator
         correspondingProperty: PROPERTY name:init visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-init> (): kotlin.Long declared in <root>.Calculator'
+          RETURN type=kotlin.Nothing from='private final fun <get-init> (): kotlin.Long declared in foo.bar.Calculator'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:init type:kotlin.Long visibility:private' type=kotlin.Long origin=null
-              receiver: GET_VAR '<this>: <root>.Calculator declared in <root>.Calculator.<get-init>' type=<root>.Calculator origin=null
+              receiver: GET_VAR '<this>: foo.bar.Calculator declared in foo.bar.Calculator.<get-init>' type=foo.bar.Calculator origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-init> visibility:private modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Calculator
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.Calculator
         VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Long
         correspondingProperty: PROPERTY name:init visibility:private modality:FINAL [var]
         BLOCK_BODY
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:init type:kotlin.Long visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.Calculator declared in <root>.Calculator.<set-init>' type=<root>.Calculator origin=null
-            value: GET_VAR '<set-?>: kotlin.Long declared in <root>.Calculator.<set-init>' type=kotlin.Long origin=null
-    CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[<root>.Calculator; kotlinx.remote.classes.Stub]
-      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Calculator.RemoteClassStub
+            receiver: GET_VAR '<this>: foo.bar.Calculator declared in foo.bar.Calculator.<set-init>' type=foo.bar.Calculator origin=null
+            value: GET_VAR '<set-?>: kotlin.Long declared in foo.bar.Calculator.<set-init>' type=kotlin.Long origin=null
+    CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[foo.bar.Calculator; kotlinx.remote.classes.Stub]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:foo.bar.Calculator.RemoteClassStub
       PROPERTY name:id visibility:public modality:FINAL [val]
         overridden:
           public abstract id: kotlin.Long declared in kotlinx.remote.classes.Stub
         FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]
           EXPRESSION_BODY
-            GET_VAR 'id: kotlin.Long declared in <root>.Calculator.RemoteClassStub.<init>' type=kotlin.Long origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+            GET_VAR 'id: kotlin.Long declared in foo.bar.Calculator.RemoteClassStub.<init>' type=kotlin.Long origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-id> visibility:public modality:FINAL returnType:kotlin.Long
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Calculator.RemoteClassStub
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.Calculator.RemoteClassStub
           correspondingProperty: PROPERTY name:id visibility:public modality:FINAL [val]
           overridden:
             public abstract fun <get-id> (): kotlin.Long declared in kotlinx.remote.classes.Stub
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-id> (): kotlin.Long declared in <root>.Calculator.RemoteClassStub'
+            RETURN type=kotlin.Nothing from='public final fun <get-id> (): kotlin.Long declared in foo.bar.Calculator.RemoteClassStub'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.Long visibility:private [final]' type=kotlin.Long origin=null
-                receiver: GET_VAR '<this>: <root>.Calculator.RemoteClassStub declared in <root>.Calculator.RemoteClassStub.<get-id>' type=<root>.Calculator.RemoteClassStub origin=null
+                receiver: GET_VAR '<this>: foo.bar.Calculator.RemoteClassStub declared in foo.bar.Calculator.RemoteClassStub.<get-id>' type=foo.bar.Calculator.RemoteClassStub origin=null
       PROPERTY name:url visibility:public modality:FINAL [val]
         overridden:
           public abstract url: kotlin.String declared in kotlinx.remote.classes.Stub
         FIELD PROPERTY_BACKING_FIELD name:url type:kotlin.String visibility:private [final]
           EXPRESSION_BODY
-            GET_VAR 'url: kotlin.String declared in <root>.Calculator.RemoteClassStub.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+            GET_VAR 'url: kotlin.String declared in foo.bar.Calculator.RemoteClassStub.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-url> visibility:public modality:FINAL returnType:kotlin.String
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Calculator.RemoteClassStub
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.Calculator.RemoteClassStub
           correspondingProperty: PROPERTY name:url visibility:public modality:FINAL [val]
           overridden:
             public abstract fun <get-url> (): kotlin.String declared in kotlinx.remote.classes.Stub
           BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-url> (): kotlin.String declared in <root>.Calculator.RemoteClassStub'
+            RETURN type=kotlin.Nothing from='public final fun <get-url> (): kotlin.String declared in foo.bar.Calculator.RemoteClassStub'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:url type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-                receiver: GET_VAR '<this>: <root>.Calculator.RemoteClassStub declared in <root>.Calculator.RemoteClassStub.<get-url>' type=<root>.Calculator.RemoteClassStub origin=null
-      CONSTRUCTOR GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] visibility:public returnType:<root>.Calculator.RemoteClassStub [primary]
+                receiver: GET_VAR '<this>: foo.bar.Calculator.RemoteClassStub declared in foo.bar.Calculator.RemoteClassStub.<get-url>' type=foo.bar.Calculator.RemoteClassStub origin=null
+      CONSTRUCTOR GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] visibility:public returnType:foo.bar.Calculator.RemoteClassStub [primary]
         VALUE_PARAMETER GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] kind:Regular name:id index:0 type:kotlin.Long
         VALUE_PARAMETER GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] kind:Regular name:url index:1 type:kotlin.String
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in <root>.Calculator'
-          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[<root>.Calculator; kotlinx.remote.classes.Stub]' type=kotlin.Unit
-      CONSTRUCTOR visibility:public returnType:<root>.Calculator.RemoteClassStub
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in foo.bar.Calculator'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS GENERATED[kotlinx.remote.codegen.frontend.FirRemoteClassStubKey] CLASS name:RemoteClassStub modality:FINAL visibility:public superTypes:[foo.bar.Calculator; kotlinx.remote.classes.Stub]' type=kotlin.Unit
+      CONSTRUCTOR visibility:public returnType:foo.bar.Calculator.RemoteClassStub
         BLOCK_BODY
-          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in <root>.Calculator'
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in foo.bar.Calculator'
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
         overridden:
-          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Calculator
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in foo.bar.Calculator
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlinx.remote.classes.Stub
       FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
-          public open fun hashCode (): kotlin.Int declared in <root>.Calculator
+          public open fun hashCode (): kotlin.Int declared in foo.bar.Calculator
           public open fun hashCode (): kotlin.Int declared in kotlinx.remote.classes.Stub
       FUN FAKE_OVERRIDE name:multiply visibility:public modality:FINAL returnType:kotlin.Long [suspend,fake_override]
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Calculator
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.Calculator
         VALUE_PARAMETER kind:Context name:ctx index:1 type:kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>
         VALUE_PARAMETER kind:Regular name:x index:2 type:kotlin.Long
         annotations:
           Remote(name = <null>)
         overridden:
-          public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, x: kotlin.Long): kotlin.Long declared in <root>.Calculator
+          public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, x: kotlin.Long): kotlin.Long declared in foo.bar.Calculator
       FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
-          public open fun toString (): kotlin.String declared in <root>.Calculator
+          public open fun toString (): kotlin.String declared in foo.bar.Calculator
           public open fun toString (): kotlin.String declared in kotlinx.remote.classes.Stub
-    CONSTRUCTOR visibility:public returnType:<root>.Calculator [primary]
+    CONSTRUCTOR visibility:public returnType:foo.bar.Calculator [primary]
       VALUE_PARAMETER kind:Regular name:init index:0 type:kotlin.Long
         EXPRESSION_BODY
           CONST Long type=kotlin.Long value=0
@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/genRemoteClassesList.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
     FUN name:multiply visibility:public modality:FINAL returnType:kotlin.Long [suspend]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Calculator
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:foo.bar.Calculator
       VALUE_PARAMETER kind:Context name:ctx index:1 type:kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>
       VALUE_PARAMETER kind:Regular name:x index:2 type:kotlin.Long
       annotations:
@@ -117,38 +117,38 @@ FILE fqName:<root> fileName:/genRemoteClassesList.kt
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlinx.remote.LocalContext
-              GET_VAR 'ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> declared in <root>.Calculator.multiply' type=kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> origin=null
+              GET_VAR 'ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> declared in foo.bar.Calculator.multiply' type=kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> origin=null
             then: BLOCK type=kotlin.Nothing origin=null
               CALL 'public final fun checkIsNotStubForRemoteClassMethod (value: kotlin.Any): kotlin.Unit declared in kotlinx.remote.classes' type=kotlin.Unit origin=null
-                ARG value: GET_VAR '<this>: <root>.Calculator declared in <root>.Calculator.multiply' type=<root>.Calculator origin=null
-              CALL 'private final fun <set-init> (<set-?>: kotlin.Long): kotlin.Unit declared in <root>.Calculator' type=kotlin.Unit origin=MULTEQ
-                ARG <this>: GET_VAR '<this>: <root>.Calculator declared in <root>.Calculator.multiply' type=<root>.Calculator origin=IMPLICIT_ARGUMENT
+                ARG value: GET_VAR '<this>: foo.bar.Calculator declared in foo.bar.Calculator.multiply' type=foo.bar.Calculator origin=null
+              CALL 'private final fun <set-init> (<set-?>: kotlin.Long): kotlin.Unit declared in foo.bar.Calculator' type=kotlin.Unit origin=MULTEQ
+                ARG <this>: GET_VAR '<this>: foo.bar.Calculator declared in foo.bar.Calculator.multiply' type=foo.bar.Calculator origin=IMPLICIT_ARGUMENT
                 ARG <set-?>: CALL 'public final fun times (other: kotlin.Long): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=MULTEQ
-                  ARG <this>: CALL 'private final fun <get-init> (): kotlin.Long declared in <root>.Calculator' type=kotlin.Long origin=MULTEQ
-                    ARG <this>: GET_VAR '<this>: <root>.Calculator declared in <root>.Calculator.multiply' type=<root>.Calculator origin=IMPLICIT_ARGUMENT
-                  ARG other: GET_VAR 'x: kotlin.Long declared in <root>.Calculator.multiply' type=kotlin.Long origin=null
-              RETURN type=kotlin.Nothing from='public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, x: kotlin.Long): kotlin.Long declared in <root>.Calculator'
-                CALL 'private final fun <get-init> (): kotlin.Long declared in <root>.Calculator' type=kotlin.Long origin=GET_PROPERTY
-                  ARG <this>: GET_VAR '<this>: <root>.Calculator declared in <root>.Calculator.multiply' type=<root>.Calculator origin=IMPLICIT_ARGUMENT
+                  ARG <this>: CALL 'private final fun <get-init> (): kotlin.Long declared in foo.bar.Calculator' type=kotlin.Long origin=MULTEQ
+                    ARG <this>: GET_VAR '<this>: foo.bar.Calculator declared in foo.bar.Calculator.multiply' type=foo.bar.Calculator origin=IMPLICIT_ARGUMENT
+                  ARG other: GET_VAR 'x: kotlin.Long declared in foo.bar.Calculator.multiply' type=kotlin.Long origin=null
+              RETURN type=kotlin.Nothing from='public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, x: kotlin.Long): kotlin.Long declared in foo.bar.Calculator'
+                CALL 'private final fun <get-init> (): kotlin.Long declared in foo.bar.Calculator' type=kotlin.Long origin=GET_PROPERTY
+                  ARG <this>: GET_VAR '<this>: foo.bar.Calculator declared in foo.bar.Calculator.multiply' type=foo.bar.Calculator origin=IMPLICIT_ARGUMENT
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: RETURN type=kotlin.Nothing from='public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, x: kotlin.Long): kotlin.Long declared in <root>.Calculator'
+            then: RETURN type=kotlin.Nothing from='public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, x: kotlin.Long): kotlin.Long declared in foo.bar.Calculator'
               CALL 'public final fun call <T> (<this>: kotlinx.remote.RemoteClient, call: kotlinx.remote.RemoteCall): T of kotlinx.remote.call declared in kotlinx.remote' type=T of kotlinx.remote.call origin=null
                 TYPE_ARG T: kotlin.Long
                 ARG <this>: CALL 'public abstract fun <get-client> (): kotlinx.remote.RemoteClient declared in kotlinx.remote.RemoteConfig' type=kotlinx.remote.RemoteClient origin=null
                   ARG <this>: CALL 'public final fun <get-config> (): T of kotlinx.remote.ConfiguredContext declared in kotlinx.remote.ConfiguredContext' type=T of kotlinx.remote.ConfiguredContext origin=null
                     ARG <this>: TYPE_OP type=kotlinx.remote.ConfiguredContext<T of kotlinx.remote.ConfiguredContext> origin=CAST typeOperand=kotlinx.remote.ConfiguredContext<T of kotlinx.remote.ConfiguredContext>
-                      GET_VAR 'ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> declared in <root>.Calculator.multiply' type=kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> origin=null
+                      GET_VAR 'ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> declared in foo.bar.Calculator.multiply' type=kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig> origin=null
                 ARG call: CONSTRUCTOR_CALL 'public constructor <init> (callableName: kotlin.String, arguments: kotlin.Array<kotlin.Any?>) declared in kotlinx.remote.RemoteCall' type=kotlinx.remote.RemoteCall origin=null
-                  ARG callableName: CONST String type=kotlin.String value="Calculator.multiply"
+                  ARG callableName: CONST String type=kotlin.String value="foo.bar.Calculator.multiply"
                   ARG arguments: CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOf> origin=null
                     TYPE_ARG T: kotlin.Any?
                     ARG elements: VARARG type=kotlin.Array<kotlin.Any?> varargElementType=kotlin.Any?
-                      GET_VAR '<this>: <root>.Calculator declared in <root>.Calculator.multiply' type=<root>.Calculator origin=null
-                      GET_VAR 'x: kotlin.Long declared in <root>.Calculator.multiply' type=kotlin.Long origin=null
+                      GET_VAR '<this>: foo.bar.Calculator declared in foo.bar.Calculator.multiply' type=foo.bar.Calculator origin=null
+                      GET_VAR 'x: kotlin.Long declared in foo.bar.Calculator.multiply' type=kotlin.Long origin=null
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in foo.bar'
         CALL 'public final fun runBlocking <T> (context: kotlin.coroutines.CoroutineContext, block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineScope, T of kotlinx.coroutines.runBlocking>): T of kotlinx.coroutines.runBlocking declared in kotlinx.coroutines' type=kotlin.String origin=null
           TYPE_ARG T: kotlin.String
           ARG block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.CoroutineScope, kotlin.String> origin=LAMBDA
@@ -156,24 +156,24 @@ FILE fqName:<root> fileName:/genRemoteClassesList.kt
               VALUE_PARAMETER kind:ExtensionReceiver name:$this$runBlocking index:0 type:kotlinx.coroutines.CoroutineScope
               BLOCK_BODY
                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-                  CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<out kotlin.Pair<kotlin.reflect.KClass<kotlin.Any>, kotlin.Function2<kotlin.Long, kotlin.String, kotlin.Any>>> origin=null
-                    TYPE_ARG T: kotlin.Pair<kotlin.reflect.KClass<kotlin.Any>, kotlin.Function2<kotlin.Long, kotlin.String, kotlin.Any>>
-                    ARG elements: VARARG type=kotlin.Array<out kotlin.Pair<kotlin.reflect.KClass<kotlin.Any>, kotlin.Function2<kotlin.Long, kotlin.String, kotlin.Any>>> varargElementType=kotlin.Pair<kotlin.reflect.KClass<kotlin.Any>, kotlin.Function2<kotlin.Long, kotlin.String, kotlin.Any>>
-                      CALL 'public final fun to <A, B> (<this>: A of kotlin.to, that: B of kotlin.to): kotlin.Pair<A of kotlin.to, B of kotlin.to> declared in kotlin' type=kotlin.Pair<kotlin.reflect.KClass<kotlin.Any>, kotlin.Function2<kotlin.Long, kotlin.String, kotlin.Any>> origin=null
-                        TYPE_ARG A: kotlin.reflect.KClass<kotlin.Any>
-                        TYPE_ARG B: kotlin.Function2<kotlin.Long, kotlin.String, kotlin.Any>
-                        ARG <this>: TYPE_OP type=kotlin.reflect.KClass<kotlin.Any> origin=CAST typeOperand=kotlin.reflect.KClass<kotlin.Any>
-                          CLASS_REFERENCE 'CLASS CLASS name:Calculator modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.Calculator>
-                        ARG that: FUN_EXPR type=kotlin.Function2<kotlin.Long, kotlin.String, kotlin.Any> origin=LAMBDA
+                  CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.listOf): kotlin.collections.List<T of kotlin.collections.listOf> declared in kotlin.collections' type=kotlin.collections.List<out kotlinx.remote.classes.RemoteClassDescriptor<kotlin.Any>> origin=null
+                    TYPE_ARG T: kotlinx.remote.classes.RemoteClassDescriptor<kotlin.Any>
+                    ARG elements: VARARG type=kotlin.Array<out kotlinx.remote.classes.RemoteClassDescriptor<kotlin.Any>> varargElementType=kotlinx.remote.classes.RemoteClassDescriptor<kotlin.Any>
+                      CONSTRUCTOR_CALL 'public constructor <init> (clazz: kotlin.reflect.KClass<T of kotlinx.remote.classes.RemoteClassDescriptor>, serialName: kotlin.String, stubFabric: kotlin.Function2<kotlin.Long, kotlin.String, T of kotlinx.remote.classes.RemoteClassDescriptor>) declared in kotlinx.remote.classes.RemoteClassDescriptor' type=kotlinx.remote.classes.RemoteClassDescriptor<kotlin.Any> origin=null
+                        TYPE_ARG (of class) T: kotlin.Any
+                        ARG clazz: TYPE_OP type=kotlin.reflect.KClass<kotlin.Any> origin=CAST typeOperand=kotlin.reflect.KClass<kotlin.Any>
+                          CLASS_REFERENCE 'CLASS CLASS name:Calculator modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<foo.bar.Calculator>
+                        ARG serialName: CONST String type=kotlin.String value="foo.bar.Calculator"
+                        ARG stubFabric: FUN_EXPR type=kotlin.Function2<kotlin.Long, kotlin.String, kotlin.Any> origin=LAMBDA
                           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Any
                             VALUE_PARAMETER kind:Regular name:id index:0 type:kotlin.Long
                             VALUE_PARAMETER kind:Regular name:url index:1 type:kotlin.String
                             BLOCK_BODY
-                              RETURN type=kotlin.Nothing from='local final fun <anonymous> (id: kotlin.Long, url: kotlin.String): kotlin.Any declared in <root>.box.<anonymous>'
-                                CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.Long, url: kotlin.String) declared in <root>.Calculator.RemoteClassStub' type=<root>.Calculator.RemoteClassStub origin=null
-                                  ARG id: GET_VAR 'id: kotlin.Long declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.Long origin=null
-                                  ARG url: GET_VAR 'url: kotlin.String declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.String origin=null
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$runBlocking: kotlinx.coroutines.CoroutineScope): kotlin.String declared in <root>.box'
+                              RETURN type=kotlin.Nothing from='local final fun <anonymous> (id: kotlin.Long, url: kotlin.String): kotlin.Any declared in foo.bar.box.<anonymous>'
+                                CONSTRUCTOR_CALL 'public constructor <init> (id: kotlin.Long, url: kotlin.String) declared in foo.bar.Calculator.RemoteClassStub' type=foo.bar.Calculator.RemoteClassStub origin=null
+                                  ARG id: GET_VAR 'id: kotlin.Long declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlin.Long origin=null
+                                  ARG url: GET_VAR 'url: kotlin.String declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlin.String origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> ($this$runBlocking: kotlinx.coroutines.CoroutineScope): kotlin.String declared in foo.bar.box'
                   CALL 'public final fun context <T, R> (with: T of kotlin.context, block: @[ContextFunctionTypeParams(count = 1)] kotlin.Function1<T of kotlin.context, R of kotlin.context>): R of kotlin.context declared in kotlin' type=kotlin.String origin=null
                     TYPE_ARG T: kotlinx.remote.ConfiguredContext<kotlinx.remote.codegen.test.ServerConfig>
                     TYPE_ARG R: kotlin.String
@@ -184,23 +184,23 @@ FILE fqName:<root> fileName:/genRemoteClassesList.kt
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
                         VALUE_PARAMETER UNDERSCORE_PARAMETER kind:Context name:<unused var> index:0 type:kotlinx.remote.ConfiguredContext<kotlinx.remote.codegen.test.ServerConfig>
                         BLOCK_BODY
-                          VAR name:c type:<root>.Calculator [val]
-                            CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in <root>.Calculator' type=<root>.Calculator origin=null
+                          VAR name:c type:foo.bar.Calculator [val]
+                            CONSTRUCTOR_CALL 'public constructor <init> (init: kotlin.Long) declared in foo.bar.Calculator' type=foo.bar.Calculator origin=null
                               ARG init: CONST Long type=kotlin.Long value=1
                           VAR name:test1 type:kotlin.Long [val]
-                            CALL 'public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, x: kotlin.Long): kotlin.Long declared in <root>.Calculator' type=kotlin.Long origin=null
-                              ARG <this>: GET_VAR 'val c: <root>.Calculator declared in <root>.box.<anonymous>.<anonymous>' type=<root>.Calculator origin=null
-                              ARG ctx: GET_VAR '<unused var>: kotlinx.remote.ConfiguredContext<kotlinx.remote.codegen.test.ServerConfig> declared in <root>.box.<anonymous>.<anonymous>' type=kotlinx.remote.ConfiguredContext<kotlinx.remote.codegen.test.ServerConfig> origin=null
+                            CALL 'public final fun multiply (ctx: kotlinx.remote.RemoteContext<kotlinx.remote.RemoteConfig>, x: kotlin.Long): kotlin.Long declared in foo.bar.Calculator' type=kotlin.Long origin=null
+                              ARG <this>: GET_VAR 'val c: foo.bar.Calculator declared in foo.bar.box.<anonymous>.<anonymous>' type=foo.bar.Calculator origin=null
+                              ARG ctx: GET_VAR '<unused var>: kotlinx.remote.ConfiguredContext<kotlinx.remote.codegen.test.ServerConfig> declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlinx.remote.ConfiguredContext<kotlinx.remote.codegen.test.ServerConfig> origin=null
                               ARG x: CONST Long type=kotlin.Long value=5
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.ConfiguredContext<kotlinx.remote.codegen.test.ServerConfig>): kotlin.String declared in <root>.box.<anonymous>'
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (<unused var>: kotlinx.remote.ConfiguredContext<kotlinx.remote.codegen.test.ServerConfig>): kotlin.String declared in foo.bar.box.<anonymous>'
                             WHEN type=kotlin.String origin=IF
                               BRANCH
                                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                                  ARG arg0: GET_VAR 'val test1: kotlin.Long declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.Long origin=null
+                                  ARG arg0: GET_VAR 'val test1: kotlin.Long declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlin.Long origin=null
                                   ARG arg1: CONST Long type=kotlin.Long value=42
                                 then: CONST String type=kotlin.String value="OK"
                               BRANCH
                                 if: CONST Boolean type=kotlin.Boolean value=true
                                 then: STRING_CONCATENATION type=kotlin.String
                                   CONST String type=kotlin.String value="Fail: test1="
-                                  GET_VAR 'val test1: kotlin.Long declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.Long origin=null
+                                  GET_VAR 'val test1: kotlin.Long declared in foo.bar.box.<anonymous>.<anonymous>' type=kotlin.Long origin=null

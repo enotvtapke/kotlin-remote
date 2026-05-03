@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -30,14 +31,8 @@ class RemoteClassListGenerator(
 ) {
 
     fun generate(parent: IrDeclarationParent): IrExpression {
-        val kClassAnyType = ctx.kClass.typeWith(ctx.irBuiltIns.anyType, Variance.INVARIANT)
-        val function2LongStringAnyType = ctx.function2.typeWith(
-            ctx.irBuiltIns.longType,
-            ctx.irBuiltIns.stringType,
-            ctx.irBuiltIns.anyType,
-        )
-        val pairType = ctx.pair.typeWith(kClassAnyType, function2LongStringAnyType)
-        val listType = ctx.irBuiltIns.listClass.typeWith(pairType, Variance.OUT_VARIANCE)
+        val descriptorType = ctx.remoteClassDescriptor.typeWith(ctx.irBuiltIns.anyType)
+        val listType = ctx.irBuiltIns.listClass.typeWith(descriptorType, Variance.OUT_VARIANCE)
 
         if (remoteClasses.isEmpty()) {
             return IrCallImpl(
@@ -47,11 +42,11 @@ class RemoteClassListGenerator(
                 symbol = ctx.functions.emptyList,
                 typeArgumentsCount = 1,
             ).apply {
-                typeArguments[0] = pairType
+                typeArguments[0] = descriptorType
             }
         }
 
-        val varargType = ctx.irBuiltIns.arrayClass.typeWith(pairType, Variance.OUT_VARIANCE)
+        val varargType = ctx.irBuiltIns.arrayClass.typeWith(descriptorType, Variance.OUT_VARIANCE)
 
         return IrCallImpl(
             startOffset = UNDEFINED_OFFSET,
@@ -60,41 +55,46 @@ class RemoteClassListGenerator(
             symbol = ctx.functions.listOf,
             typeArgumentsCount = 1,
         ).apply {
-            typeArguments[0] = pairType
+            typeArguments[0] = descriptorType
             arguments[0] = IrVarargImpl(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
                 type = varargType,
-                varargElementType = pairType,
+                varargElementType = descriptorType,
                 elements = remoteClasses.memoryOptimizedMap { remoteClass ->
-                    generatePair(parent, remoteClass, kClassAnyType, function2LongStringAnyType, pairType)
+                    generateDescriptor(parent, remoteClass, descriptorType)
                 }
             )
         }
     }
 
-    private fun generatePair(
+    private fun generateDescriptor(
         parent: IrDeclarationParent,
         remoteClass: RemoteClass,
-        kClassAnyType: IrType,
-        function2LongStringAnyType: IrType,
-        pairType: IrType,
+        descriptorType: IrType,
     ): IrExpression {
-        return IrCallImpl(
+        return IrConstructorCallImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
-            type = pairType,
-            symbol = ctx.functions.to,
-            typeArgumentsCount = 2,
+            type = descriptorType,
+            symbol = ctx.remoteClassDescriptor.constructors.single(),
+            typeArgumentsCount = 1,
+            constructorTypeArgumentsCount = 0,
         ).apply {
-            typeArguments[0] = kClassAnyType
-            typeArguments[1] = function2LongStringAnyType
-            arguments[0] = generateClassReference(remoteClass, kClassAnyType)
-            arguments[1] = generateStubFactory(parent, remoteClass)
+            typeArguments[0] = ctx.irBuiltIns.anyType
+            arguments[0] = generateClassReference(remoteClass)
+            arguments[1] = IrConstImpl.string(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                ctx.irBuiltIns.stringType,
+                remoteClass.declaration.fqNameWhenAvailable?.asString() ?: remoteClass.declaration.name.asString(),
+            )
+            arguments[2] = generateStubFactory(parent, remoteClass)
         }
     }
 
-    private fun generateClassReference(remoteClass: RemoteClass, kClassAnyType: IrType): IrExpression {
+    private fun generateClassReference(remoteClass: RemoteClass): IrExpression {
+        val kClassAnyType = ctx.kClass.typeWith(ctx.irBuiltIns.anyType, Variance.INVARIANT)
         val classType = remoteClass.declaration.defaultType
         val kClassType = ctx.kClass.typeWith(classType, Variance.INVARIANT)
         val classReference = IrClassReferenceImpl(
@@ -131,7 +131,7 @@ class RemoteClassListGenerator(
                 name = Name.identifier("id")
                 type = ctx.irBuiltIns.longType
             }
-            
+
             val urlParameter = addValueParameter {
                 name = Name.identifier("url")
                 type = ctx.irBuiltIns.stringType
