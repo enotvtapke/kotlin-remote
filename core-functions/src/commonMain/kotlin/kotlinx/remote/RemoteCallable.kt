@@ -1,7 +1,5 @@
 package kotlinx.remote
 
-import io.ktor.util.reflect.*
-import kotlinx.remote.serialization.asKClass
 import kotlin.reflect.KType
 
 data class RemoteType(
@@ -26,8 +24,3 @@ fun interface RemoteInvokator {
     context(_: LocalContext)
     suspend fun callWithUniqueName(parameters: Array<Any?>): Any?
 }
-
-fun RemoteCallable.returnTypeInfo(): TypeInfo = TypeInfo(
-    returnType.kType.asKClass(),
-    returnType.kType
-)

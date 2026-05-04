@@ -19,7 +19,7 @@ import kotlin.reflect.KType
 import kotlin.reflect.KTypeParameter
 
 @Suppress("UNCHECKED_CAST")
-internal fun KType.asKClass() = when (val t = classifier) {
+fun KType.asKClass() = when (val t = classifier) {
     is KClass<*> -> t
     is KTypeParameter -> {
         throw IllegalArgumentException(

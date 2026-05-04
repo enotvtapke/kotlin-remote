@@ -1,5 +1,6 @@
 package kotlinx.remote
 
+// TODO We should throw exception or write a warning if keys in callable map are duplicated during generation
 class CallableMap(val callableMap: Map<String, RemoteCallable> = mapOf()) {
     operator fun get(name: String): RemoteCallable = callableMap[name]
         ?: error(
