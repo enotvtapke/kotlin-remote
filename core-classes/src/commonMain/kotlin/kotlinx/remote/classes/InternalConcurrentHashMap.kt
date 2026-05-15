@@ -34,6 +34,7 @@ internal interface InternalConcurrentHashMap<K : Any, V : Any> {
     )
 }
 
+// TODO Make function expect/actual. Use more performant maps on backends where they exist
 internal fun <K : Any, V : Any> InternalConcurrentHashMap(): InternalConcurrentHashMap<K, V> = SynchronizedHashMap()
 
 internal class SynchronizedHashMap<K : Any, V: Any> : InternalConcurrentHashMap<K, V>, SynchronizedObject() {

@@ -17,9 +17,9 @@ public final class kotlinx/remote/ktor/KRemoteConfigBuilder$KRemoteClassesConfig
 
 public final class kotlinx/remote/ktor/KRemoteConfigBuilder$KRemoteClassesConfigBuilder$KRemoteClassesDeserializationConfigBuilder {
 	public fun <init> ()V
-	public final fun getLeaseRenewalClientConfig ()Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;
+	public final fun getLeaseRenewalPool ()Lkotlinx/remote/ktor/KtorLeaseRenewalManager;
 	public final fun getOnStubDeserialization ()Lkotlin/jvm/functions/Function1;
-	public final fun setLeaseRenewalClientConfig (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;)V
+	public final fun setLeaseRenewalPool (Lkotlinx/remote/ktor/KtorLeaseRenewalManager;)V
 	public final fun setOnStubDeserialization (Lkotlin/jvm/functions/Function1;)V
 }
 
@@ -45,12 +45,26 @@ public final class kotlinx/remote/ktor/KRemoteLeaseRoutesKt {
 public final class kotlinx/remote/ktor/KRemoteRouteDslKt {
 	public static final fun handleRemoteCall (Lio/ktor/server/routing/RoutingContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun remote (Lio/ktor/server/routing/Route;Ljava/lang/String;)V
+	public static final fun returnTypeInfo (Lkotlinx/remote/RemoteCallable;)Lio/ktor/util/reflect/TypeInfo;
+}
+
+public final class kotlinx/remote/ktor/KtorLeaseRenewalManager : kotlinx/remote/classes/lease/LeaseRenewalManager {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;)V
+	public synthetic fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun stop ()V
+}
+
+public final class kotlinx/remote/ktor/KtorLeaseRenewalPool : kotlinx/remote/classes/lease/LeaseRenewalPool {
+	public fun <init> ()V
+	public fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;)V
+	public synthetic fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun stop ()V
 }
 
 public final class kotlinx/remote/ktor/KtorRemoteClassSerializersModuleKt {
 	public static final fun ktorRemoteClassSerializersModule (Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseConfig;Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;Ljava/lang/String;)Lkotlinx/serialization/modules/SerializersModule;
 	public static synthetic fun ktorRemoteClassSerializersModule$default (Ljava/util/List;Lkotlinx/remote/classes/lease/LeaseConfig;Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/serialization/modules/SerializersModule;
-	public static final fun startLeaseOnStubDeserialization (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;)Lkotlin/jvm/functions/Function1;
 }
 
 public final class kotlinx/remote/ktor/KtorRemoteClientKt {

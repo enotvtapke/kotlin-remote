@@ -6,21 +6,22 @@ import kotlinx.remote.classes.RemoteInstancesPool
 import kotlinx.remote.classes.Stub
 import kotlinx.remote.classes.lease.LeaseConfig
 import kotlinx.remote.classes.lease.LeaseManager
-import kotlinx.remote.classes.lease.LeaseRenewalClientConfig
 import kotlinx.serialization.modules.SerializersModule
 
 class KRemoteConfigBuilder {
     class KRemoteClassesConfigBuilder {
         class KRemoteClassesDeserializationConfigBuilder {
-            var leaseRenewalClientConfig: LeaseRenewalClientConfig? = null
+            var leaseRenewalPool: KtorLeaseRenewalManager? = null
             var onStubDeserialization: ((Stub) -> Unit)? = null
 
             internal fun build(): KRemoteClassesDeserializationConfig {
-                return KRemoteClassesDeserializationConfig(
-                    onStubDeserialization ?: startLeaseOnStubDeserialization(
-                        leaseRenewalClientConfig ?: LeaseRenewalClientConfig()
-                    )
-                )
+                val userCallback = onStubDeserialization
+                if (userCallback != null) {
+                    if (leaseRenewalPool != null) error("`onStubDeserialization` and `leaseRenewalPool` cannot be used together")
+                    return KRemoteClassesDeserializationConfig(userCallback, pool = null)
+                }
+                val pool = leaseRenewalPool ?: KtorLeaseRenewalManager()
+                return KRemoteClassesDeserializationConfig(pool.onStubDeserialization, pool = pool)
             }
         }
 
@@ -99,7 +100,8 @@ internal data class KRemoteClassesConfig(
 )
 
 internal data class KRemoteClassesDeserializationConfig(
-    val onStubDeserialization: ((Stub) -> Unit)
+    val onStubDeserialization: ((Stub) -> Unit),
+    val pool: KtorLeaseRenewalManager? = null,
 )
 
 internal data class KRemoteClassesSerializationConfig(

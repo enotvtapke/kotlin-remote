@@ -37,5 +37,6 @@ val KRemote: ApplicationPlugin<KRemoteConfigBuilder> = createApplicationPlugin(
     config.classes?.server?.leaseManager?.startCleanupJob(CoroutineScope(Dispatchers.Default))
     application.monitor.subscribe(ApplicationStopped) {
         config.classes?.server?.leaseManager?.stopCleanupJob()
+        config.classes?.client?.pool?.stop()
     }
 }

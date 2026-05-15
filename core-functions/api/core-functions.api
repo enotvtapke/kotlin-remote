@@ -48,10 +48,6 @@ public final class kotlinx/remote/RemoteCallable {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class kotlinx/remote/RemoteCallableKt {
-	public static final fun returnTypeInfo (Lkotlinx/remote/RemoteCallable;)Lio/ktor/util/reflect/TypeInfo;
-}
-
 public abstract interface class kotlinx/remote/RemoteClient {
 	public abstract fun call (Lkotlinx/remote/RemoteCall;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -185,6 +181,7 @@ public final class kotlinx/remote/serialization/RemoteCallableSerializer : kotli
 }
 
 public final class kotlinx/remote/serialization/RemoteCallableSerializerKt {
+	public static final fun asKClass (Lkotlin/reflect/KType;)Lkotlin/reflect/KClass;
 	public static final fun remoteSerializersModule (Lkotlinx/remote/CallableMap;)Lkotlinx/serialization/modules/SerializersModule;
 }
 

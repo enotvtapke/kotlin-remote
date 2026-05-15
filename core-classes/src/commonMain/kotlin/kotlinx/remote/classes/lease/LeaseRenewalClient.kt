@@ -149,7 +149,8 @@ class LeaseRenewalClient(private val config: LeaseRenewalClientConfig, private v
 
 data class LeaseRenewalClientConfig(
     val renewalIntervalMs: Long = DEFAULT_RENEWAL_INTERVAL_MS,
-    val clientId: String? = null
+    val clientId: String? = null,
+    val leasePath: String = "lease"
 ) {
     companion object {
         const val DEFAULT_RENEWAL_INTERVAL_MS = 10_000L
