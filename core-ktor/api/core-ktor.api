@@ -50,8 +50,8 @@ public final class kotlinx/remote/ktor/KRemoteRouteDslKt {
 
 public final class kotlinx/remote/ktor/KtorLeaseRenewalManager : kotlinx/remote/classes/lease/LeaseRenewalManager {
 	public fun <init> ()V
-	public fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;)V
-	public synthetic fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;Lio/ktor/client/HttpClient;)V
+	public synthetic fun <init> (Lkotlinx/remote/classes/lease/LeaseRenewalClientConfig;Lio/ktor/client/HttpClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun stop ()V
 }
 
@@ -70,6 +70,12 @@ public final class kotlinx/remote/ktor/KtorRemoteClassSerializersModuleKt {
 public final class kotlinx/remote/ktor/KtorRemoteClientKt {
 	public static final fun remoteClient (Lio/ktor/client/HttpClient;Lkotlinx/remote/CallableMap;Ljava/lang/String;)Lkotlinx/remote/RemoteClient;
 	public static synthetic fun remoteClient$default (Lio/ktor/client/HttpClient;Lkotlinx/remote/CallableMap;Ljava/lang/String;ILjava/lang/Object;)Lkotlinx/remote/RemoteClient;
+}
+
+public final class kotlinx/remote/ktor/RemoteCallException : java/lang/RuntimeException {
+	public fun <init> (ILjava/lang/String;)V
+	public final fun getResponseBody ()Ljava/lang/String;
+	public final fun getStatusCode ()I
 }
 
 public final class kotlinx/remote/ktor/classes/KtorLeaseClientKt {

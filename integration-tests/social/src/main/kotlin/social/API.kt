@@ -163,3 +163,46 @@ suspend fun searchByHashtag(tag: String): List<Post> {
     val posts = context(PostServiceConfig.asContext()) { allPosts() }
     return posts.filter { it.text.contains(needle, ignoreCase = true) }
 }
+
+// === Web BFF ===
+
+@Remote context(_: RemoteContext<WebBffConfig>)
+suspend fun getWebHomePage(userId: Long): WebHomePage {
+    val user = context(UserServiceConfig.asContext()) { getUser(userId) }
+    val feed = context(FeedServiceConfig.asContext()) { getFeed(userId) }
+    val notifications = context(NotificationServiceConfig.asContext()) { getNotifications(userId) }.take(10)
+    val trending = context(FeedServiceConfig.asContext()) { getTrending() }.take(5)
+    val followerCount = context(FollowServiceConfig.asContext()) { getFollowers(userId) }.size
+    val followingCount = context(FollowServiceConfig.asContext()) { getFollowing(userId) }.size
+    return WebHomePage(user, feed, notifications, trending, followerCount, followingCount)
+}
+
+@Remote context(_: RemoteContext<WebBffConfig>)
+suspend fun getWebProfilePage(userId: Long, viewerId: Long): WebProfilePage {
+    val user = context(UserServiceConfig.asContext()) { getUser(userId) }
+    val posts = context(FeedServiceConfig.asContext()) { getUserFeed(userId) }
+    val followerCount = context(FollowServiceConfig.asContext()) { getFollowers(userId) }.size
+    val followingCount = context(FollowServiceConfig.asContext()) { getFollowing(userId) }.size
+    val isFollowedByMe = context(FollowServiceConfig.asContext()) { isFollowing(viewerId, userId) }
+    return WebProfilePage(user, posts, followerCount, followingCount, isFollowedByMe)
+}
+
+// === Mobile BFF ===
+
+@Remote context(_: RemoteContext<MobileBffConfig>)
+suspend fun getMobileHomePage(userId: Long, offset: Int = 0, limit: Int = 10): MobileHomePage {
+    val feed = context(FeedServiceConfig.asContext()) { getFeed(userId) }.drop(offset).take(limit)
+    val unread = context(NotificationServiceConfig.asContext()) { getNotifications(userId) }.count { !it.read }
+    return MobileHomePage(
+        feed = feed.map { MobileFeedItem(it.post.id, it.post.text, it.author.name, it.likes) },
+        unreadNotifications = unread,
+    )
+}
+
+@Remote context(_: RemoteContext<MobileBffConfig>)
+suspend fun getMobileProfile(userId: Long): MobileProfile {
+    val user = context(UserServiceConfig.asContext()) { getUser(userId) }
+    val postCount = context(PostServiceConfig.asContext()) { listUserPosts(userId) }.size
+    val followerCount = context(FollowServiceConfig.asContext()) { getFollowers(userId) }.size
+    return MobileProfile(user.name, postCount, followerCount)
+}

@@ -12,7 +12,7 @@ import java.lang.Thread.sleep
 import kotlin.concurrent.thread
 import kotlin.system.exitProcess
 
-context(_ : RemoteContext<UserServiceConfig>, _ : RemoteContext<PostServiceConfig>, _ : RemoteContext<FollowServiceConfig>, _ : RemoteContext<LikeServiceConfig>, _ : RemoteContext<CommentServiceConfig>, _ : RemoteContext<NotificationServiceConfig>, _ : RemoteContext<FeedServiceConfig>, _ : RemoteContext<SearchServiceConfig>)
+context(_ : RemoteContext<UserServiceConfig>, _ : RemoteContext<PostServiceConfig>, _ : RemoteContext<FollowServiceConfig>, _ : RemoteContext<LikeServiceConfig>, _ : RemoteContext<CommentServiceConfig>, _ : RemoteContext<NotificationServiceConfig>, _ : RemoteContext<FeedServiceConfig>, _ : RemoteContext<SearchServiceConfig>, _ : RemoteContext<WebBffConfig>, _ : RemoteContext<MobileBffConfig>)
 suspend fun testClient() {
     val alice = register("alice", "pw", "Alice")
     val bob = register("bob", "pw", "Bob")
@@ -30,6 +30,18 @@ suspend fun testClient() {
 
     val found = searchByHashtag("world")
     println("Posts with #world: $found")
+
+    val webHome = getWebHomePage(bob.id)
+    println("Web home: $webHome")
+
+    val webProfile = getWebProfilePage(alice.id, bob.id)
+    println("Web profile: $webProfile")
+
+    val mobileHome = getMobileHomePage(bob.id, offset = 0, limit = 5)
+    println("Mobile home: $mobileHome")
+
+    val mobileProfile = getMobileProfile(alice.id)
+    println("Mobile profile: $mobileProfile")
 }
 
 fun main() = runBlocking {
@@ -45,7 +57,9 @@ fun main() = runBlocking {
         FollowServiceContext,
         LikeServiceContext,
         CommentServiceContext,
-        NotificationServiceContext
+        NotificationServiceContext,
+        WebBffContext,
+        MobileBffContext,
     ) {
         testClient()
     }

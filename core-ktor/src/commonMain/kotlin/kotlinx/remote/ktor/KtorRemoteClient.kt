@@ -2,6 +2,7 @@ package kotlinx.remote.ktor
 
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import kotlinx.remote.*
 
@@ -12,6 +13,7 @@ internal class KtorRemoteClient(
 ) : RemoteClient {
     override suspend fun call(call: RemoteCall): RemoteResponse<*> {
         val post = httpClient.post(path) {
+            expectSuccess = true
             setBody(call)
         }
         val callable = callableMap[call.callableName]
