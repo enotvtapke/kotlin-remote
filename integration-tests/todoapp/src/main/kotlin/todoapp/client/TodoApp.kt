@@ -40,7 +40,10 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import kotlinx.coroutines.launch
+import kotlinx.remote.RemoteConfig
+import kotlinx.remote.RemoteContext
 import kotlinx.remote.asContext
+import kotlinx.remote.runWith
 import todoapp.model.CreateTodoRequest
 import todoapp.model.Todo
 import todoapp.model.UpdateTodoRequest
@@ -67,11 +70,14 @@ fun main() = application {
         title = "Todo App",
         state = rememberWindowState(width = 520.dp, height = 740.dp)
     ) {
-        TodoApp()
+        ServerConfig.runWith {
+            TodoApp()
+        }
     }
 }
 
 @Composable
+context(_: RemoteContext<ServerConfig>)
 fun TodoApp() {
     val scope = rememberCoroutineScope()
     var todoList by remember { mutableStateOf<List<Todo>>(emptyList()) }
@@ -85,9 +91,7 @@ fun TodoApp() {
             isLoading = true
             errorMessage = null
             try {
-                context(ServerConfig.asContext()) {
-                    todoList = todos()
-                }
+                todoList = todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to load todos: ${e.message}"
             }
@@ -99,11 +103,9 @@ fun TodoApp() {
         if (newTodoTitle.isBlank()) return
         scope.launch {
             try {
-                context(ServerConfig.asContext()) {
-                    createTodo(CreateTodoRequest(newTodoTitle.trim()))
-                    newTodoTitle = ""
-                    todoList = todos()
-                }
+                createTodo(CreateTodoRequest(newTodoTitle.trim()))
+                newTodoTitle = ""
+                todoList = todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to add todo: ${e.message}"
             }
@@ -113,10 +115,8 @@ fun TodoApp() {
     fun toggleTodo(todo: Todo) {
         scope.launch {
             try {
-                context(ServerConfig.asContext()) {
-                    updateTodo(todo.id, UpdateTodoRequest(done = !todo.done))
-                    todoList = todos()
-                }
+                updateTodo(todo.id, UpdateTodoRequest(done = !todo.done))
+                todoList = todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to update todo: ${e.message}"
             }
@@ -126,10 +126,8 @@ fun TodoApp() {
     fun removeTodo(todo: Todo) {
         scope.launch {
             try {
-                context(ServerConfig.asContext()) {
-                    deleteTodo(todo.id)
-                    todoList = todos()
-                }
+                deleteTodo(todo.id)
+                todoList = todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to delete todo: ${e.message}"
             }
@@ -140,10 +138,8 @@ fun TodoApp() {
         if (newTitle.isBlank() || newTitle == todo.title) return
         scope.launch {
             try {
-                context(ServerConfig.asContext()) {
-                    updateTodo(todo.id, UpdateTodoRequest(title = newTitle.trim()))
-                    todoList = todos()
-                }
+                updateTodo(todo.id, UpdateTodoRequest(title = newTitle.trim()))
+                todoList = todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to update todo: ${e.message}"
             }
