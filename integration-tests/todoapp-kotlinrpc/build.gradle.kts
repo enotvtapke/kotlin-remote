@@ -1,7 +1,16 @@
 plugins {
     kotlin("jvm") version "2.2.20"
     kotlin("plugin.serialization") version "2.2.20"
-    id("org.jetbrains.kotlinx.rpc.plugin") version "0.5.0"
+    id("org.jetbrains.kotlinx.rpc.plugin") version "0.10.1"
+    id("org.jetbrains.kotlin.plugin.remote")
+}
+
+// The kotlin-remote plugin is applied here only so that the line-report measurement
+// pass can run on this project too. The plugin's transformations are skipped (no
+// kotlinx-remote types are referenced from this module) and runtime injection is
+// disabled to keep the production classpath minimal.
+simplePlugin {
+    skipRuntimeInjection.set(true)
 }
 
 group = "org.example"
@@ -12,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    val rpcVersion = "0.5.0"
+    val rpcVersion = "0.10.1"
     val ktorVersion = "3.2.1"
 
     implementation("org.jetbrains.kotlinx:kotlinx-rpc-krpc-server:$rpcVersion")

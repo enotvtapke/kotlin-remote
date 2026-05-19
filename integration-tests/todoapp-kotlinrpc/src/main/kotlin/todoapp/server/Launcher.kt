@@ -1,5 +1,6 @@
 package todoapp.server
 
+import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.routing.routing
@@ -22,7 +23,7 @@ fun main() {
                 rpcConfig {
                     serialization { json() }
                 }
-                registerService<TodoService> { ctx -> TodoServiceImpl(ctx, repository) }
+                registerService<TodoService> { TodoServiceImpl(repository) }
             }
         }
     }.start(wait = true)

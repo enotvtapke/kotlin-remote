@@ -4,12 +4,19 @@
 
 package kotlinx.remote.codegen.backend
 
+import kotlinx.remote.codegen.common.RemoteClassId
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 class RemoteIrExtension : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
+        // If kotlinx-remote is not on the classpath of this compilation, there is nothing
+        // for us to transform. Skip silently. This makes the plugin safe to apply to
+        // projects that intentionally don't depend on kotlinx-remote (e.g. Kotlin RPC
+        // projects added to the line-report comparison).
+        if (pluginContext.referenceClass(RemoteClassId.remoteAnnotation) == null) return
+
         val context = RemoteIrContext(pluginContext)
         val scanner = RemoteFunctionScanner()
         scanner.visitModuleFragment(moduleFragment)
