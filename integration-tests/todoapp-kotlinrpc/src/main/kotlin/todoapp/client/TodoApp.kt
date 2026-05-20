@@ -1,9 +1,7 @@
 package todoapp.client
 
 import androidx.compose.animation.*
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,7 +12,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,17 +39,20 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.http.URLProtocol
 import kotlinx.coroutines.launch
-import kotlinx.remote.RemoteContext
-import kotlinx.remote.runWith
+import kotlinx.coroutines.runBlocking
+import kotlinx.rpc.krpc.ktor.client.installKrpc
+import kotlinx.rpc.krpc.ktor.client.rpc
+import kotlinx.rpc.krpc.ktor.client.rpcConfig
+import kotlinx.rpc.krpc.serialization.json.json
+import kotlinx.rpc.withService
+import todoapp.api.TodoService
 import todoapp.model.CreateTodoRequest
 import todoapp.model.Todo
 import todoapp.model.UpdateTodoRequest
-import todoapp.remote.ServerConfig
-import todoapp.server.createTodo
-import todoapp.server.deleteTodo
-import todoapp.server.todos
-import todoapp.server.updateTodo
 
 // Color Palette - Deep Ocean Theme
 private val DeepOceanDark = Color(0xFF0A1628)
@@ -59,21 +65,34 @@ private val TextPrimary = Color(0xFFF8F9FA)
 private val TextSecondary = Color(0xFFADB5BD)
 private val TextMuted = Color(0xFF6C757D)
 
-fun main() = application {
-    Window(
-        onCloseRequest = ::exitApplication,
-        title = "Todo App",
-        state = rememberWindowState(width = 520.dp, height = 740.dp)
-    ) {
-        ServerConfig.runWith {
-            TodoApp()
+fun main(): Unit = runBlocking {
+    val httpClient = HttpClient(CIO) { installKrpc() }
+    val rpcClient = httpClient.rpc {
+        url {
+            protocol = URLProtocol.WS
+            host = "localhost"
+            port = 8000
+            pathSegments = listOf("api")
+        }
+        rpcConfig { serialization { json() } }
+    }
+    val service = rpcClient.withService<TodoService>()
+    application {
+        Window(
+            onCloseRequest = {
+                httpClient.close()
+                exitApplication()
+            },
+            title = "Todo App",
+            state = rememberWindowState(width = 520.dp, height = 740.dp)
+        ) {
+            TodoApp(service)
         }
     }
 }
 
 @Composable
-context(_: RemoteContext<ServerConfig>)
-fun TodoApp() {
+fun TodoApp(service: TodoService) {
     val scope = rememberCoroutineScope()
     var todoList by remember { mutableStateOf<List<Todo>>(emptyList()) }
     var newTodoTitle by remember { mutableStateOf("") }
@@ -86,7 +105,7 @@ fun TodoApp() {
             isLoading = true
             errorMessage = null
             try {
-                todoList = todos()
+                todoList = service.todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to load todos: ${e.message}"
             }
@@ -98,9 +117,9 @@ fun TodoApp() {
         if (newTodoTitle.isBlank()) return
         scope.launch {
             try {
-                createTodo(CreateTodoRequest(newTodoTitle.trim()))
+                service.createTodo(CreateTodoRequest(newTodoTitle.trim()))
                 newTodoTitle = ""
-                todoList = todos()
+                todoList = service.todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to add todo: ${e.message}"
             }
@@ -110,8 +129,8 @@ fun TodoApp() {
     fun toggleTodo(todo: Todo) {
         scope.launch {
             try {
-                updateTodo(todo.id, UpdateTodoRequest(done = !todo.done))
-                todoList = todos()
+                service.updateTodo(todo.id, UpdateTodoRequest(done = !todo.done))
+                todoList = service.todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to update todo: ${e.message}"
             }
@@ -121,8 +140,8 @@ fun TodoApp() {
     fun removeTodo(todo: Todo) {
         scope.launch {
             try {
-                deleteTodo(todo.id)
-                todoList = todos()
+                service.deleteTodo(todo.id)
+                todoList = service.todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to delete todo: ${e.message}"
             }
@@ -133,8 +152,8 @@ fun TodoApp() {
         if (newTitle.isBlank() || newTitle == todo.title) return
         scope.launch {
             try {
-                updateTodo(todo.id, UpdateTodoRequest(title = newTitle.trim()))
-                todoList = todos()
+                service.updateTodo(todo.id, UpdateTodoRequest(title = newTitle.trim()))
+                todoList = service.todos()
             } catch (e: Exception) {
                 errorMessage = "Failed to update todo: ${e.message}"
             }
@@ -250,7 +269,7 @@ fun TodoApp() {
                         }
                     }
                 )
-                
+
                 IconButton(
                     onClick = { addTodo() },
                     modifier = Modifier
@@ -280,7 +299,7 @@ fun TodoApp() {
             ) {
                 val completedCount = todoList.count { it.done }
                 val totalCount = todoList.size
-                
+
                 Text(
                     text = "$completedCount of $totalCount completed",
                     style = TextStyle(
@@ -289,7 +308,7 @@ fun TodoApp() {
                         fontFamily = FontFamily.Monospace
                     )
                 )
-                
+
                 IconButton(
                     onClick = { loadTodos() },
                     modifier = Modifier.size(32.dp)
@@ -412,7 +431,7 @@ fun TodoItem(
     var isEditing by remember { mutableStateOf(false) }
     var editText by remember(todo.title) { mutableStateOf(todo.title) }
     val editFocusRequester = remember { FocusRequester() }
-    
+
     val scale by animateFloatAsState(
         targetValue = if (isExpanded) 1.01f else 1f,
         animationSpec = spring(stiffness = Spring.StiffnessHigh)
@@ -556,8 +575,8 @@ fun TodoItem(
                     modifier = Modifier.clickable(
                         interactionSource = null,
                         indication = null
-                    ) { 
-                        isEditing = true 
+                    ) {
+                        isEditing = true
                     }
                 )
                 Text(
@@ -635,4 +654,3 @@ fun TodoItem(
         }
     }
 }
-

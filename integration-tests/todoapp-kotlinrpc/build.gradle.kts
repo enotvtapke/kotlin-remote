@@ -2,6 +2,8 @@ plugins {
     kotlin("jvm") version "2.2.20"
     kotlin("plugin.serialization") version "2.2.20"
     id("org.jetbrains.kotlinx.rpc.plugin") version "0.10.1"
+    id("org.jetbrains.compose") version "1.7.3"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.2.20"
     id("org.jetbrains.kotlin.plugin.remote")
 }
 
@@ -17,6 +19,7 @@ group = "org.example"
 version = "1.0-SNAPSHOT"
 
 repositories {
+    google()
     mavenCentral()
 }
 
@@ -44,8 +47,20 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:0.55.0")
     implementation("com.h2database:h2:2.3.232")
     implementation("ch.qos.logback:logback-classic:1.3.14")
+
+    // Compose Multiplatform Desktop
+    implementation(compose.desktop.currentOs)
+    implementation(compose.material3)
+    implementation(compose.materialIconsExtended)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
 }
 
 kotlin {
     jvmToolchain(21)
+}
+
+compose.desktop {
+    application {
+        mainClass = "todoapp.client.TodoAppKt"
+    }
 }
